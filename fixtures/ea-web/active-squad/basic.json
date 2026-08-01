@@ -1,0 +1,8 @@
+{
+  "schemaVersion": 1,
+  "id": "active-squad-basic",
+  "category": "active-squad",
+  "description": "Synthetic starting, bench, and reserve groups.",
+  "initialHtml": "<main data-fixture-screen='active-squad'><section data-group='starting'></section><section data-group='bench'></section><section data-group='reserves'></section></main>",
+  "mutations": []
+}

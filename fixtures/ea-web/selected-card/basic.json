@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "id": "selected-card-basic",
+  "category": "selected-card",
+  "description": "A synthetic card appears after a user selection.",
+  "initialHtml": "<main data-fixture-screen='club'><section id='selection'></section></main>",
+  "mutations": [
+    {
+      "atMs": 100,
+      "operation": "append-html",
+      "selector": "#selection",
+      "html": "<article data-fixture-card data-name='Alex Example' data-overall='91' data-position='ST' data-club='North London FC' data-league='Premier Division' data-nation='Example Nation' data-rarity='Special'></article>"
+    }
+  ]
+}

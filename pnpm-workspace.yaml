@@ -1,0 +1,6 @@
+packages:
+  - apps/*
+  - packages/*
+minimumReleaseAgeExclude:
+  - '@aklinker1/zero-zip@1.0.1'
+  - wxt@0.21.3

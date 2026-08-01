@@ -1,0 +1,8 @@
+{
+  "schemaVersion": 1,
+  "id": "unsupported-basic",
+  "category": "unsupported",
+  "description": "Synthetic unknown page with no recognizable context.",
+  "initialHtml": "<main><section data-unrecognized></section></main>",
+  "mutations": []
+}

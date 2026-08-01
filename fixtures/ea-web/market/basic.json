@@ -1,0 +1,8 @@
+{
+  "schemaVersion": 1,
+  "id": "market-basic",
+  "category": "market",
+  "description": "Synthetic transfer market results.",
+  "initialHtml": "<main data-fixture-screen='market'><section data-market-results></section></main>",
+  "mutations": []
+}

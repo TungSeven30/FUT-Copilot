@@ -1,0 +1,23 @@
+{
+  "name": "@fut-copilot/domain",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./adapter-events": "./src/adapter-events.ts",
+    "./cards": "./src/cards.ts",
+    "./common": "./src/common.ts",
+    "./observation": "./src/observation.ts",
+    "./profile": "./src/profile.ts",
+    "./workflows": "./src/workflows.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "zod": "4.4.3"
+  },
+  "devDependencies": {
+    "typescript": "5.9.3"
+  }
+}

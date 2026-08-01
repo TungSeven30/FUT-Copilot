@@ -1,0 +1,8 @@
+{
+  "schemaVersion": 1,
+  "id": "pack-result-basic",
+  "category": "pack-result",
+  "description": "Synthetic pack result container.",
+  "initialHtml": "<main data-fixture-screen='pack-result'><section data-result-items></section></main>",
+  "mutations": []
+}

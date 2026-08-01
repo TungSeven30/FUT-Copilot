@@ -1,0 +1,8 @@
+{
+  "schemaVersion": 1,
+  "id": "player-pick-basic",
+  "category": "player-pick",
+  "description": "Synthetic player-pick options.",
+  "initialHtml": "<main data-fixture-screen='player-pick'><section data-pick-options></section></main>",
+  "mutations": []
+}

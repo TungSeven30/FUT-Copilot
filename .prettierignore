@@ -1,0 +1,5 @@
+node_modules/
+coverage/
+outputs/
+apps/chrome-extension/.output/
+apps/chrome-extension/.wxt/

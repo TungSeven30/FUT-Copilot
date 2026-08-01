@@ -1,0 +1,8 @@
+{
+  "schemaVersion": 1,
+  "id": "duplicate-basic",
+  "category": "duplicate",
+  "description": "Synthetic duplicate/unassigned state.",
+  "initialHtml": "<main data-fixture-screen='duplicate'><section data-duplicate-item></section></main>",
+  "mutations": []
+}
