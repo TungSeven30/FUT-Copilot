@@ -79,7 +79,7 @@ describe('database backup and import', () => {
 
     const invalidFutureBackup = {
       format: 'fut-copilot-backup',
-      schemaVersion: 2,
+      schemaVersion: 3,
       createdAt: timestamp,
       data: {},
     };
@@ -134,5 +134,54 @@ describe('database backup and import', () => {
     expect(await target.profiles.get(preservedProfile.id)).toEqual(
       preservedProfile,
     );
+  });
+
+  it('migrates a schema-v1 journal event before import', async () => {
+    const database = createDatabase();
+    const current = await exportDatabase(database);
+    const preview = previewImport({
+      ...current,
+      schemaVersion: 1,
+      data: {
+        ...current.data,
+        marketTransactions: [
+          {
+            id: '5aa4f409-2e46-49a2-b7f3-76f9e80a8115',
+            profileId: '353e123c-4549-4421-bde6-5110e592374c',
+            cardDefinitionId: '55e69da8-50f1-42be-a2e5-43c8188a14ab',
+            platform: 'playstation',
+            transactionType: 'purchase',
+            amount: 10_000,
+            occurredAt: timestamp,
+            userConfirmed: true,
+            notes: '',
+          },
+        ],
+      },
+    });
+
+    expect(preview.backup.schemaVersion).toBe(2);
+    expect(preview.backup.data.marketTransactions[0]?.transactionType).toBe(
+      'purchased',
+    );
+  });
+
+  it('removes unknown sensitive-shaped fields from exported records', async () => {
+    const database = createDatabase();
+    const profile = {
+      ...makeProfile(),
+      cookie: 'synthetic-private-field',
+      rawHtml: '<main>synthetic private page</main>',
+      accessToken: 'synthetic-private-field',
+    } as PersonalProfile;
+    await database.profiles.add(profile);
+
+    const serialized = JSON.stringify(await exportDatabase(database));
+
+    expect(serialized).not.toContain('synthetic-private-field');
+    expect(serialized).not.toContain('synthetic private page');
+    expect(serialized).not.toContain('cookie');
+    expect(serialized).not.toContain('accessToken');
+    expect(serialized).not.toContain('rawHtml');
   });
 });

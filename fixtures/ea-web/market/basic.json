@@ -3,6 +3,6 @@
   "id": "market-basic",
   "category": "market",
   "description": "Synthetic transfer market results.",
-  "initialHtml": "<main data-fixture-screen='market'><section data-market-results></section></main>",
+  "initialHtml": "<main data-fixture-screen='market'><section data-market-results><article data-card data-role='selected' data-id='4db7fbb0-00c0-49b4-87e7-39ea2d7eef9f' data-name='Market Example' data-rating='89' data-position='RW' data-rarity='special' data-tradeability='tradeable'></article><span data-price='42000'></span><span data-price='43500'></span></section></main>",
   "mutations": []
 }

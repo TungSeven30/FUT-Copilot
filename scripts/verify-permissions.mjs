@@ -94,15 +94,35 @@ assert(
   'External extension connections are not allowed.',
 );
 
-const applicationSourceFiles = await listApplicationSourceFiles(
-  path.join(extensionRoot, 'entrypoints'),
-);
+const applicationSourceFiles = (
+  await Promise.all([
+    listApplicationSourceFiles(path.join(extensionRoot, 'entrypoints')),
+    listApplicationSourceFiles(path.resolve('packages')),
+  ])
+).flat();
 const remoteRequestCall = /\b(?:fetch|XMLHttpRequest|WebSocket)\s*\(/;
+const remoteExecutableCode =
+  /\b(?:eval\s*\(|new\s+Function\s*\(|importScripts\s*\(\s*['"]https?:)/;
 for (const file of applicationSourceFiles) {
   const contents = await readFile(file, 'utf8');
   assert(
     !remoteRequestCall.test(contents),
-    `Remote-request primitive found in application source ${path.relative(extensionRoot, file)}.`,
+    `Remote-request primitive found in runtime source ${path.relative(process.cwd(), file)}.`,
+  );
+  assert(
+    !remoteExecutableCode.test(contents),
+    `Remote or dynamic executable code found in runtime source ${path.relative(process.cwd(), file)}.`,
+  );
+}
+
+for (const entrypoint of ['background.ts', 'content.ts']) {
+  const entrypointPath = path.join(extensionRoot, 'entrypoints', entrypoint);
+  const contents = await readFile(entrypointPath, 'utf8');
+  assert(
+    !/\.(?:click|requestSubmit|submit)\s*\(|\.dispatchEvent\s*\(/.test(
+      contents,
+    ),
+    `${entrypoint} must not programmatically activate page controls.`,
   );
 }
 

@@ -3,6 +3,6 @@
   "id": "active-squad-basic",
   "category": "active-squad",
   "description": "Synthetic starting, bench, and reserve groups.",
-  "initialHtml": "<main data-fixture-screen='active-squad'><section data-group='starting'></section><section data-group='bench'></section><section data-group='reserves'></section></main>",
+  "initialHtml": "<main data-fixture-screen='active-squad'><section data-group='starting'><article data-card data-id='1e332efe-ed8f-44c6-a9b8-cb8d60ea1b8d' data-slot='ST' data-name='Starter Example' data-rating='89' data-position='ST' data-rarity='rare' data-tradeability='untradeable'></article></section><section data-group='bench'><article data-card data-id='a1b22cdf-72f7-4943-937d-393721f0df50' data-slot='SUB-1' data-name='Bench Example' data-rating='87' data-position='CM' data-rarity='special' data-tradeability='tradeable'></article></section><section data-group='reserves'><article data-card data-id='9ff94ec0-9727-4e42-a63a-f827ae5f6897' data-slot='RES-1' data-name='Reserve Example' data-rating='85' data-position='CB' data-rarity='rare' data-tradeability='unknown'></article></section></main>",
   "mutations": []
 }

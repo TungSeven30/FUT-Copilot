@@ -7,17 +7,21 @@ FUT Copilot is a local-first Chrome extension for a personalized EA SPORTS FC Ul
 
 ## Project status
 
-The selected-card vertical slice is complete. The repository currently provides:
+The 0.1.0 MVP preview provides:
 
 - A Chrome Manifest V3 side-panel extension built with WXT, React, and TypeScript.
 - Runtime-validated models for cards, ownership, preferences, duplicates, SBCs, market observations, recommendations, and adapter events.
-- A versioned local IndexedDB database with validated JSON backup and restore.
+- A versioned local IndexedDB database with schema migration plus validated JSON backup and restore.
 - A deterministic fixture harness for developing EA Web App observation without depending on a live account.
 - A versioned FC 26 adapter that recognizes the English My Club Players screen and extracts the active visible card.
 - A typed content-script/background/side-panel message flow with explicit loading, empty, ready, unsupported, and degraded states.
+- Persistent personal tags, notes, protection rules, and identity-safe local card context.
+- A public FUT.GG exact-or-search link that opens only after a user click.
+- Explainable keep, sell, and SBC recommendations with protection overrides.
+- Duplicate triage, rating-only SBC planning, a manual market calculator, transaction journal, selling guard, settings, and compatibility workspaces.
 - Automated permission, fixture-redaction, formatting, lint, type, test, and production-build checks.
 
-The current extension can read a selected visible Club card's name, overall, position, face statistics, broad rarity, and carefully inferred ownership/transfer signals. Full-club synchronization, exact card identity resolution, personal protection rules, FUT.GG links, and recommendations are not implemented yet.
+The selected-card Club slice has been smoke-tested against the live English FC 26 Web App. Active-squad, pack, pick, duplicate, SBC, and market context contracts have deterministic synthetic coverage; their live page adapters are still release gates and are reported as unsupported instead of guessed. See [`docs/release/known-limitations.md`](docs/release/known-limitations.md).
 
 ## Goals
 
@@ -127,8 +131,9 @@ apps/
   chrome-extension/       WXT runtime and React side panel
 packages/
   domain/                 Zod entities and normalized event contracts
-  ea-web-adapter/         Fixture harness and future read-only EA adapter
-  storage/                Dexie schema, backup, and import
+  ea-web-adapter/         Read-only EA adapter and fixture harness
+  recommendation-engine/ Explainable card, SBC, and market logic
+  storage/                Dexie schema, repositories, backup, and import
 fixtures/
   ea-web/                  Synthetic and redacted screen scenarios
 docs/
@@ -138,13 +143,14 @@ docs/
   compatibility/           EA Web App compatibility evidence
   policy/                  Data-source and account-safety rules
   product/                 MVP scope and success measures
+  release/                 Installation, rollback, privacy, and smoke tests
 outputs/                   Research, personalized specification, and full plan
 scripts/                   Permission and fixture-safety validators
 ```
 
 ## Local data model
 
-Database version 1 contains twelve tables:
+Database version 2 contains twelve tables:
 
 - Profiles
 - Card definitions
@@ -171,7 +177,7 @@ Backup import is validated before any write. Replacement imports can create a ba
 - Add a synthetic or aggressively redacted fixture for every new page assumption.
 - Make every recommendation explainable and every game-changing action manual.
 
-See [`AGENTS.md`](AGENTS.md) for implementation rules and [`docs/backlog/current-milestone.md`](docs/backlog/current-milestone.md) for the next acceptance target.
+See [`AGENTS.md`](AGENTS.md) for implementation rules, [`docs/backlog/current-milestone.md`](docs/backlog/current-milestone.md) for the active release gate, and [`docs/release/README.md`](docs/release/README.md) for installation, backup, rollback, privacy, and test instructions.
 
 ## Roadmap
 
@@ -179,12 +185,14 @@ See [`AGENTS.md`](AGENTS.md) for implementation rules and [`docs/backlog/current
 - [x] User-assisted visible-UI observation spike
 - [x] Club screen classifier and adapter health state
 - [x] Selected-card observation in the side panel
-- [ ] Protection, favorites, tags, and notes
-- [ ] FUT.GG exact-page/search deep links
-- [ ] Duplicate triage workflow
-- [ ] Rating-oriented SBC proposal workflow
-- [ ] Manual market journal and calculator
-- [ ] Local-first recommendation engine
+- [x] Protection, favorites, tags, and notes
+- [x] FUT.GG exact-page/search deep links
+- [x] Duplicate triage workflow and synthetic event contract
+- [x] Rating-oriented SBC proposal workflow and synthetic event contract
+- [x] Manual market journal and calculator
+- [x] Local-first recommendation engine
+- [ ] Live active-squad, pack, pick, duplicate, SBC, and market extractors
+- [ ] Full manual regression matrix on a supported EA Web App build
 - [ ] iPhone companion exploration after the Chrome MVP
 
 The exhaustive task breakdown is in [`outputs/fut-copilot-mvp-implementation-plan.md`](outputs/fut-copilot-mvp-implementation-plan.md).

@@ -1,28 +1,39 @@
-# Current milestone: personalized selected-card context
+# Current milestone: live workflow adapter gates
 
-## Completed foundation
+## Completed foundation and local workflows
 
-- [x] Workspace and Chrome side-panel scaffold.
-- [x] Safety, architecture, source, and agent documentation.
-- [x] Narrow generated-manifest permission verifier.
-- [x] Runtime-validated domain and observation contracts.
-- [x] Versioned local storage and backup/import implementation.
-- [x] Deterministic fixture harness and fixture redaction verifier.
-- [x] User-assisted FC 26 Club selected-card observation.
-- [x] Screen classification, adapter degradation, and selected-card extraction.
-- [x] Typed message flow and distinct side-panel observation states.
-- [x] Live smoke test confirmed against the selected visible card.
+- [x] Workspace, Chrome side-panel shell, safety policy, and narrow permissions.
+- [x] Versioned domain events, IndexedDB schema v2 migration, and backup/import.
+- [x] Deterministic synthetic fixtures and account-data redaction checks.
+- [x] Live English FC 26 Club screen classification and selected-card extraction.
+- [x] Typed content/background/panel messages and fail-closed adapter health.
+- [x] Default PlayStation profile, seven personal tags, protection, and notes.
+- [x] Ambiguity-safe local identity resolution and user-clicked FUT.GG links.
+- [x] Explainable keep, sell, and SBC recommendations.
+- [x] Duplicate case persistence/triage and non-interactive protection warning.
+- [x] Rating-only SBC planner with protected-card exclusions and validation.
+- [x] Manual market observations, tax calculator, selling guard, and journal.
+- [x] Settings, compatibility summary, schema-v2 export/import, and release docs.
 
-## In this milestone
+## Active release gates
 
-- [ ] Create the default local PlayStation profile.
-- [ ] Add personal tags, protection, and notes to a selected card.
-- [ ] Implement identity resolution without silently collapsing ambiguity.
-- [ ] Generate exact-or-search FUT.GG public deep links.
-- [ ] Add the manual PlayStation market calculator.
+- [ ] Live-observe active squad, bench, and reserves; add sanitized compatibility
+      evidence before implementing selectors.
+- [ ] Live-observe pack result and player-pick layouts without opening a pack or
+      making a pick on the user's behalf.
+- [ ] Live-observe duplicate state and prove idempotent local case creation.
+- [ ] Live-observe an SBC segment and implement supported requirement extraction.
+- [ ] Live-observe read-only transfer context without searching, bidding, buying,
+      or listing on the user's behalf.
+- [ ] Run the complete manual smoke checklist on the supported EA build.
 
-## Next acceptance target
+## Acceptance target
 
-With a recognized selected card, the user can mark it protected, favorite, or an Evolution project; add a note; and see those choices after restarting Chrome. Protection must override later sell or SBC recommendations.
+Each new live extractor must emit only normalized domain events, preserve visible
+order/grouping, fail closed on ambiguity, use a synthetic or aggressively
+redacted fixture, and receive a compatibility-log entry. No raw HTML or account
+data may be stored. All game-changing actions remain manual.
 
-No raw HTML or secret material may cross the adapter boundary. New EA page-shape assumptions require a synthetic/redacted fixture and compatibility note.
+The Chrome browser-control connection timed out twice on 2026-08-01 while
+claiming the already-open EA tab. No new selector assumption was recorded from
+that failed session.

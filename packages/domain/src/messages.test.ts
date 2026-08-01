@@ -1,5 +1,9 @@
 import type { NormalizedAdapterEvent } from './adapter-events';
-import { adapterSnapshotSchema, createAdapterSnapshot } from './messages';
+import {
+  adapterSnapshotSchema,
+  createAdapterSnapshot,
+  protectionStatusResponseSchema,
+} from './messages';
 
 const timestamp = '2026-08-01T15:00:00.000Z';
 const unknownBuild = {
@@ -50,5 +54,15 @@ describe('adapter snapshots', () => {
     };
 
     expect(createAdapterSnapshot(event)?.state).toBe('unsupported');
+  });
+
+  it('validates normalized protection status without page data', () => {
+    expect(
+      protectionStatusResponseSchema.parse({
+        kind: 'protection.status',
+        status: 'protected',
+        tagNames: ['favorite'],
+      }),
+    ).toMatchObject({ status: 'protected', tagNames: ['favorite'] });
   });
 });

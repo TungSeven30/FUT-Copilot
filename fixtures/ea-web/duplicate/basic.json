@@ -3,6 +3,6 @@
   "id": "duplicate-basic",
   "category": "duplicate",
   "description": "Synthetic duplicate/unassigned state.",
-  "initialHtml": "<main data-fixture-screen='duplicate'><section data-duplicate-item></section></main>",
+  "initialHtml": "<main data-fixture-screen='duplicate'><section data-duplicate-item><article data-card data-role='duplicate' data-id='c2f6b34e-e6cc-4ccf-9976-992092352a45' data-name='Duplicate Example' data-rating='86' data-position='CM' data-rarity='rare' data-tradeability='unknown'></article><article data-card data-role='existing' data-id='669d9fbe-aabf-42d0-937a-c70a4f0b021e' data-name='Duplicate Example' data-rating='86' data-position='CM' data-rarity='rare' data-tradeability='unknown'></article></section></main>",
   "mutations": []
 }

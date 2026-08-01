@@ -1,0 +1,21 @@
+{
+  "name": "@fut-copilot/recommendation-engine",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./market": "./src/market.ts",
+    "./recommendations": "./src/recommendations.ts",
+    "./sbc": "./src/sbc.ts",
+    "./selling-guard": "./src/selling-guard.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@fut-copilot/domain": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "5.9.3"
+  }
+}

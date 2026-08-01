@@ -15,9 +15,9 @@ flowchart LR
 
 - `apps/chrome-extension` owns the WXT runtime, side panel, and browser wiring.
 - `packages/domain` owns runtime-validated entities, events, and compatibility metadata.
-- `packages/storage` owns schema migrations, repositories, and backup/import.
+- `packages/storage` owns schema migrations, workspace repositories, and backup/import. UI code does not query Dexie tables directly.
 - `packages/ea-web-adapter` is the only code allowed to know EA DOM or route details.
-- A later `packages/recommendation-engine` will consume normalized data and produce explainable suggestions.
+- `packages/recommendation-engine` consumes normalized data and produces explainable card, SBC, and market suggestions.
 
 ## Event rule
 

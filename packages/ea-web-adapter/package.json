@@ -6,6 +6,7 @@
   "exports": {
     "./event-signature": "./src/event-signature.ts",
     "./fixture-harness": "./src/testing/fixture-harness.ts",
+    "./synthetic-context-extractor": "./src/testing/synthetic-context-extractor.ts",
     "./screen-classifier": "./src/screen-classifier.ts",
     "./selected-card": "./src/selected-card.ts"
   },

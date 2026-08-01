@@ -4,11 +4,16 @@ import {
   adapterSnapshotGetMessageSchema,
   adapterSnapshotSchema,
   createAdapterSnapshot,
+  protectionStatusRequestMessageSchema,
   type AdapterSnapshot,
 } from '@fut-copilot/domain/messages';
+import { FutCopilotDatabase } from '@fut-copilot/storage/database';
+import { createDuplicateCaseFromEvent } from '@fut-copilot/storage/duplicates';
+import { ensureSelectedCardContext } from '@fut-copilot/storage/personalization';
 import { browser } from 'wxt/browser';
 
 const SNAPSHOT_STORAGE_KEY = 'adapterSnapshot.v1';
+const database = new FutCopilotDatabase();
 
 async function readSnapshot(): Promise<AdapterSnapshot | null> {
   const stored = await browser.storage.local.get(SNAPSHOT_STORAGE_KEY);
@@ -24,6 +29,15 @@ async function broadcastSnapshot(snapshot: AdapterSnapshot): Promise<void> {
   await browser.runtime
     .sendMessage({ kind: 'adapter.snapshot.changed', snapshot })
     .catch(() => undefined);
+}
+
+async function persistAdapterEvent(
+  event: Parameters<typeof createAdapterSnapshot>[0],
+): Promise<void> {
+  await database.observations.put(event);
+  if (event.type === 'duplicate.detected') {
+    await createDuplicateCaseFromEvent(database, event);
+  }
 }
 
 async function requestObservationFromActiveTab() {
@@ -64,7 +78,8 @@ export default defineBackground(() => {
         });
       }
 
-      return storeSnapshot(snapshot)
+      return persistAdapterEvent(eventMessage.data.event)
+        .then(() => storeSnapshot(snapshot))
         .then(() => broadcastSnapshot(snapshot))
         .then(() => ({ kind: 'adapter.ack' as const, accepted: true }));
     }
@@ -78,6 +93,34 @@ export default defineBackground(() => {
 
     if (adapterObserveRequestMessageSchema.safeParse(message).success) {
       return requestObservationFromActiveTab();
+    }
+
+    const protectionRequest =
+      protectionStatusRequestMessageSchema.safeParse(message);
+    if (protectionRequest.success) {
+      return ensureSelectedCardContext(
+        database,
+        protectionRequest.data.card,
+      ).then((context) => {
+        if (context.ownedCard === null) {
+          return {
+            kind: 'protection.status' as const,
+            status: 'ambiguous' as const,
+            tagNames: [],
+          };
+        }
+        const selectedTags = context.tags.filter((tag) =>
+          context.ownedCard?.personalTagIds.includes(tag.id),
+        );
+        const protectedCard =
+          context.ownedCard.protected ||
+          selectedTags.some((tag) => tag.protectsCard);
+        return {
+          kind: 'protection.status' as const,
+          status: protectedCard ? ('protected' as const) : ('clear' as const),
+          tagNames: selectedTags.map((tag) => tag.name),
+        };
+      });
     }
 
     return undefined;

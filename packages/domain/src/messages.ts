@@ -1,17 +1,36 @@
 import { z } from 'zod';
 
 import {
+  activeSquadVisibleEventSchema,
   adapterDegradedEventSchema,
   cardSelectedEventSchema,
+  cardsVisibleEventSchema,
+  duplicateDetectedEventSchema,
+  marketContextVisibleEventSchema,
+  packResultVisibleEventSchema,
+  playerPickVisibleEventSchema,
+  sbcContextVisibleEventSchema,
   type NormalizedAdapterEvent,
+  visibleCardSchema,
 } from './adapter-events';
 import { isoDateTimeSchema } from './common';
+
+const adapterReadyEventSchema = z.union([
+  cardSelectedEventSchema,
+  cardsVisibleEventSchema,
+  activeSquadVisibleEventSchema,
+  packResultVisibleEventSchema,
+  playerPickVisibleEventSchema,
+  duplicateDetectedEventSchema,
+  sbcContextVisibleEventSchema,
+  marketContextVisibleEventSchema,
+]);
 
 export const adapterSnapshotSchema = z.discriminatedUnion('state', [
   z.object({
     state: z.literal('ready'),
     updatedAt: isoDateTimeSchema,
-    event: cardSelectedEventSchema,
+    event: adapterReadyEventSchema,
   }),
   z.object({
     state: z.literal('empty'),
@@ -32,7 +51,7 @@ export const adapterSnapshotSchema = z.discriminatedUnion('state', [
 
 export const adapterEventMessageSchema = z.object({
   kind: z.literal('adapter.event'),
-  event: z.union([cardSelectedEventSchema, adapterDegradedEventSchema]),
+  event: z.union([adapterReadyEventSchema, adapterDegradedEventSchema]),
 });
 
 export const adapterSnapshotGetMessageSchema = z.object({
@@ -63,6 +82,17 @@ export const adapterAcknowledgeResponseSchema = z.object({
   reason: z.string().min(1).optional(),
 });
 
+export const protectionStatusRequestMessageSchema = z.object({
+  kind: z.literal('protection.status.request'),
+  card: visibleCardSchema,
+});
+
+export const protectionStatusResponseSchema = z.object({
+  kind: z.literal('protection.status'),
+  status: z.enum(['protected', 'clear', 'ambiguous']),
+  tagNames: z.array(z.string().min(1)),
+});
+
 export function createAdapterSnapshot(
   event: NormalizedAdapterEvent,
 ): z.infer<typeof adapterSnapshotSchema> | null {
@@ -77,6 +107,22 @@ export function createAdapterSnapshot(
   if (event.type === 'adapter.degraded') {
     return {
       state: event.payload.screen === 'unknown' ? 'unsupported' : 'degraded',
+      updatedAt: event.occurredAt,
+      event,
+    };
+  }
+
+  if (
+    event.type === 'cards.visible' ||
+    event.type === 'activeSquad.visible' ||
+    event.type === 'packResult.visible' ||
+    event.type === 'playerPick.visible' ||
+    event.type === 'duplicate.detected' ||
+    event.type === 'sbcContext.visible' ||
+    event.type === 'marketContext.visible'
+  ) {
+    return {
+      state: 'ready',
       updatedAt: event.occurredAt,
       event,
     };

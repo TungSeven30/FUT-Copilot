@@ -7,5 +7,7 @@
 - `adr/` — durable architectural decisions.
 - `backlog/current-milestone.md` — the next executable work slice.
 - `compatibility/README.md` — EA Web App compatibility evidence.
+- `release/README.md` — install, backup, rollback, privacy, limitations, and
+  manual validation guidance.
 
 The exhaustive product and implementation plans remain in `outputs/`.

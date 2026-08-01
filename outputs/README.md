@@ -18,13 +18,8 @@ The product calculates, guides, and warns. The user performs all game-changing a
 
 ## Current milestone
 
-Next: implement FCP-001 through FCP-007 from the MVP implementation plan:
-
-- AI-agent-friendly monorepo and documentation
-- Chrome Manifest V3 extension shell
-- Minimal permission baseline and validator
-- Domain schemas and local Dexie database
-- Backup export/import
-- EA fixture harness
-
-After that foundation, complete the user-assisted Web App observation task before writing real selectors.
+The local MVP workspaces and automated foundation are implemented. The active
+milestone is user-assisted, read-only observation of the remaining live EA Web
+App contexts before adding selectors. See
+[`../docs/backlog/current-milestone.md`](../docs/backlog/current-milestone.md)
+and [`../docs/release/README.md`](../docs/release/README.md).

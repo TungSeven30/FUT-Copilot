@@ -1,0 +1,21 @@
+# FUT Copilot 0.1.0 MVP preview
+
+This directory contains the operational handoff for the unpacked Chrome release.
+
+- [Installation](installation.md)
+- [Backup, upgrade, and rollback](upgrade-and-rollback.md)
+- [Known limitations](known-limitations.md)
+- [Manual smoke checklist](manual-smoke-checklist.md)
+- [Privacy and permission audit](privacy-audit.md)
+
+The production artifact is generated at
+`apps/chrome-extension/.output/chrome-mv3/` by `pnpm verify` or `pnpm build`.
+It is intentionally not committed because it is reproducible build output.
+
+## Release status
+
+The selected-card workflow is live-validated against the English FC 26 Web
+App Club screen. Duplicate, pack, pick, SBC, squad, and market context contracts
+have synthetic regression coverage, but their live EA page adapters remain
+release gates. The manual side-panel workspaces are usable without those live
+extractors.

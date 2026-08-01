@@ -90,7 +90,7 @@ export const cardSelectedEventSchema = z.object({
   }),
 });
 
-const cardsVisibleEventSchema = z.object({
+export const cardsVisibleEventSchema = z.object({
   ...eventBase,
   type: z.literal('cards.visible'),
   payload: z.object({
@@ -99,19 +99,19 @@ const cardsVisibleEventSchema = z.object({
   }),
 });
 
-const activeSquadVisibleEventSchema = z.object({
+export const activeSquadVisibleEventSchema = z.object({
   ...eventBase,
   type: z.literal('activeSquad.visible'),
   payload: z.object({ slots: z.array(squadSlotSchema).max(23) }),
 });
 
-const packResultVisibleEventSchema = z.object({
+export const packResultVisibleEventSchema = z.object({
   ...eventBase,
   type: z.literal('packResult.visible'),
   payload: z.object({ cards: z.array(visibleCardSchema).min(1) }),
 });
 
-const playerPickVisibleEventSchema = z.object({
+export const playerPickVisibleEventSchema = z.object({
   ...eventBase,
   type: z.literal('playerPick.visible'),
   payload: z.object({
@@ -120,7 +120,7 @@ const playerPickVisibleEventSchema = z.object({
   }),
 });
 
-const duplicateDetectedEventSchema = z.object({
+export const duplicateDetectedEventSchema = z.object({
   ...eventBase,
   type: z.literal('duplicate.detected'),
   payload: z.object({
@@ -129,7 +129,7 @@ const duplicateDetectedEventSchema = z.object({
   }),
 });
 
-const sbcContextVisibleEventSchema = z.object({
+export const sbcContextVisibleEventSchema = z.object({
   ...eventBase,
   type: z.literal('sbcContext.visible'),
   payload: z.object({
@@ -140,7 +140,7 @@ const sbcContextVisibleEventSchema = z.object({
   }),
 });
 
-const marketContextVisibleEventSchema = z.object({
+export const marketContextVisibleEventSchema = z.object({
   ...eventBase,
   type: z.literal('marketContext.visible'),
   payload: z.object({
