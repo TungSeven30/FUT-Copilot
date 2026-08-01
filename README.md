@@ -17,8 +17,8 @@ The 0.1.0 MVP preview provides:
 - A typed content-script/background/side-panel message flow with explicit loading, empty, ready, unsupported, and degraded states.
 - Persistent personal tags, notes, protection rules, and identity-safe local card context.
 - A public FUT.GG exact-or-search link that opens only after a user click.
-- Explainable keep, sell, and SBC recommendations with protection overrides.
-- Duplicate triage, rating-only SBC planning, a manual market calculator, transaction journal, selling guard, settings, and compatibility workspaces.
+- Explainable keep, sell, and SBC recommendations driven by editable favorite-player, favorite-club, Evolution, meta, market, and SBC weights, with protection overrides.
+- Full local duplicate destination/resolution logging, rating-only SBC planning with visible-card protection scans, a manual market calculator, transaction journal, selling guard, settings, and compatibility workspaces.
 - Automated permission, fixture-redaction, formatting, lint, type, test, and production-build checks.
 
 The selected-card Club slice has been smoke-tested against the live English FC 26 Web App. Active-squad, pack, pick, duplicate, SBC, and market context contracts have deterministic synthetic coverage; their live page adapters are still release gates and are reported as unsupported instead of guessed. See [`docs/release/known-limitations.md`](docs/release/known-limitations.md).
@@ -178,6 +178,9 @@ Backup import is validated before any write. Replacement imports can create a ba
 - Make every recommendation explainable and every game-changing action manual.
 
 See [`AGENTS.md`](AGENTS.md) for implementation rules, [`docs/backlog/current-milestone.md`](docs/backlog/current-milestone.md) for the active release gate, and [`docs/release/README.md`](docs/release/README.md) for installation, backup, rollback, privacy, and test instructions.
+
+The latest reproducible automated and owner-assisted evidence is recorded in
+[`docs/release/verification-2026-08-01.md`](docs/release/verification-2026-08-01.md).
 
 ## Roadmap
 

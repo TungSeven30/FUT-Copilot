@@ -102,7 +102,7 @@ describe('selected-card fixture vertical slice', () => {
     );
   });
 
-  it('degrades safely when a required visible field disappears', () => {
+  it('degrades safely when an incomplete card loses a required visible field', () => {
     const harness = createHarness();
     harness.load();
     harness.advanceTo(100);
@@ -116,6 +116,97 @@ describe('selected-card fixture vertical slice', () => {
     expect(event.type).toBe('adapter.degraded');
     if (event.type === 'adapter.degraded') {
       expect(event.payload.reasonCodes).toEqual(['missing-name']);
+    }
+  });
+
+  it('infers a visible loan marker without guessing loan duration', () => {
+    const harness = createHarness();
+    harness.load();
+    harness.advanceTo(100);
+    harness.fixtureDocument
+      .querySelector('.item.player.ut-item-loaded')
+      ?.classList.add('loan');
+
+    const event = extractSelectedCardEvent(harness.fixtureDocument, {
+      createId: createIdFactory(),
+      now: () => new Date(observedAt),
+    });
+
+    expect(event.type).toBe('card.selected');
+    if (event.type === 'card.selected') {
+      expect(event.payload.card?.loan).toMatchObject({
+        value: true,
+        status: 'inferred',
+      });
+    }
+  });
+
+  it('fails closed for a synthetic concept-card marker', () => {
+    const harness = createHarness();
+    harness.load();
+    harness.advanceTo(100);
+    harness.fixtureDocument
+      .querySelector('.item.player.ut-item-loaded')
+      ?.classList.add('concept');
+
+    const event = extractSelectedCardEvent(harness.fixtureDocument, {
+      createId: createIdFactory(),
+      now: () => new Date(observedAt),
+    });
+
+    expect(event.type).toBe('adapter.degraded');
+    if (event.type === 'adapter.degraded') {
+      expect(event.payload.reasonCodes).toEqual(['concept-card-not-owned']);
+    }
+  });
+
+  it('keeps an unrecognized synthetic Evolution rarity unknown', () => {
+    const harness = createHarness();
+    harness.load();
+    harness.advanceTo(100);
+    const card = harness.fixtureDocument.querySelector(
+      '.item.player.ut-item-loaded',
+    );
+    card?.classList.remove('specials', 'rare');
+    card?.classList.add('evolution');
+
+    const event = extractSelectedCardEvent(harness.fixtureDocument, {
+      createId: createIdFactory(),
+      now: () => new Date(observedAt),
+    });
+
+    expect(event.type).toBe('card.selected');
+    if (event.type === 'card.selected') {
+      expect(event.payload.card?.rarity).toMatchObject({
+        value: null,
+        status: 'unknown',
+      });
+    }
+  });
+
+  it('degrades when more than one active card matches', () => {
+    const harness = createHarness();
+    harness.load();
+    harness.advanceTo(100);
+    const activeSlide = harness.fixtureDocument.querySelector(
+      '.detail-carousel .tns-slide-active',
+    );
+    const card = activeSlide?.querySelector('.item.player.ut-item-loaded');
+    if (activeSlide === null || card === null || card === undefined) {
+      throw new Error('Expected synthetic active card.');
+    }
+    activeSlide.append(card.cloneNode(true));
+
+    const event = extractSelectedCardEvent(harness.fixtureDocument, {
+      createId: createIdFactory(),
+      now: () => new Date(observedAt),
+    });
+
+    expect(event.type).toBe('adapter.degraded');
+    if (event.type === 'adapter.degraded') {
+      expect(event.payload.reasonCodes).toEqual([
+        'active-card-anchor-missing-or-ambiguous',
+      ]);
     }
   });
 });

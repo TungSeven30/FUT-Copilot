@@ -5,12 +5,16 @@ import type {
 import type { Observation } from '@fut-copilot/domain/observation';
 
 import { FutCopilotDatabase } from './database';
-import { ensureSelectedCardContext } from './personalization';
+import {
+  ensureSelectedCardContext,
+  updateOwnedCardPersonalization,
+} from './personalization';
 import {
   getDuplicateQueueRows,
   getAdapterDiagnostics,
   getSbcInventory,
   getTableCounts,
+  scanVisibleCardProtection,
   savePersonalProfile,
 } from './workspaces';
 
@@ -114,6 +118,7 @@ describe('workspace storage services', () => {
       id: '4cc7d5be-711c-423d-a8bb-d23351140ac4',
       profileId: context.profile.id,
       cardDefinitionId: context.cardDefinition.id,
+      existingOwnedCardId: context.ownedCard?.id,
       tradeability: 'untradeable',
       state: 'detected',
       detectedAt: observedAt,
@@ -121,7 +126,73 @@ describe('workspace storage services', () => {
     });
 
     expect(await getDuplicateQueueRows(database)).toMatchObject([
-      { cardName: 'Workspace Example' },
+      {
+        cardName: 'Workspace Example',
+        protected: false,
+        protectingTagNames: [],
+      },
+    ]);
+
+    const protectingTag = (await database.personalTags.toArray()).find(
+      (tag) => tag.protectsCard,
+    );
+    if (context.ownedCard === null || protectingTag === undefined) {
+      throw new Error('Expected an owned card and protecting tag.');
+    }
+    await updateOwnedCardPersonalization(database, {
+      ownedCardId: context.ownedCard.id,
+      personalTagIds: [protectingTag.id],
+      notes: '',
+    });
+    expect(await getDuplicateQueueRows(database)).toMatchObject([
+      {
+        protected: true,
+        protectingTagNames: [protectingTag.name],
+      },
+    ]);
+  });
+
+  it('fails closed when visible SBC card protection is unresolved or active', async () => {
+    const database = createDatabase();
+    const card = visibleCard();
+    const context = await ensureSelectedCardContext(database, card, {
+      now: () => new Date(observedAt),
+    });
+    if (context.ownedCard === null) {
+      throw new Error('Expected local owned card.');
+    }
+    const protectingTag = (await database.personalTags.toArray()).find(
+      (tag) => tag.protectsCard,
+    );
+    if (protectingTag === undefined) {
+      throw new Error('Expected a default protecting tag.');
+    }
+    await updateOwnedCardPersonalization(database, {
+      ownedCardId: context.ownedCard.id,
+      personalTagIds: [protectingTag.id],
+      notes: '',
+    });
+
+    expect(await scanVisibleCardProtection(database, [card])).toMatchObject([
+      {
+        localObservationId: card.localObservationId,
+        cardName: 'Workspace Example',
+        status: 'protected',
+        protectingTagNames: [protectingTag.name],
+      },
+    ]);
+
+    const unmatched = visibleCard();
+    unmatched.localObservationId = '4805e3d5-1086-419c-8ea4-2871d4722ce0';
+    unmatched.name = known('Unmatched Example');
+    expect(
+      await scanVisibleCardProtection(database, [unmatched]),
+    ).toMatchObject([
+      {
+        localObservationId: unmatched.localObservationId,
+        cardName: 'Unmatched Example',
+        status: 'unresolved',
+      },
     ]);
   });
 });

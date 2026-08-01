@@ -6,9 +6,9 @@ or raw page HTML into this file.
 
 ## Automated prerequisite
 
-- [ ] `pnpm verify` passes.
-- [ ] `apps/chrome-extension/.output/chrome-mv3/manifest.json` exists.
-- [ ] Generated permissions are exactly `storage` and `sidePanel`.
+- [x] `pnpm verify` passes. Evidence: 2026-08-01 verification record.
+- [x] `apps/chrome-extension/.output/chrome-mv3/manifest.json` exists.
+- [x] Generated permissions are exactly `storage` and `sidePanel`.
 
 ## Extension shell
 
@@ -20,7 +20,9 @@ or raw page HTML into this file.
 ## Live selected-card slice
 
 - [ ] On English **My Club Players** with no detail carousel, panel shows empty.
-- [ ] Selecting one card produces the matching visible name/rating/position.
+- [x] Selecting one card produces the matching visible name/rating/position.
+      Owner-assisted English Club observation confirmed “matches” on
+      2026-08-01; no account values were retained.
 - [ ] Tags and notes persist after extension reload.
 - [ ] A protecting tag creates a non-interactive Shadow DOM warning.
 - [ ] Leaving the supported context removes the warning or shows unsupported.

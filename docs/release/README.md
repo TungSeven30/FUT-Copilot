@@ -6,6 +6,7 @@ This directory contains the operational handoff for the unpacked Chrome release.
 - [Backup, upgrade, and rollback](upgrade-and-rollback.md)
 - [Known limitations](known-limitations.md)
 - [Manual smoke checklist](manual-smoke-checklist.md)
+- [Verification record — 2026-08-01](verification-2026-08-01.md)
 - [Privacy and permission audit](privacy-audit.md)
 
 The production artifact is generated at

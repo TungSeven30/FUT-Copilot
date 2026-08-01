@@ -8,6 +8,7 @@ import {
 import { personalProfileSchema } from '@fut-copilot/domain/profile';
 import {
   sbcDefinitionSchema,
+  type DuplicateCase,
   type MarketObservation,
   type MarketTransaction,
   type SbcProposal,
@@ -59,10 +60,12 @@ import {
   getAdapterDiagnostics,
   getSbcInventory,
   getTableCounts,
+  scanVisibleCardProtection,
   savePersonalProfile,
   saveSbcProposal,
   type AdapterDiagnostics,
   type DuplicateQueueRow,
+  type VisibleCardProtectionResult,
 } from '@fut-copilot/storage/workspaces';
 import { useCallback, useEffect, useState } from 'react';
 import { browser } from 'wxt/browser';
@@ -236,6 +239,7 @@ function useCardWorkspace(snapshot: AdapterSnapshot | null) {
         const recommendation = recommendCard({
           definition: context.cardDefinition,
           ownedCard: context.ownedCard,
+          profile: context.profile,
           tags: context.tags,
           market,
         });
@@ -994,6 +998,10 @@ function DuplicatesWorkspace({
 }) {
   const [rows, setRows] = useState<DuplicateQueueRow[] | null>(null);
   const [reloadVersion, setReloadVersion] = useState(0);
+  const [selectedActions, setSelectedActions] = useState<
+    Record<string, NonNullable<DuplicateCase['resolution']>['action']>
+  >({});
+  const [notes, setNotes] = useState<Record<string, string>>({});
 
   useEffect(() => {
     let active = true;
@@ -1015,11 +1023,33 @@ function DuplicatesWorkspace({
     }).then(() => setReloadVersion((version) => version + 1));
   };
 
-  const defer = (duplicateCaseId: string) => {
+  const selectDestination = (
+    duplicateCaseId: string,
+    action: NonNullable<DuplicateCase['resolution']>['action'],
+  ) => {
+    setSelectedActions((current) => ({
+      ...current,
+      [duplicateCaseId]: action,
+    }));
+    updateState(duplicateCaseId, 'destination-selected');
+  };
+
+  const confirmResolution = (row: DuplicateQueueRow) => {
+    const duplicateCaseId = row.duplicateCase.id;
+    const action = selectedActions[duplicateCaseId] ?? 'deferred';
+    const resolvedOwnedCardId =
+      action === 'kept-existing'
+        ? row.duplicateCase.existingOwnedCardId
+        : action === 'kept-duplicate'
+          ? row.duplicateCase.duplicateOwnedCardId
+          : undefined;
     void resolveDuplicateCase(database, {
       duplicateCaseId,
-      action: 'deferred',
-      notes: 'Deferred by the user from the triage queue.',
+      action,
+      ...(resolvedOwnedCardId === undefined ? {} : { resolvedOwnedCardId }),
+      notes:
+        notes[duplicateCaseId] ??
+        `User confirmed the local ${action.replaceAll('-', ' ')} record.`,
     }).then(() => setReloadVersion((version) => version + 1));
   };
 
@@ -1070,6 +1100,57 @@ function DuplicatesWorkspace({
               </strong>
             </div>
           </div>
+          {row.protected ? (
+            <div className="warning-stack" role="alert">
+              <p>
+                Protected by your local rules
+                {row.protectingTagNames.length > 0
+                  ? `: ${row.protectingTagNames.join(', ')}`
+                  : '.'}
+              </p>
+            </div>
+          ) : null}
+          <label className="field">
+            <span>Intended result · logged only after your confirmation</span>
+            <select
+              onChange={(event) =>
+                selectDestination(
+                  row.duplicateCase.id,
+                  event.target.value as NonNullable<
+                    DuplicateCase['resolution']
+                  >['action'],
+                )
+              }
+              value={selectedActions[row.duplicateCase.id] ?? 'deferred'}
+            >
+              <option value="deferred">Defer safely</option>
+              <option value="kept-existing">Kept existing copy</option>
+              <option value="kept-duplicate">Kept duplicate copy</option>
+              <option value="listed">Listed manually</option>
+              <option value="used-in-sbc">Used in SBC manually</option>
+              <option value="quick-sold">Quick-sold manually</option>
+            </select>
+          </label>
+          <label className="field">
+            <span>Resolution note</span>
+            <input
+              maxLength={2_000}
+              onChange={(event) =>
+                setNotes((current) => ({
+                  ...current,
+                  [row.duplicateCase.id]: event.target.value,
+                }))
+              }
+              placeholder="Optional manual action detail"
+              value={notes[row.duplicateCase.id] ?? ''}
+            />
+          </label>
+          {selectedActions[row.duplicateCase.id] === 'quick-sold' ? (
+            <p className="helper-text">
+              This records an action you already performed. FUT Copilot cannot
+              quick-sell the item.
+            </p>
+          ) : null}
           <div className="button-row button-row--wrap">
             <button
               className="secondary-button"
@@ -1080,10 +1161,10 @@ function DuplicatesWorkspace({
             </button>
             <button
               className="secondary-button"
-              onClick={() => defer(row.duplicateCase.id)}
+              onClick={() => confirmResolution(row)}
               type="button"
             >
-              Confirm defer
+              Confirm and resolve locally
             </button>
             <button
               className="text-button"
@@ -1118,6 +1199,9 @@ function SbcWorkspace({ snapshot }: { snapshot: AdapterSnapshot | null }) {
   const [strategy, setStrategy] =
     useState<SbcPlannerStrategy>('duplicate-cleanup');
   const [inventory, setInventory] = useState<SbcPlannerCard[] | null>(null);
+  const [visibleProtection, setVisibleProtection] = useState<
+    VisibleCardProtectionResult[] | null
+  >(visibleEvent === null ? [] : null);
   const [savedProposal, setSavedProposal] = useState<SbcProposal | null>(null);
 
   useEffect(() => {
@@ -1129,6 +1213,23 @@ function SbcWorkspace({ snapshot }: { snapshot: AdapterSnapshot | null }) {
       active = false;
     };
   }, []);
+
+  useEffect(() => {
+    let active = true;
+    if (visibleEvent === null) {
+      return () => {
+        active = false;
+      };
+    }
+    void scanVisibleCardProtection(database, visibleEvent.payload.cards).then(
+      (value) => {
+        if (active) setVisibleProtection(value);
+      },
+    );
+    return () => {
+      active = false;
+    };
+  }, [visibleEvent]);
 
   const playerCount = Number(requiredPlayers);
   const ratingTarget = Number(requiredRating);
@@ -1144,7 +1245,10 @@ function SbcWorkspace({ snapshot }: { snapshot: AdapterSnapshot | null }) {
           strategy,
         });
   const proposalIsValid =
-    plan?.valid === true && visibleRequirements.unsupportedLabels.length === 0;
+    plan?.valid === true &&
+    visibleRequirements.unsupportedLabels.length === 0 &&
+    visibleProtection !== null &&
+    visibleProtection.every((result) => result.status === 'clear');
 
   const saveProposal = () => {
     if (plan === null || !proposalIsValid) return;
@@ -1244,6 +1348,30 @@ function SbcWorkspace({ snapshot }: { snapshot: AdapterSnapshot | null }) {
             </p>
           </div>
         ) : null}
+
+        {visibleProtection === null ? (
+          <p className="helper-text">Scanning visible SBC cards…</p>
+        ) : null}
+        {(visibleProtection ?? [])
+          .filter((result) => result.status !== 'clear')
+          .map((result) => (
+            <div
+              className="warning-stack"
+              key={result.localObservationId}
+              role="alert"
+            >
+              <p>
+                {result.cardName}:{' '}
+                {result.status === 'protected'
+                  ? 'protected locally'
+                  : 'identity unresolved'}
+                . {result.reason}
+              </p>
+              {result.protectingTagNames.length > 0 ? (
+                <p>Protecting tags: {result.protectingTagNames.join(', ')}</p>
+              ) : null}
+            </div>
+          ))}
 
         <div className="calculation-grid calculation-grid--compact">
           <div>
@@ -1537,6 +1665,9 @@ function ProfileSettingsForm({
   const [favoriteClubs, setFavoriteClubs] = useState(
     profile.favoriteClubNames.join(', '),
   );
+  const [recommendationWeights, setRecommendationWeights] = useState(
+    profile.recommendationWeights,
+  );
 
   const save = () => {
     const updated = personalProfileSchema.parse({
@@ -1551,6 +1682,7 @@ function ProfileSettingsForm({
         .split(',')
         .map((value) => value.trim())
         .filter(Boolean),
+      recommendationWeights,
       updatedAt: new Date().toISOString(),
     });
     void savePersonalProfile(database, updated).then(onSaved);
@@ -1601,6 +1733,41 @@ function ProfileSettingsForm({
           value={favoriteClubs}
         />
       </label>
+      <div className="field">
+        <span>Recommendation weights · 0 ignores, 1 maximizes</span>
+        <div className="field-grid">
+          {(
+            [
+              ['metaPerformance', 'Meta performance'],
+              ['favoritePlayer', 'Favorite player'],
+              ['favoriteClub', 'Favorite club'],
+              ['evolutionPotential', 'Evolution potential'],
+              ['marketValue', 'Market value'],
+              ['sbcUtility', 'SBC utility'],
+            ] as const
+          ).map(([key, label]) => (
+            <label className="field" key={key}>
+              <span>{label}</span>
+              <input
+                max="1"
+                min="0"
+                onChange={(event) => {
+                  const value = Number(event.target.value);
+                  if (Number.isFinite(value)) {
+                    setRecommendationWeights((current) => ({
+                      ...current,
+                      [key]: Math.max(0, Math.min(1, value)),
+                    }));
+                  }
+                }}
+                step="0.05"
+                type="number"
+                value={recommendationWeights[key]}
+              />
+            </label>
+          ))}
+        </div>
+      </div>
       <button className="secondary-button" onClick={save} type="button">
         Save profile
       </button>

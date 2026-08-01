@@ -14,6 +14,11 @@
 - [x] Rating-only SBC planner with protected-card exclusions and validation.
 - [x] Manual market observations, tax calculator, selling guard, and journal.
 - [x] Settings, compatibility summary, schema-v2 export/import, and release docs.
+- [x] Editable recommendation weights and favorite-player/club scoring.
+- [x] Duplicate destination selection plus explicit user-confirmed resolution log.
+- [x] Fail-closed visible-SBC protection scan against resolved local identities.
+- [x] Selected-card concept, loan, Evolution-rarity, incomplete, and ambiguity regressions.
+- [x] Export/import regression with one validated record in every schema-v2 table.
 
 ## Active release gates
 
@@ -34,6 +39,8 @@ order/grouping, fail closed on ambiguity, use a synthetic or aggressively
 redacted fixture, and receive a compatibility-log entry. No raw HTML or account
 data may be stored. All game-changing actions remain manual.
 
-The Chrome browser-control connection timed out twice on 2026-08-01 while
-claiming the already-open EA tab. No new selector assumption was recorded from
-that failed session.
+The owner-assisted Chrome connection was restored on 2026-08-01 and reached the
+EA Squads hub. An EA authentication-expired dialog prevented navigation to the
+active squad. FUT Copilot did not dismiss the dialog, trigger login, or retain
+any account value. No new selector assumption was promoted from that session;
+live work resumes only after the owner signs in manually.

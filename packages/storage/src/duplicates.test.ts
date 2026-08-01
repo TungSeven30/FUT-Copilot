@@ -4,6 +4,7 @@ import { FutCopilotDatabase } from './database';
 import {
   createDuplicateCaseFromEvent,
   resolveDuplicateCase,
+  updateDuplicateCaseState,
 } from './duplicates';
 
 const databases: FutCopilotDatabase[] = [];
@@ -88,16 +89,23 @@ describe('duplicate triage storage', () => {
     if (created.status === 'ambiguous') {
       throw new Error('Expected a duplicate case.');
     }
+    const destinationSelected = await updateDuplicateCaseState(database, {
+      duplicateCaseId: created.duplicateCase.id,
+      state: 'destination-selected',
+      now: () => new Date(observedAt),
+    });
+    expect(destinationSelected.state).toBe('destination-selected');
+
     const resolved = await resolveDuplicateCase(database, {
       duplicateCaseId: created.duplicateCase.id,
-      action: 'deferred',
-      notes: 'Review after the SBC expires.',
+      action: 'listed',
+      notes: 'Recorded after listing manually in EA.',
       now: () => new Date(observedAt),
     });
 
     expect(resolved.state).toBe('resolved');
     expect(resolved.resolution).toMatchObject({
-      action: 'deferred',
+      action: 'listed',
       userConfirmed: true,
     });
   });

@@ -23,6 +23,9 @@
 
 - The planner supports rating-only squads. Chemistry and complex rarity,
   league, club, or nation constraints are flagged as unsupported.
+- A visible SBC card blocks local proposal validity when its local identity is
+  unresolved or any matching owned copy is protected. This check depends on
+  cards already known to FUT Copilot and is not a full-club ownership sync.
 - It creates a reviewable local proposal only. It cannot place players or
   submit an SBC.
 - The duplicate queue can record user-confirmed triage state, but it cannot

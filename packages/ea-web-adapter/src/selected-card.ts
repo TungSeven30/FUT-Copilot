@@ -154,6 +154,15 @@ export function extractSelectedCardEvent(
     );
   }
 
+  if (cardElement.classList.contains('concept')) {
+    return createDegradedEvent(
+      'club',
+      ['concept-card-not-owned'],
+      observedAt,
+      createId,
+    );
+  }
+
   const name = textFrom(cardElement, '.name.main-view');
   const overall = parseRating(textFrom(cardElement, '.rating'));
   const position = textFrom(cardElement, '.position');

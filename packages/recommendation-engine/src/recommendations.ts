@@ -1,5 +1,5 @@
 import type { CardDefinition, OwnedCard } from '@fut-copilot/domain/cards';
-import type { PersonalTag } from '@fut-copilot/domain/profile';
+import type { PersonalProfile, PersonalTag } from '@fut-copilot/domain/profile';
 import {
   recommendationSchema,
   type Recommendation,
@@ -32,39 +32,74 @@ function knownOverall(definition: CardDefinition): number | null {
   return definition.overall.value;
 }
 
+function isFavorite(values: string[], candidate: string | null): boolean {
+  if (candidate === null) return false;
+  const normalizedCandidate = candidate.trim().toLocaleLowerCase('en-US');
+  return values.some(
+    (value) => value.trim().toLocaleLowerCase('en-US') === normalizedCandidate,
+  );
+}
+
 export function evaluateKeepModel(input: {
   definition: CardDefinition;
   ownedCard: OwnedCard;
+  profile: PersonalProfile;
   tags: PersonalTag[];
 }): RecommendationModel {
   const overall = knownOverall(input.definition);
-  const favorite = hasTag(input.tags, input.ownedCard, 'favorite');
+  const favoriteTag = hasTag(input.tags, input.ownedCard, 'favorite');
+  const favoritePlayer = isFavorite(
+    input.profile.favoritePlayerNames,
+    input.definition.name.value,
+  );
+  const favoriteClub = isFavorite(
+    input.profile.favoriteClubNames,
+    input.definition.club.value,
+  );
   const evo = hasTag(input.tags, input.ownedCard, 'Evo project');
   const reasons: Recommendation['reasons'] = [];
   let score = 0.25;
 
-  if (favorite) {
-    score += 0.55;
+  if (favoriteTag || favoritePlayer) {
+    const impact = 0.55 * input.profile.recommendationWeights.favoritePlayer;
+    score += impact;
     reasons.push({
-      code: 'favorite-tag',
+      code: favoriteTag ? 'favorite-tag' : 'favorite-player-profile',
       summary: 'Personal favorite',
-      detail: 'You marked this card as a favorite.',
-      impact: 0.55,
+      detail: favoriteTag
+        ? 'You marked this owned card as a favorite.'
+        : 'The visible player name matches your favorite-player profile.',
+      impact,
       factStatus: 'known',
     });
   }
+  if (favoriteClub) {
+    const impact = 0.35 * input.profile.recommendationWeights.favoriteClub;
+    score += impact;
+    reasons.push({
+      code: 'favorite-club-profile',
+      summary: 'Favorite club',
+      detail: 'The known club matches your favorite-club profile.',
+      impact,
+      factStatus: input.definition.club.status,
+    });
+  }
   if (evo) {
-    score += 0.45;
+    const impact =
+      0.45 * input.profile.recommendationWeights.evolutionPotential;
+    score += impact;
     reasons.push({
       code: 'evo-project-tag',
       summary: 'Evolution project',
       detail: 'The card is part of your personal Evolution plans.',
-      impact: 0.45,
+      impact,
       factStatus: 'known',
     });
   }
   if (overall !== null) {
-    const impact = Math.max(-0.15, Math.min(0.3, (overall - 84) / 30));
+    const impact =
+      Math.max(-0.15, Math.min(0.3, (overall - 84) / 30)) *
+      input.profile.recommendationWeights.metaPerformance;
     score += impact;
     reasons.push({
       code: 'overall-known',
@@ -95,6 +130,7 @@ export function evaluateKeepModel(input: {
 
 export function evaluateSellModel(input: {
   ownedCard: OwnedCard;
+  profile: PersonalProfile;
   tags: PersonalTag[];
   market: MarketCalculation;
 }): RecommendationModel {
@@ -133,13 +169,14 @@ export function evaluateSellModel(input: {
   }
 
   if (input.market.expectedNetProceeds !== null) {
-    score += 0.25;
+    const impact = 0.25 * input.profile.recommendationWeights.marketValue;
+    score += impact;
     confidence += input.market.observationStatus === 'fresh' ? 0.2 : 0.05;
     reasons.push({
       code: 'manual-price-known',
       summary: `${input.market.expectedNetProceeds.toLocaleString()} net coins`,
       detail: 'This uses your manual PlayStation price and configured tax.',
-      impact: 0.25,
+      impact,
       factStatus:
         input.market.observationStatus === 'stale' ? 'stale' : 'known',
     });
@@ -176,6 +213,7 @@ export function evaluateSellModel(input: {
 export function evaluateSbcModel(input: {
   definition: CardDefinition;
   ownedCard: OwnedCard;
+  profile: PersonalProfile;
   tags: PersonalTag[];
 }): RecommendationModel {
   const reasons: Recommendation['reasons'] = [];
@@ -184,17 +222,20 @@ export function evaluateSbcModel(input: {
   let confidence = overall === null ? 0.35 : 0.7;
 
   if (hasTag(input.tags, input.ownedCard, 'fodder')) {
-    score += 0.55;
+    const impact = 0.55 * input.profile.recommendationWeights.sbcUtility;
+    score += impact;
     reasons.push({
       code: 'fodder-tag',
       summary: 'Marked as fodder',
       detail: 'Your explicit fodder tag favors SBC use.',
-      impact: 0.55,
+      impact,
       factStatus: 'known',
     });
   }
   if (overall !== null) {
-    const impact = overall >= 87 ? 0.25 : 0.08;
+    const impact =
+      (overall >= 87 ? 0.25 : 0.08) *
+      input.profile.recommendationWeights.sbcUtility;
     score += impact;
     reasons.push({
       code: 'sbc-rating-utility',
@@ -235,6 +276,7 @@ export function evaluateSbcModel(input: {
 export function recommendCard(input: {
   definition: CardDefinition;
   ownedCard: OwnedCard;
+  profile: PersonalProfile;
   tags: PersonalTag[];
   market: MarketCalculation;
   createId?: () => string;

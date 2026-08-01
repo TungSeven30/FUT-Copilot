@@ -25,6 +25,9 @@
 - A visible `.icon_chemistry_first_owner` marker implies first-owner status; absence remains unknown.
 - `specials` and `rare` card classes provide only a broad rarity family, not an exact promotion identity.
 - A `loan` item class provides a loan-state inference.
+- A `concept` item class is handled defensively as a non-owned card and yields a
+  degraded event. This marker is covered synthetically but was not part of the
+  live observation, so it is not claimed as live-supported evidence.
 
 ## Compatibility risks
 
@@ -32,5 +35,7 @@
 - `tns-slide-active` belongs to the carousel implementation and may change independently of EA field classes.
 - Club, league, nation, exact promotion, resource ID, and Web App build were not available as reliable visible text in this observation.
 - Hidden action buttons remain in the DOM, so action inference must test actual visibility.
+- Unrecognized Evolution or promotion classes remain unknown instead of being
+  mapped to an exact rarity without live evidence.
 
 No account header values, club identity, balances, player inventory, raw HTML, cookies, tokens, headers, or network responses were retained.

@@ -185,7 +185,7 @@ export async function ensureDefaultProfile(
   };
 }
 
-function visibleIdentityFacts(card: VisibleCard): CardIdentityFacts {
+export function visibleCardIdentityFacts(card: VisibleCard): CardIdentityFacts {
   return {
     assetId: unknownString(card.name.observedAt),
     resourceId: unknownString(card.name.observedAt),
@@ -284,7 +284,7 @@ export async function ensureSelectedCardContext(
   const { profile, tags } = await ensureDefaultProfile(database, options.now);
   const definitions = await database.cardDefinitions.toArray();
   const resolution = resolveCardIdentity(
-    visibleIdentityFacts(card),
+    visibleCardIdentityFacts(card),
     definitions,
   );
 

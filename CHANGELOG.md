@@ -22,6 +22,15 @@
 - IndexedDB and backup schema version 2 with explicit version-1 migration.
 - Synthetic active-squad, pack, pick, duplicate, SBC, and market workflow regression coverage.
 - Release installation, backup/rollback, limitations, smoke-test, and privacy-audit guides.
+- Editable personalization weights wired into favorite, meta, Evolution,
+  market-value, and SBC-utility scoring.
+- Explicit duplicate destination and user-confirmed resolution logging with
+  protected-card warnings and no automatic quick-sell path.
+- Visible-SBC local identity/protection scanning that blocks unresolved or
+  protected proposals.
+- Selected-card regressions for concept, loan, unrecognized Evolution rarity,
+  incomplete fields, and ambiguous active-card anchors.
+- Full schema-v2 backup round-trip coverage across all twelve local tables.
 
 ### Fixed
 
