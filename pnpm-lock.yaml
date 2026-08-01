@@ -52,6 +52,9 @@ importers:
       '@fut-copilot/domain':
         specifier: workspace:*
         version: link:../../packages/domain
+      '@fut-copilot/ea-web-adapter':
+        specifier: workspace:*
+        version: link:../../packages/ea-web-adapter
       '@fut-copilot/storage':
         specifier: workspace:*
         version: link:../../packages/storage

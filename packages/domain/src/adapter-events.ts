@@ -31,6 +31,29 @@ export const visibleCardSchema = z.object({
   tradeability: createObservationSchema(
     z.enum(['tradeable', 'untradeable', 'unknown']),
   ),
+  firstOwner: createObservationSchema(z.boolean()),
+  loan: createObservationSchema(z.boolean()),
+  faceStats: z
+    .array(
+      z.object({
+        label: z.enum([
+          'PAC',
+          'SHO',
+          'PAS',
+          'DRI',
+          'DEF',
+          'PHY',
+          'DIV',
+          'HAN',
+          'KIC',
+          'REF',
+          'SPD',
+          'POS',
+        ]),
+        value: z.number().int().min(0).max(99),
+      }),
+    )
+    .max(6),
 });
 
 export const squadSlotSchema = z.object({
@@ -58,10 +81,13 @@ const screenChangedEventSchema = z.object({
   }),
 });
 
-const cardSelectedEventSchema = z.object({
+export const cardSelectedEventSchema = z.object({
   ...eventBase,
   type: z.literal('card.selected'),
-  payload: z.object({ card: visibleCardSchema.nullable() }),
+  payload: z.object({
+    screen: screenKindSchema,
+    card: visibleCardSchema.nullable(),
+  }),
 });
 
 const cardsVisibleEventSchema = z.object({
@@ -125,7 +151,7 @@ const marketContextVisibleEventSchema = z.object({
   }),
 });
 
-const adapterDegradedEventSchema = z.object({
+export const adapterDegradedEventSchema = z.object({
   ...eventBase,
   type: z.literal('adapter.degraded'),
   payload: z.object({

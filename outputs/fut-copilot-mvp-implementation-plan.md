@@ -1,16 +1,16 @@
 # FUT Co-Pilot MVP Implementation Plan
 
-Status: FCP-001 through FCP-007 implemented; FCP-008 next
+Status: FCP-001 through FCP-012 implemented; FCP-013 next
 Updated: August 1, 2026
 Target: EA SPORTS FC 26 Web App on desktop Chrome, PlayStation market profile
 Implementation style: local-first, assistive, testable, and AI-agent-friendly
 
 ## Implementation status — August 1, 2026
 
-- FCP-001 through FCP-007 are implemented and verified in the workspace.
+- FCP-001 through FCP-012 are implemented and verified in the workspace.
 - The production Chrome MV3 build is generated at `apps/chrome-extension/.output/chrome-mv3/`.
-- The automated gate currently covers formatting, linting, TypeScript, 16 tests, eight synthetic fixture categories, production build, and the generated permission manifest.
-- The next task is FCP-008: a user-assisted, visible-UI-only EA Web App observation session. No raw HTML, HAR file, cookie, token, or authenticated response capture is permitted.
+- The automated gate currently covers formatting, linting, TypeScript, 21 tests, eight synthetic fixture categories, production build, and the generated permission manifest.
+- The next task is FCP-013: persistent personal tags, protection, and notes for the recognized selected card.
 
 ## 1. MVP outcome
 

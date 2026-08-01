@@ -4,7 +4,10 @@
   "private": true,
   "type": "module",
   "exports": {
-    "./fixture-harness": "./src/testing/fixture-harness.ts"
+    "./event-signature": "./src/event-signature.ts",
+    "./fixture-harness": "./src/testing/fixture-harness.ts",
+    "./screen-classifier": "./src/screen-classifier.ts",
+    "./selected-card": "./src/selected-card.ts"
   },
   "scripts": {
     "typecheck": "tsc --noEmit"

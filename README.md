@@ -7,15 +7,17 @@ FUT Copilot is a local-first Chrome extension for a personalized EA SPORTS FC Ul
 
 ## Project status
 
-The foundation milestone is complete. The repository currently provides:
+The selected-card vertical slice is complete. The repository currently provides:
 
 - A Chrome Manifest V3 side-panel extension built with WXT, React, and TypeScript.
 - Runtime-validated models for cards, ownership, preferences, duplicates, SBCs, market observations, recommendations, and adapter events.
 - A versioned local IndexedDB database with validated JSON backup and restore.
 - A deterministic fixture harness for developing EA Web App observation without depending on a live account.
+- A versioned FC 26 adapter that recognizes the English My Club Players screen and extracts the active visible card.
+- A typed content-script/background/side-panel message flow with explicit loading, empty, ready, unsupported, and degraded states.
 - Automated permission, fixture-redaction, formatting, lint, type, test, and production-build checks.
 
-Live EA Web App extraction and the recommendation interface are the next implementation slice. The current extension intentionally displays foundation status and does not yet read a live team.
+The current extension can read a selected visible Club card's name, overall, position, face statistics, broad rarity, and carefully inferred ownership/transfer signals. Full-club synchronization, exact card identity resolution, personal protection rules, FUT.GG links, and recommendations are not implemented yet.
 
 ## Goals
 
@@ -174,9 +176,9 @@ See [`AGENTS.md`](AGENTS.md) for implementation rules and [`docs/backlog/current
 ## Roadmap
 
 - [x] Repository, extension, domain, storage, backup, and fixture foundation
-- [ ] User-assisted visible-UI observation spike
-- [ ] Screen classifier and adapter health state
-- [ ] Selected-card observation in the side panel
+- [x] User-assisted visible-UI observation spike
+- [x] Club screen classifier and adapter health state
+- [x] Selected-card observation in the side panel
 - [ ] Protection, favorites, tags, and notes
 - [ ] FUT.GG exact-page/search deep links
 - [ ] Duplicate triage workflow

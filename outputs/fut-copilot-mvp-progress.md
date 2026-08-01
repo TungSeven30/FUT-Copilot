@@ -1,7 +1,7 @@
 # FUT Copilot MVP — Build Progress
 
 Date: 2026-08-01
-Current milestone: foundation complete; live observation next
+Current milestone: selected-card observation complete; personalization next
 
 ## What is implemented
 
@@ -18,8 +18,13 @@ Current milestone: foundation complete; live observation next
 - Eight synthetic fixture categories: selected card, active squad, pack result, player pick, duplicate, SBC, market, and unsupported.
 - Automated fixture secret/account-data scanning.
 - Automated verification of the final generated Chrome manifest.
+- Sanitized live compatibility evidence for the FC 26 English Club screen.
+- A versioned Club screen classifier and selected-card extractor.
+- Typed Chrome messages and a manual **Observe selected card** gesture.
+- Side-panel loading, empty, ready, unsupported, and degraded states.
+- Live smoke-test confirmation against a selected visible card.
 
-The extension intentionally does not read live EA data yet. That boundary will be implemented only after a visible-UI observation session produces minimal, redacted evidence.
+The extension now reads the selected visible Club card's name, overall, position, face statistics, broad rarity family, and carefully inferred first-owner, loan, and transfer signals. It does not yet resolve an exact card identity, synchronize the full club, or generate recommendations.
 
 ## Verification result
 
@@ -28,7 +33,7 @@ The extension intentionally does not read live EA data yet. That boundary will b
 - Prettier formatting
 - ESLint
 - TypeScript checks across all workspaces
-- 5 test files / 16 tests
+- 7 test files / 21 tests
 - 8 fixture files passing redaction checks
 - Chrome MV3 production build
 - Generated permission and host allowlist
@@ -58,15 +63,13 @@ For the production build:
 
 ## Next implementation slice
 
-FCP-008 through FCP-012 will establish the first useful vertical slice:
+FCP-013 through FCP-016 will personalize the selected-card context:
 
-1. Observe only visible UI structure on the signed-in EA Web App.
-2. Hand-author the smallest redacted fixture fragments needed for a selected card.
-3. Record stable semantic anchors and deliberately treat fragile selectors as compatibility risks.
-4. Implement screen classification, adapter health, and selected-card extraction.
-5. Send a validated event to the side panel with distinct empty, loading, unsupported, degraded, and known states.
-
-The live session should begin with a harmless club screen and one selected card. It must not capture HAR data, network responses, cookies, tokens, account identifiers, coin balance, raw full-page HTML, or game-changing actions.
+1. Create the default local PlayStation profile.
+2. Add persistent personal tags, protection, and notes.
+3. Resolve exact or ambiguous card identity explicitly.
+4. Open exact-or-search FUT.GG public deep links.
+5. Add a manual PlayStation market calculator.
 
 ## Safety boundary retained
 

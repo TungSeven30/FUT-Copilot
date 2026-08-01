@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@fut-copilot/domain": "workspace:*",
+    "@fut-copilot/ea-web-adapter": "workspace:*",
     "@fut-copilot/storage": "workspace:*",
     "react": "19.2.8",
     "react-dom": "19.2.8"
