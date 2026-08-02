@@ -558,6 +558,7 @@ describe('FUT Copilot side panel', () => {
               position: 'CM',
             }),
           ],
+          duplicateIndexes: [1],
         },
       },
     };
@@ -576,6 +577,8 @@ describe('FUT Copilot side panel', () => {
         ),
       ).map((element) => element.textContent),
     ).toEqual(['Pack First', 'Pack Second']);
+    expect(container.textContent).toContain('Pack card 2 · duplicate');
+    expect(container.textContent).toContain('including 1 duplicate');
     expect(container.textContent).toContain(
       'cannot open the pack, send an item, or advance the result screen',
     );

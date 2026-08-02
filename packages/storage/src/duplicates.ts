@@ -1,4 +1,7 @@
-import type { NormalizedAdapterEvent } from '@fut-copilot/domain/adapter-events';
+import {
+  duplicateDetectedEventSchema,
+  type NormalizedAdapterEvent,
+} from '@fut-copilot/domain/adapter-events';
 import { ownedCardSchema } from '@fut-copilot/domain/cards';
 import {
   duplicateCaseSchema,
@@ -7,16 +10,59 @@ import {
 } from '@fut-copilot/domain/workflows';
 
 import type { FutCopilotDatabase } from './database';
+import { persistNormalizedAdapterEvent } from './observations';
 import { ensureSelectedCardContext } from './personalization';
 
 type DuplicateDetectedEvent = Extract<
   NormalizedAdapterEvent,
   { type: 'duplicate.detected' }
 >;
+type PackResultVisibleEvent = Extract<
+  NormalizedAdapterEvent,
+  { type: 'packResult.visible' }
+>;
 
 export type DuplicateCaseCreation =
   | { status: 'created' | 'existing'; duplicateCase: DuplicateCase }
   | { status: 'ambiguous' };
+
+export async function createDuplicateCasesFromPackResultEvent(
+  database: FutCopilotDatabase,
+  event: PackResultVisibleEvent,
+  options: { createId?: () => string; now?: () => Date } = {},
+): Promise<DuplicateCaseCreation[]> {
+  const createId = options.createId ?? (() => crypto.randomUUID());
+  const results: DuplicateCaseCreation[] = [];
+  for (const visibleIndex of event.payload.duplicateIndexes) {
+    const duplicate = event.payload.cards[visibleIndex];
+    if (duplicate === undefined) {
+      throw new Error('Validated pack duplicate index became unavailable.');
+    }
+    const derived = duplicateDetectedEventSchema.parse({
+      eventVersion: 1,
+      eventId: createId(),
+      type: 'duplicate.detected',
+      webAppBuild: event.webAppBuild,
+      occurredAt: event.occurredAt,
+      confidence: event.confidence,
+      extractionStatus: event.extractionStatus,
+      adapterVersion: event.adapterVersion,
+      payload: {
+        duplicate,
+        existingCard: null,
+        source: { context: 'pack-result', visibleIndex },
+      },
+    });
+    const persisted = await persistNormalizedAdapterEvent(database, derived);
+    if (persisted.event.type !== 'duplicate.detected') {
+      throw new Error('Persisted pack duplicate changed event type.');
+    }
+    results.push(
+      await createDuplicateCaseFromEvent(database, persisted.event, options),
+    );
+  }
+  return results;
+}
 
 export async function createDuplicateCaseFromEvent(
   database: FutCopilotDatabase,

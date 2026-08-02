@@ -1,4 +1,5 @@
 import {
+  packResultVisibleEventSchema,
   playerPickVisibleEventSchema,
   type NormalizedAdapterEvent,
 } from './adapter-events';
@@ -115,6 +116,22 @@ describe('adapter snapshots', () => {
         extractionStatus: 'known',
         adapterVersion: 'synthetic-fixture-v1',
         payload: { options: [visiblePickOption], selectedIndex: 1 },
+      }).success,
+    ).toBe(false);
+  });
+
+  it('rejects duplicate pack indexes outside the visible card list', () => {
+    expect(
+      packResultVisibleEventSchema.safeParse({
+        eventVersion: 1,
+        eventId: 'f96f56fc-f3d6-4f7d-929e-075953a61cc6',
+        type: 'packResult.visible',
+        webAppBuild: unknownBuild,
+        occurredAt: timestamp,
+        confidence: 0.9,
+        extractionStatus: 'known',
+        adapterVersion: 'synthetic-fixture-v1',
+        payload: { cards: [visiblePickOption], duplicateIndexes: [1] },
       }).success,
     ).toBe(false);
   });

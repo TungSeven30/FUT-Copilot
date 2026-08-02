@@ -3,6 +3,7 @@ import type { NormalizedAdapterEvent } from '@fut-copilot/domain/adapter-events'
 import { FutCopilotDatabase } from './database';
 import {
   createDuplicateCaseFromEvent,
+  createDuplicateCasesFromPackResultEvent,
   resolveDuplicateCase,
   updateDuplicateCaseState,
 } from './duplicates';
@@ -46,6 +47,34 @@ const duplicateEvent: Extract<
     existingCard: null,
   },
 };
+const packResultEvent: Extract<
+  NormalizedAdapterEvent,
+  { type: 'packResult.visible' }
+> = {
+  eventVersion: 1,
+  eventId: 'c2966f4e-fe7f-4ea0-92d4-1eb74d403d12',
+  type: 'packResult.visible',
+  webAppBuild: unknown,
+  occurredAt: observedAt,
+  confidence: 0.95,
+  extractionStatus: 'known',
+  adapterVersion: 'fixture-v1',
+  payload: {
+    cards: [
+      duplicateEvent.payload.duplicate,
+      {
+        ...duplicateEvent.payload.duplicate,
+        localObservationId: '3c9a0a5e-b941-4322-a7df-8e7ab69f51c7',
+        name: {
+          ...duplicateEvent.payload.duplicate.name,
+          value: 'Second Duplicate Example',
+        },
+        overall: { ...duplicateEvent.payload.duplicate.overall, value: 84 },
+      },
+    ],
+    duplicateIndexes: [0, 1],
+  },
+};
 
 function createDatabase() {
   const database = new FutCopilotDatabase(
@@ -60,6 +89,35 @@ afterEach(async () => {
 });
 
 describe('duplicate triage storage', () => {
+  it('creates one idempotent case for every visible pack duplicate', async () => {
+    const database = createDatabase();
+    const first = await createDuplicateCasesFromPackResultEvent(
+      database,
+      packResultEvent,
+      { now: () => new Date(observedAt) },
+    );
+    const repeated = await createDuplicateCasesFromPackResultEvent(
+      database,
+      {
+        ...packResultEvent,
+        eventId: '62950836-c90d-43c8-8ad8-f0d090cd39d0',
+        occurredAt: '2026-08-01T15:01:00.000Z',
+      },
+      { now: () => new Date('2026-08-01T15:01:00.000Z') },
+    );
+
+    expect(first.map((result) => result.status)).toEqual([
+      'created',
+      'created',
+    ]);
+    expect(repeated.map((result) => result.status)).toEqual([
+      'existing',
+      'existing',
+    ]);
+    expect(await database.duplicateCases.count()).toBe(2);
+    expect(await database.observations.count()).toBe(2);
+  });
+
   it('creates one idempotent case per adapter event', async () => {
     const database = createDatabase();
     const first = await createDuplicateCaseFromEvent(database, duplicateEvent, {

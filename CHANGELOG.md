@@ -54,6 +54,11 @@
 - Read-only side-panel summaries for normalized pack-result, player-pick, and
   duplicate events, preserving visible order and exposing no game-action
   controls.
+- Live English Unassigned pack-result extraction with ordered Items and
+  Duplicates sections, explicit duplicate indexes, compact visible-card
+  boundaries, and fail-closed handling for changed or unsupported rows.
+- Local duplicate-case derivation from visible pack duplicate markers without
+  activating send, list, discard, quick-sell, or result-advance controls.
 
 ### Fixed
 
@@ -75,11 +80,14 @@
 - Normalized observations now deduplicate at the IndexedDB boundary across
   extension restarts, updating timestamps while preserving real state changes
   and duplicate-case idempotency.
+- Same-type observation deduplication now finds any matching recent event, so
+  several distinct duplicates on one result screen remain independently
+  idempotent.
 
 ### Known limitations
 
 - Live EA extraction supports the English Club selected-card, Active Squad,
-  Transfer List, Transfer Market Search Results, and empty SBC-requirements
-  contexts. Pack result, player pick, duplicate, and populated SBC-card
-  contracts remain synthetic-only until user-assisted validation produces
-  sanitized compatibility evidence.
+  Unassigned player pack result with duplicates, Transfer List, Transfer Market
+  Search Results, and empty SBC-requirements contexts. Player pick, non-player
+  pack items, and populated SBC-card contracts remain synthetic-only until
+  user-assisted validation produces sanitized compatibility evidence.

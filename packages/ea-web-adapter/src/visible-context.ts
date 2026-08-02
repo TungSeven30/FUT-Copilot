@@ -1,6 +1,7 @@
 import type { NormalizedAdapterEvent } from '@fut-copilot/domain/adapter-events';
 
 import { extractActiveSquadEvent } from './active-squad';
+import { extractPackResultEvent } from './pack-result';
 import { classifyScreen } from './screen-classifier';
 import { extractSbcContextEvent } from './sbc-context';
 import { extractSelectedCardEvent } from './selected-card';
@@ -19,6 +20,9 @@ export function extractVisibleContextEvent(
   const screen = classifyScreen(document).screen;
   if (screen === 'active-squad') {
     return extractActiveSquadEvent(document, options);
+  }
+  if (screen === 'pack-result') {
+    return extractPackResultEvent(document, options);
   }
   if (screen === 'transfer-list') {
     return extractTransferListEvent(document, options);

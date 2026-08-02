@@ -1,6 +1,7 @@
 import type { ScreenKind } from '@fut-copilot/domain/adapter-events';
 
 const CLUB_HEADING = 'My Club Players';
+const PACK_RESULT_HEADING = 'Unassigned';
 const TRANSFER_LIST_HEADING = 'Transfer List';
 const TRANSFER_MARKET_RESULTS_HEADING = 'Search Results';
 
@@ -17,6 +18,39 @@ function normalizeText(value: string | null): string {
 export function classifyScreen(document: Document): ScreenClassification {
   const headings = document.querySelectorAll('.ut-root-view h1.title');
   const headingText = normalizeText(headings[0]?.textContent ?? null);
+  const unassignedViews = document.querySelectorAll(
+    '.ut-unassigned-view.ui-layout-left',
+  );
+  const packItemSections = Array.from(
+    document.querySelectorAll(
+      '.ut-unassigned-view.ui-layout-left > .ut-sectioned-item-list-view',
+    ),
+  ).filter((section) => {
+    const sectionHeadings = section.querySelectorAll(
+      ':scope > .ut-section-header-view h2',
+    );
+    return (
+      sectionHeadings.length === 1 &&
+      normalizeText(sectionHeadings[0]?.textContent ?? null) === 'Items'
+    );
+  });
+  if (
+    headings.length === 1 &&
+    headingText === PACK_RESULT_HEADING &&
+    unassignedViews.length === 1 &&
+    packItemSections.length === 1
+  ) {
+    return {
+      screen: 'pack-result',
+      confidence: 0.99,
+      evidenceCodes: [
+        'unassigned-heading-visible',
+        'unassigned-view-visible',
+        'pack-items-section-visible',
+      ],
+    };
+  }
+
   const transferLists = document.querySelectorAll('.ut-transfer-list-view');
   if (headingText === TRANSFER_LIST_HEADING && transferLists.length === 1) {
     return {

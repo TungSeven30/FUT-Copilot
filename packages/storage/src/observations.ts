@@ -23,21 +23,25 @@ export async function persistNormalizedAdapterEvent(
   )
     .map((candidate) => normalizedAdapterEventSchema.parse(candidate))
     .sort((left, right) => right.occurredAt.localeCompare(left.occurredAt));
-  const latest = sameType[0];
-  const elapsedSinceLatest =
-    latest === undefined
-      ? Number.POSITIVE_INFINITY
-      : new Date(event.occurredAt).getTime() -
-        new Date(latest.occurredAt).getTime();
-  const repeated =
-    latest !== undefined &&
-    elapsedSinceLatest >= 0 &&
-    elapsedSinceLatest <= DEDUPLICATION_WINDOW_MS &&
-    createAdapterEventSignature(latest) === createAdapterEventSignature(event);
+  const eventTime = new Date(event.occurredAt).getTime();
+  const eventSignature = createAdapterEventSignature(event);
+  const repeatedEvent = sameType.find((candidate) => {
+    const elapsed = eventTime - new Date(candidate.occurredAt).getTime();
+    return (
+      elapsed >= 0 &&
+      elapsed <= DEDUPLICATION_WINDOW_MS &&
+      createAdapterEventSignature(candidate) === eventSignature
+    );
+  });
   const persisted = normalizedAdapterEventSchema.parse(
-    repeated ? { ...event, eventId: latest.eventId } : event,
+    repeatedEvent === undefined
+      ? event
+      : { ...event, eventId: repeatedEvent.eventId },
   );
 
   await database.observations.put(persisted);
-  return { event: persisted, status: repeated ? 'updated' : 'created' };
+  return {
+    event: persisted,
+    status: repeatedEvent === undefined ? 'created' : 'updated',
+  };
 }

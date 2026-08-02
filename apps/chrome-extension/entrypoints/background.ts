@@ -8,7 +8,10 @@ import {
   type AdapterSnapshot,
 } from '@fut-copilot/domain/messages';
 import { FutCopilotDatabase } from '@fut-copilot/storage/database';
-import { createDuplicateCaseFromEvent } from '@fut-copilot/storage/duplicates';
+import {
+  createDuplicateCaseFromEvent,
+  createDuplicateCasesFromPackResultEvent,
+} from '@fut-copilot/storage/duplicates';
 import { persistNormalizedAdapterEvent } from '@fut-copilot/storage/observations';
 import { ensureSelectedCardContext } from '@fut-copilot/storage/personalization';
 import { browser } from 'wxt/browser';
@@ -38,6 +41,9 @@ async function persistAdapterEvent(
   const persisted = await persistNormalizedAdapterEvent(database, event);
   if (persisted.event.type === 'duplicate.detected') {
     await createDuplicateCaseFromEvent(database, persisted.event);
+  }
+  if (persisted.event.type === 'packResult.visible') {
+    await createDuplicateCasesFromPackResultEvent(database, persisted.event);
   }
   return persisted.event;
 }

@@ -86,6 +86,40 @@ describe('normalized adapter observation persistence', () => {
     expect(await database.observations.count()).toBe(2);
   });
 
+  it('updates a matching recent event when another same-type event is newer', async () => {
+    const database = new FutCopilotDatabase(
+      `fut-copilot-observations-${crypto.randomUUID()}`,
+    );
+    databases.push(database);
+    const first = degradedEvent(
+      'df17bb10-7097-45e7-a9ab-13aef3c5eada',
+      '2026-08-01T15:00:00.000Z',
+      ['first-visible-shape'],
+    );
+    await persistNormalizedAdapterEvent(database, first);
+    await persistNormalizedAdapterEvent(
+      database,
+      degradedEvent(
+        '1af82785-6cb6-4265-b1f8-e095bf174b63',
+        '2026-08-01T15:01:00.000Z',
+        ['second-visible-shape'],
+      ),
+    );
+
+    const repeated = await persistNormalizedAdapterEvent(
+      database,
+      degradedEvent(
+        'c10cda37-4c31-4b33-99fe-3d3949b6c619',
+        '2026-08-01T15:02:00.000Z',
+        ['first-visible-shape'],
+      ),
+    );
+
+    expect(repeated.status).toBe('updated');
+    expect(repeated.event.eventId).toBe(first.eventId);
+    expect(await database.observations.count()).toBe(2);
+  });
+
   it('keeps an identical occurrence outside the stability window', async () => {
     const database = new FutCopilotDatabase(
       `fut-copilot-observations-${crypto.randomUUID()}`,

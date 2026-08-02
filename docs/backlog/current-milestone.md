@@ -39,6 +39,9 @@
 - [x] Read-only pack-result, player-pick, and duplicate side-panel summaries for
       normalized events, including ordered rendering and bounded pick-index
       validation.
+- [x] Live English FC 26 Unassigned player pack-result extraction with ordered
+      Items/Duplicates sections, explicit duplicate indexes, and idempotent
+      local duplicate-case derivation.
 
 ## Active release gates
 
@@ -59,6 +62,9 @@ then validated the active-squad 11 + manager / 7 / 5 slot shape and the narrow
 visible card fields, plus an empty SBC challenge with matching requirement
 lists and an 11 + 12 slot shape. No player name, club identity, balance,
 credential, authenticated response, or raw HTML was retained. The next
-owner-assisted gate is a naturally reached pack-result/player-pick/duplicate
-screen; FUT Copilot will not submit an SBC, open a pack, or select an option for
-the owner.
+On 2026-08-02 the owner opened a pack manually and stopped on its populated
+Unassigned result. Sanitized read-only observation validated the ordered Items
+and Duplicates section contract without retaining any player or account value.
+Exact-build side-panel confirmation and the naturally reached player-pick state
+remain open. FUT Copilot will not submit an SBC, open a pack, move an item, or
+select an option for the owner.

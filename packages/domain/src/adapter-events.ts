@@ -105,11 +105,41 @@ export const activeSquadVisibleEventSchema = z.object({
   payload: z.object({ slots: z.array(squadSlotSchema).max(23) }),
 });
 
-export const packResultVisibleEventSchema = z.object({
-  ...eventBase,
-  type: z.literal('packResult.visible'),
-  payload: z.object({ cards: z.array(visibleCardSchema).min(1) }),
-});
+export const packResultVisibleEventSchema = z
+  .object({
+    ...eventBase,
+    type: z.literal('packResult.visible'),
+    payload: z.object({
+      cards: z.array(visibleCardSchema).min(1),
+      duplicateIndexes: z.array(z.number().int().nonnegative()).default([]),
+    }),
+  })
+  .superRefine((event, context) => {
+    const duplicateIndexes = event.payload.duplicateIndexes;
+    if (new Set(duplicateIndexes).size !== duplicateIndexes.length) {
+      context.addIssue({
+        code: 'custom',
+        path: ['payload', 'duplicateIndexes'],
+        message: 'Pack-result duplicate indexes must be unique.',
+      });
+    }
+    for (const [index, duplicateIndex] of duplicateIndexes.entries()) {
+      if (duplicateIndex >= event.payload.cards.length) {
+        context.addIssue({
+          code: 'custom',
+          path: ['payload', 'duplicateIndexes', index],
+          message: 'Pack-result duplicate index must identify a visible card.',
+        });
+      }
+      if (index > 0 && duplicateIndex <= (duplicateIndexes[index - 1] ?? -1)) {
+        context.addIssue({
+          code: 'custom',
+          path: ['payload', 'duplicateIndexes', index],
+          message: 'Pack-result duplicate indexes must preserve visible order.',
+        });
+      }
+    }
+  });
 
 export const playerPickVisibleEventSchema = z
   .object({
@@ -139,6 +169,12 @@ export const duplicateDetectedEventSchema = z.object({
   payload: z.object({
     duplicate: visibleCardSchema,
     existingCard: visibleCardSchema.nullable(),
+    source: z
+      .object({
+        context: screenKindSchema,
+        visibleIndex: z.number().int().nonnegative(),
+      })
+      .optional(),
   }),
 });
 

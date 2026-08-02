@@ -1,7 +1,7 @@
 # FUT Co-Pilot MVP Implementation Plan
 
-Status: local MVP and four live context slices implemented; final live gates remain
-Updated: August 1, 2026
+Status: local MVP and five live context slices implemented; final live gates remain
+Updated: August 2, 2026
 Target: EA SPORTS FC 26 Web App on desktop Chrome, PlayStation market profile
 Implementation style: local-first, assistive, testable, and AI-agent-friendly
 
@@ -9,17 +9,18 @@ Implementation style: local-first, assistive, testable, and AI-agent-friendly
 
 - FCP-001–007, FCP-009–017, FCP-020–021, FCP-023–030, and the
   automated portions of FCP-031–032 are implemented in the workspace.
-- FCP-019 has idempotent normalized-event persistence and local triage coverage,
-  but its live duplicate-state observation remains gated by FCP-008.
+- FCP-019 now uses the live Unassigned Duplicates section and idempotent
+  normalized-event persistence to create local triage cases.
 - The production Chrome MV3 build is generated at `apps/chrome-extension/.output/chrome-mv3/`.
 - The English FC 26 Club selected-card, Active Squad, Transfer List, Transfer
-  Market Search Results, and empty SBC-requirements slices are live-tested.
+  Market Search Results, empty SBC-requirements, and Unassigned player
+  pack-result/duplicate slices are live-tested.
   Automated verification covers
-  formatting, linting, TypeScript, 121 tests, twelve synthetic/redacted fixture
+  formatting, linting, TypeScript, 131 tests, thirteen synthetic/redacted fixture
   files, the production build, and generated runtime/permission safety checks.
-- FCP-008 remains partially open for pack result, player pick, duplicate, and
-  populated SBC cards. FCP-018 remains blocked on the corresponding live
-  pack/pick evidence.
+- FCP-008 remains partially open for player pick, non-player pack items, and
+  populated SBC cards. FCP-018 has live pack-result evidence but remains open
+  for player-pick evidence.
 - FCP-022 supports the live empty-SBC requirement and slot contract but
   deliberately degrades on populated cards until their visible shape is
   separately observed.

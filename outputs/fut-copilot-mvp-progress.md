@@ -2,7 +2,7 @@
 
 Date: 2026-08-01
 
-Current milestone: pack, player-pick, duplicate, and final manual live gates remain
+Current milestone: player-pick, exact pack/duplicate confirmation, and final manual live gates remain
 
 ## Implemented
 
@@ -12,7 +12,7 @@ Current milestone: pack, player-pick, duplicate, and final manual live gates rem
 - Known, inferred, unknown, and stale observation states plus explicit tradeability.
 - Twelve-table Dexie database schema v2 with tested version-1 migration.
 - Validated schema-v2 JSON export/import, preview, merge/replace, and backup-before-replace.
-- Eight synthetic/redacted fixture categories, twelve account-free fixture files,
+- Eight synthetic/redacted fixture categories, thirteen account-free fixture files,
   and a deterministic fixture harness.
 - Live-tested English Club screen classifier and selected-card extractor.
 - Live-tested English Active Squad extractor with ordered 11 / 7 / 5 player
@@ -23,8 +23,10 @@ Current milestone: pack, player-pick, duplicate, and final manual live gates rem
   11 + 12 slot-shape agreement; populated SBC cards fail closed.
 - Live-tested English Transfer Market Search Results extractor with a selected
   detail card, labeled start/Buy Now values, and no owned-card mutation.
-- Read-only normalized pack-result, player-pick, and duplicate summaries are
-  implemented and tested; only their live EA selectors remain gated.
+- Live-tested English Unassigned player pack-result extractor preserves ordered
+  Items and Duplicates sections and creates idempotent local duplicate cases.
+- Read-only normalized player-pick summaries are implemented and tested; their
+  live EA selectors remain gated.
 - Typed Chrome messaging and loading, empty, ready, unsupported, and degraded panel states.
 - Local PlayStation profile, seven tags, protection rules, notes, and non-collapsing identity resolution.
 - User-clicked FUT.GG exact-or-search links with no API, scraping, or background request.
@@ -56,9 +58,9 @@ Generated unpacked extension:
 | --- | --- | --- | --- |
 | Club selected card | Yes | Yes | Live validated |
 | Active squad/bench/reserves | Yes | Yes | Live validated |
-| Pack result | Yes | No | User-created visible state required |
+| Pack result | Yes | Yes | Live observed; exact panel confirmation pending |
 | Player pick | Yes | No | User-created visible state required |
-| Duplicate | Yes | No | User-created visible state required |
+| Duplicate | Yes | Yes | Live pack state; exact local-case confirmation pending |
 | Empty SBC requirements | Yes | Yes | Live + exact-build panel validated |
 | Populated SBC cards | Yes | No | User-created visible state required |
 | Transfer List detail | Yes | Yes | Live validated |
@@ -69,8 +71,8 @@ proof of EA DOM compatibility.
 
 ## Remaining release gates
 
-1. Let the owner naturally create each pending pack-result, player-pick, and
-   duplicate visible state manually.
+1. Confirm the rebuilt pack/duplicate summary, then let the owner naturally
+   create the pending player-pick state manually.
 2. Record only sanitized structural evidence, implement one extractor slice at
    a time, and add compatibility notes.
 3. Run every item in `docs/release/manual-smoke-checklist.md`.

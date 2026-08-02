@@ -347,11 +347,13 @@ function StateNotice({
 function OrderedVisibleCards({
   ariaLabel,
   cards,
+  duplicateIndexes = [],
   itemLabel,
   selectedIndex = null,
 }: {
   ariaLabel: string;
   cards: VisibleCard[];
+  duplicateIndexes?: number[];
   itemLabel: string;
   selectedIndex?: number | null;
 }) {
@@ -363,6 +365,7 @@ function OrderedVisibleCards({
             <span>
               {itemLabel} {index + 1}
               {selectedIndex === index ? ' · visibly selected' : ''}
+              {duplicateIndexes.includes(index) ? ' · duplicate' : ''}
             </span>
             <small>{formatValue(card.name)}</small>
           </span>
@@ -586,8 +589,12 @@ function ReadyObservation({ snapshot }: { snapshot: AdapterSnapshot }) {
     snapshot.event.type === 'packResult.visible' ||
     snapshot.event.type === 'cards.visible'
   ) {
-    const cards = snapshot.event.payload.cards;
+    const { cards } = snapshot.event.payload;
     const packResult = snapshot.event.type === 'packResult.visible';
+    const duplicateIndexes =
+      snapshot.event.type === 'packResult.visible'
+        ? snapshot.event.payload.duplicateIndexes
+        : [];
     const confidence = Math.round(snapshot.event.confidence * 100);
     return (
       <article className="observation-card observation-card--ready">
@@ -603,11 +610,16 @@ function ReadyObservation({ snapshot }: { snapshot: AdapterSnapshot }) {
         <OrderedVisibleCards
           ariaLabel={packResult ? 'Ordered pack-result cards' : 'Visible cards'}
           cards={cards}
+          duplicateIndexes={duplicateIndexes}
           itemLabel={packResult ? 'Pack card' : 'Card'}
         />
         <p className="helper-text">
-          Visible order is preserved. FUT Copilot cannot open the pack, send an
-          item, or advance the result screen.
+          Visible order is preserved
+          {packResult && duplicateIndexes.length > 0
+            ? `, including ${duplicateIndexes.length} duplicate${duplicateIndexes.length === 1 ? '' : 's'}`
+            : ''}
+          . FUT Copilot cannot open the pack, send an item, or advance the
+          result screen.
         </p>
         <footer className="observation-meta">
           <span>{confidence}% extraction confidence</span>

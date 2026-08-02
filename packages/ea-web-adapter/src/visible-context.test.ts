@@ -1,4 +1,5 @@
 import activeSquadFixture from '../../../fixtures/ea-web/active-squad/live-contract.json';
+import livePackResultFixture from '../../../fixtures/ea-web/pack-result/live-unassigned-contract.json';
 import transferListFixture from '../../../fixtures/ea-web/market/live-transfer-list-contract.json';
 import transferMarketFixture from '../../../fixtures/ea-web/market/live-search-results-contract.json';
 import liveSbcFixture from '../../../fixtures/ea-web/sbc/live-requirements-contract.json';
@@ -8,6 +9,15 @@ import { FixtureHarness } from './testing/fixture-harness';
 import { extractVisibleContextEvent } from './visible-context';
 
 describe('visible context dispatcher', () => {
+  it('routes the live Unassigned contract to the pack-result extractor', () => {
+    const harness = new FixtureHarness(livePackResultFixture, () => []);
+    harness.load();
+
+    expect(extractVisibleContextEvent(harness.fixtureDocument).type).toBe(
+      'packResult.visible',
+    );
+  });
+
   it('routes the active-squad contract to its live extractor', () => {
     const harness = new FixtureHarness(activeSquadFixture, () => []);
     harness.load();

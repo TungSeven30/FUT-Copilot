@@ -11,10 +11,10 @@ HTML, cookie, token, header, or authenticated response.
 - Prettier and ESLint passed.
 - TypeScript passed for domain, EA adapter, recommendation engine, storage, and
   Chrome extension workspaces.
-- Vitest passed: **27 files, 121 tests**.
-- Fixture redaction passed for **12 synthetic fixture files**.
+- Vitest passed: **28 files, 131 tests**.
+- Fixture redaction passed for **13 synthetic fixture files**.
 - The Chrome MV3 production build completed at
-  `apps/chrome-extension/.output/chrome-mv3/` (**719.06 kB** total).
+  `apps/chrome-extension/.output/chrome-mv3/` (**727.1 kB** total).
 - The generated manifest declared exactly `storage` and `sidePanel` permissions.
 - The production artifact contained no programmatic background/content route
   activation, runtime network path, or dynamic-code escape rejected by the
@@ -64,6 +64,12 @@ Focused regression evidence includes:
 - Client-rendered summaries preserve normalized pack and player-pick order,
   expose duplicate triage status, include no game-action controls, and reject a
   player-pick selection index outside the visible option list.
+- The live Unassigned contract preserves Items followed by Duplicates, marks
+  duplicate indexes, leaves row tradeability unknown, and fails closed on
+  unloaded, incomplete, unknown-section, or concept rows.
+- Persistence finds any matching recent same-type observation rather than only
+  the newest one, keeping several distinct pack duplicates independently
+  idempotent across repeated observation.
 - GitHub Actions independently passes the same complete `pnpm verify` release
   pipeline on the draft pull request.
 
@@ -104,11 +110,19 @@ Focused regression evidence includes:
   and **Buy Now price** presentation.
 - Compatibility record:
   `docs/compatibility/2026-08-01-fc26-transfer-market-search-results.md`.
+- Supported screen: **Unassigned**, with ordered player Items and Duplicates
+  sections after the owner opened a pack manually.
+- Result: sanitized read-only structure confirmed one loaded compact player per
+  row and separate ordered result sections without activating send, list,
+  compare, discard, quick-sell, or result-advance controls. The rebuilt exact
+  production side-panel summary remains to be owner-confirmed.
+- Compatibility record:
+  `docs/compatibility/2026-08-02-fc26-pack-result-duplicates.md`.
 
 ## Open live gates
 
-Pack result, player pick, duplicate, populated SBC-card handling, and the
-complete manual regression checklist remain open. These screens require
-owner-assisted, naturally reached visible states; FUT Copilot will not open a
-pack, select a pick, place or submit an SBC card, search/bid/buy, list, discard,
-or quick-sell for the owner.
+Exact-build pack/duplicate panel confirmation, player pick, populated SBC-card
+handling, and the complete manual regression checklist remain open. Pending
+screens require owner-assisted, naturally reached visible states; FUT Copilot
+will not open a pack, select a pick, place or submit an SBC card,
+search/bid/buy, list, discard, or quick-sell for the owner.

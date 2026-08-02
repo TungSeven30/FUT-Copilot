@@ -8,12 +8,13 @@
   card and scoped displayed coin values; and an **empty SBC challenge**, with
   mirrored visible requirements, 11 pitch slots, and 12 work-area slots; and
   **Transfer Market Search Results**, with one selected detailed card and
-  labeled start/Buy Now values.
-- Synthetic-only adapter contracts: pack result, player pick, duplicate, and
-  populated SBC-card contexts.
-- Normalized pack-result, player-pick, and duplicate events have complete
-  read-only side-panel summaries, but live EA selectors remain disabled until
-  their naturally reached layouts are observed.
+  labeled start/Buy Now values; and **Unassigned**, with ordered player Items
+  and Duplicates sections.
+- Synthetic-only adapter contracts: player pick and populated SBC-card
+  contexts. Non-player pack items have not been live-observed and cause the
+  player-only pack adapter to fail closed.
+- Visible pack duplicates create idempotent local triage cases. The adapter does
+  not infer tradeability for every pack row from the selected row actions.
 - Small Active Squad cards do not expose player names as accessible visible
   text. Squad observations therefore preserve slot, rating, position, and
   narrow state markers while leaving names and hidden identity fields unknown.
