@@ -60,7 +60,7 @@ Generated unpacked extension:
 | Empty SBC requirements | Yes | Yes | Live validated; exact-build panel confirmation pending |
 | Populated SBC cards | Yes | No | User-created visible state required |
 | Transfer List detail | Yes | Yes | Live validated |
-| Transfer Market search results | Yes | Yes | Live validated |
+| Transfer Market search results | Yes | Yes | Live + exact-build panel validated |
 
 Unsupported live screens fail closed; synthetic coverage is never presented as
 proof of EA DOM compatibility.

@@ -94,7 +94,9 @@ Focused regression evidence includes:
   visible result and detailed card.
 - Result: one unfiltered read-only search confirmed the selected-result,
   detail-card, start-price, and Buy Now label boundaries without activating
-  Watch, Bid, Buy, Compare, list, or re-list.
+  Watch, Bid, Buy, Compare, list, or re-list. On 2026-08-02, the owner confirmed
+  the reloaded production side panel matched the selected card, **Start price**,
+  and **Buy Now price** presentation.
 - Compatibility record:
   `docs/compatibility/2026-08-01-fc26-transfer-market-search-results.md`.
 
