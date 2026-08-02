@@ -4,7 +4,18 @@
   "private": true,
   "type": "module",
   "exports": {
-    "./fixture-harness": "./src/testing/fixture-harness.ts"
+    "./active-squad": "./src/active-squad.ts",
+    "./adapter-version": "./src/adapter-version.ts",
+    "./event-signature": "./src/event-signature.ts",
+    "./fixture-harness": "./src/testing/fixture-harness.ts",
+    "./pack-result": "./src/pack-result.ts",
+    "./synthetic-context-extractor": "./src/testing/synthetic-context-extractor.ts",
+    "./screen-classifier": "./src/screen-classifier.ts",
+    "./sbc-context": "./src/sbc-context.ts",
+    "./selected-card": "./src/selected-card.ts",
+    "./transfer-list": "./src/transfer-list.ts",
+    "./transfer-market": "./src/transfer-market.ts",
+    "./visible-context": "./src/visible-context.ts"
   },
   "scripts": {
     "typecheck": "tsc --noEmit"

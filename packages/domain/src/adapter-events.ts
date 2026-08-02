@@ -31,6 +31,29 @@ export const visibleCardSchema = z.object({
   tradeability: createObservationSchema(
     z.enum(['tradeable', 'untradeable', 'unknown']),
   ),
+  firstOwner: createObservationSchema(z.boolean()),
+  loan: createObservationSchema(z.boolean()),
+  faceStats: z
+    .array(
+      z.object({
+        label: z.enum([
+          'PAC',
+          'SHO',
+          'PAS',
+          'DRI',
+          'DEF',
+          'PHY',
+          'DIV',
+          'HAN',
+          'KIC',
+          'REF',
+          'SPD',
+          'POS',
+        ]),
+        value: z.number().int().min(0).max(99),
+      }),
+    )
+    .max(6),
 });
 
 export const squadSlotSchema = z.object({
@@ -58,13 +81,16 @@ const screenChangedEventSchema = z.object({
   }),
 });
 
-const cardSelectedEventSchema = z.object({
+export const cardSelectedEventSchema = z.object({
   ...eventBase,
   type: z.literal('card.selected'),
-  payload: z.object({ card: visibleCardSchema.nullable() }),
+  payload: z.object({
+    screen: screenKindSchema,
+    card: visibleCardSchema.nullable(),
+  }),
 });
 
-const cardsVisibleEventSchema = z.object({
+export const cardsVisibleEventSchema = z.object({
   ...eventBase,
   type: z.literal('cards.visible'),
   payload: z.object({
@@ -73,37 +99,86 @@ const cardsVisibleEventSchema = z.object({
   }),
 });
 
-const activeSquadVisibleEventSchema = z.object({
+export const activeSquadVisibleEventSchema = z.object({
   ...eventBase,
   type: z.literal('activeSquad.visible'),
   payload: z.object({ slots: z.array(squadSlotSchema).max(23) }),
 });
 
-const packResultVisibleEventSchema = z.object({
-  ...eventBase,
-  type: z.literal('packResult.visible'),
-  payload: z.object({ cards: z.array(visibleCardSchema).min(1) }),
-});
+export const packResultVisibleEventSchema = z
+  .object({
+    ...eventBase,
+    type: z.literal('packResult.visible'),
+    payload: z.object({
+      cards: z.array(visibleCardSchema).min(1),
+      duplicateIndexes: z.array(z.number().int().nonnegative()).default([]),
+    }),
+  })
+  .superRefine((event, context) => {
+    const duplicateIndexes = event.payload.duplicateIndexes;
+    if (new Set(duplicateIndexes).size !== duplicateIndexes.length) {
+      context.addIssue({
+        code: 'custom',
+        path: ['payload', 'duplicateIndexes'],
+        message: 'Pack-result duplicate indexes must be unique.',
+      });
+    }
+    for (const [index, duplicateIndex] of duplicateIndexes.entries()) {
+      if (duplicateIndex >= event.payload.cards.length) {
+        context.addIssue({
+          code: 'custom',
+          path: ['payload', 'duplicateIndexes', index],
+          message: 'Pack-result duplicate index must identify a visible card.',
+        });
+      }
+      if (index > 0 && duplicateIndex <= (duplicateIndexes[index - 1] ?? -1)) {
+        context.addIssue({
+          code: 'custom',
+          path: ['payload', 'duplicateIndexes', index],
+          message: 'Pack-result duplicate indexes must preserve visible order.',
+        });
+      }
+    }
+  });
 
-const playerPickVisibleEventSchema = z.object({
-  ...eventBase,
-  type: z.literal('playerPick.visible'),
-  payload: z.object({
-    options: z.array(visibleCardSchema).min(1),
-    selectedIndex: z.number().int().nonnegative().nullable(),
-  }),
-});
+export const playerPickVisibleEventSchema = z
+  .object({
+    ...eventBase,
+    type: z.literal('playerPick.visible'),
+    payload: z.object({
+      options: z.array(visibleCardSchema).min(1),
+      selectedIndex: z.number().int().nonnegative().nullable(),
+    }),
+  })
+  .superRefine((event, context) => {
+    if (
+      event.payload.selectedIndex !== null &&
+      event.payload.selectedIndex >= event.payload.options.length
+    ) {
+      context.addIssue({
+        code: 'custom',
+        path: ['payload', 'selectedIndex'],
+        message: 'Selected player-pick index must identify a visible option.',
+      });
+    }
+  });
 
-const duplicateDetectedEventSchema = z.object({
+export const duplicateDetectedEventSchema = z.object({
   ...eventBase,
   type: z.literal('duplicate.detected'),
   payload: z.object({
     duplicate: visibleCardSchema,
     existingCard: visibleCardSchema.nullable(),
+    source: z
+      .object({
+        context: screenKindSchema,
+        visibleIndex: z.number().int().nonnegative(),
+      })
+      .optional(),
   }),
 });
 
-const sbcContextVisibleEventSchema = z.object({
+export const sbcContextVisibleEventSchema = z.object({
   ...eventBase,
   type: z.literal('sbcContext.visible'),
   payload: z.object({
@@ -114,7 +189,7 @@ const sbcContextVisibleEventSchema = z.object({
   }),
 });
 
-const marketContextVisibleEventSchema = z.object({
+export const marketContextVisibleEventSchema = z.object({
   ...eventBase,
   type: z.literal('marketContext.visible'),
   payload: z.object({
@@ -125,7 +200,7 @@ const marketContextVisibleEventSchema = z.object({
   }),
 });
 
-const adapterDegradedEventSchema = z.object({
+export const adapterDegradedEventSchema = z.object({
   ...eventBase,
   type: z.literal('adapter.degraded'),
   payload: z.object({

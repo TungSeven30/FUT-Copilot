@@ -14,9 +14,10 @@
     "format:check": "prettier --check . --ignore-path .prettierignore",
     "lint": "eslint .",
     "test": "vitest run",
+    "test:fixtures": "node scripts/verify-fixture-redaction.mjs",
     "test:watch": "vitest",
     "typecheck": "pnpm --recursive --if-present typecheck",
-    "verify:fixtures": "node scripts/verify-fixture-redaction.mjs",
+    "verify:fixtures": "pnpm test:fixtures",
     "verify:permissions": "node scripts/verify-permissions.mjs",
     "verify": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm test && pnpm verify:fixtures && pnpm build && pnpm verify:permissions"
   },

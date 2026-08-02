@@ -1,16 +1,31 @@
 # FUT Co-Pilot MVP Implementation Plan
 
-Status: FCP-001 through FCP-007 implemented; FCP-008 next
-Updated: August 1, 2026
+Status: local MVP and seven live context slices implemented; final live gates remain
+Updated: August 2, 2026
 Target: EA SPORTS FC 26 Web App on desktop Chrome, PlayStation market profile
 Implementation style: local-first, assistive, testable, and AI-agent-friendly
 
 ## Implementation status — August 1, 2026
 
-- FCP-001 through FCP-007 are implemented and verified in the workspace.
+- FCP-001–007, FCP-009–017, FCP-020–021, FCP-023–030, and the
+  automated portions of FCP-031–032 are implemented in the workspace.
+- FCP-019 now uses the live Unassigned Duplicates section and idempotent
+  normalized-event persistence to create local triage cases; an owner-confirmed
+  repeated observation did not increase the unresolved case count.
 - The production Chrome MV3 build is generated at `apps/chrome-extension/.output/chrome-mv3/`.
-- The automated gate currently covers formatting, linting, TypeScript, 16 tests, eight synthetic fixture categories, production build, and the generated permission manifest.
-- The next task is FCP-008: a user-assisted, visible-UI-only EA Web App observation session. No raw HTML, HAR file, cookie, token, or authenticated response capture is permitted.
+- The English FC 26 Club selected-card, Active Squad, Transfer List, Transfer
+  Market Search Results, empty and populated SBC, and Unassigned player
+  pack-result/duplicate slices are live-tested.
+  Automated verification covers
+  formatting, linting, TypeScript, 137 tests, fourteen synthetic/redacted fixture
+  files, the production build, and generated runtime/permission safety checks.
+- FCP-008 remains partially open for player pick and non-player pack items.
+  FCP-018 has exact-build pack-result evidence but remains open for player-pick
+  evidence.
+- FCP-022 supports both the live empty-SBC requirement contract and the
+  populated builder's ordered compact-card contract. Names stay unknown when
+  the loaded slot does not expose them directly.
+- FCP-031–032 remain open until the pending live contexts and full manual smoke checklist pass.
 
 ## 1. MVP outcome
 

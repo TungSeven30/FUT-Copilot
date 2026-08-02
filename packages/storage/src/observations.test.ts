@@ -1,0 +1,145 @@
+import type { NormalizedAdapterEvent } from '@fut-copilot/domain/adapter-events';
+
+import { FutCopilotDatabase } from './database';
+import { persistNormalizedAdapterEvent } from './observations';
+
+const databases: FutCopilotDatabase[] = [];
+
+function degradedEvent(
+  eventId: string,
+  occurredAt: string,
+  reasonCodes: string[],
+): NormalizedAdapterEvent {
+  return {
+    eventVersion: 1,
+    eventId,
+    type: 'adapter.degraded',
+    webAppBuild: {
+      value: null,
+      source: 'fixture',
+      observedAt: occurredAt,
+      status: 'unknown',
+    },
+    occurredAt,
+    confidence: 0,
+    extractionStatus: 'unknown',
+    adapterVersion: 'fixture-v1',
+    payload: { screen: 'unknown', reasonCodes },
+  };
+}
+
+afterEach(async () => {
+  await Promise.all(databases.splice(0).map((database) => database.delete()));
+});
+
+describe('normalized adapter observation persistence', () => {
+  it('updates the latest identical observation across runtime restarts', async () => {
+    const database = new FutCopilotDatabase(
+      `fut-copilot-observations-${crypto.randomUUID()}`,
+    );
+    databases.push(database);
+    const first = degradedEvent(
+      'f8f4f889-4bbf-48d4-9ec2-d21300534d4d',
+      '2026-08-01T15:00:00.000Z',
+      ['unsupported-screen'],
+    );
+    const repeated = degradedEvent(
+      '3abe1107-14c5-42c9-a9b0-a4e41cd9b459',
+      '2026-08-01T15:01:00.000Z',
+      ['unsupported-screen'],
+    );
+
+    expect((await persistNormalizedAdapterEvent(database, first)).status).toBe(
+      'created',
+    );
+    const result = await persistNormalizedAdapterEvent(database, repeated);
+
+    expect(result.status).toBe('updated');
+    expect(result.event.eventId).toBe(first.eventId);
+    expect(result.event.occurredAt).toBe(repeated.occurredAt);
+    expect(await database.observations.count()).toBe(1);
+  });
+
+  it('keeps a new history row when normalized visible facts change', async () => {
+    const database = new FutCopilotDatabase(
+      `fut-copilot-observations-${crypto.randomUUID()}`,
+    );
+    databases.push(database);
+    await persistNormalizedAdapterEvent(
+      database,
+      degradedEvent(
+        '91306b4f-a275-45c4-a9ea-c4f7d8b7c70f',
+        '2026-08-01T15:00:00.000Z',
+        ['unsupported-screen'],
+      ),
+    );
+    const changed = await persistNormalizedAdapterEvent(
+      database,
+      degradedEvent(
+        '4bbbd54c-8495-43eb-89be-b0c59d81880b',
+        '2026-08-01T16:00:00.000Z',
+        ['active-card-anchor-missing-or-ambiguous'],
+      ),
+    );
+
+    expect(changed.status).toBe('created');
+    expect(await database.observations.count()).toBe(2);
+  });
+
+  it('updates a matching recent event when another same-type event is newer', async () => {
+    const database = new FutCopilotDatabase(
+      `fut-copilot-observations-${crypto.randomUUID()}`,
+    );
+    databases.push(database);
+    const first = degradedEvent(
+      'df17bb10-7097-45e7-a9ab-13aef3c5eada',
+      '2026-08-01T15:00:00.000Z',
+      ['first-visible-shape'],
+    );
+    await persistNormalizedAdapterEvent(database, first);
+    await persistNormalizedAdapterEvent(
+      database,
+      degradedEvent(
+        '1af82785-6cb6-4265-b1f8-e095bf174b63',
+        '2026-08-01T15:01:00.000Z',
+        ['second-visible-shape'],
+      ),
+    );
+
+    const repeated = await persistNormalizedAdapterEvent(
+      database,
+      degradedEvent(
+        'c10cda37-4c31-4b33-99fe-3d3949b6c619',
+        '2026-08-01T15:02:00.000Z',
+        ['first-visible-shape'],
+      ),
+    );
+
+    expect(repeated.status).toBe('updated');
+    expect(repeated.event.eventId).toBe(first.eventId);
+    expect(await database.observations.count()).toBe(2);
+  });
+
+  it('keeps an identical occurrence outside the stability window', async () => {
+    const database = new FutCopilotDatabase(
+      `fut-copilot-observations-${crypto.randomUUID()}`,
+    );
+    databases.push(database);
+    const first = degradedEvent(
+      '172867e2-8540-4981-b04a-31561ba8ca46',
+      '2026-08-01T15:00:00.000Z',
+      ['unsupported-screen'],
+    );
+    const later = degradedEvent(
+      'fd98fe97-c62b-4279-b4a1-ff4522ef5411',
+      '2026-08-01T15:06:00.000Z',
+      ['unsupported-screen'],
+    );
+    await persistNormalizedAdapterEvent(database, first);
+
+    expect((await persistNormalizedAdapterEvent(database, later)).status).toBe(
+      'created',
+    );
+    expect(await database.observations.count()).toBe(2);
+  });
+});

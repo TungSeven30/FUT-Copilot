@@ -3,6 +3,6 @@
   "id": "sbc-basic",
   "category": "sbc",
   "description": "Synthetic SBC segment and requirement container.",
-  "initialHtml": "<main data-fixture-screen='sbc'><section data-segment></section><aside data-requirements></aside></main>",
+  "initialHtml": "<main data-fixture-screen='sbc' data-challenge='Upgrade Challenge' data-segment-name='84-Rated Squad'><section data-segment><article data-card data-id='5026761c-ee95-4c91-8012-b5605d61009e' data-name='SBC Example' data-rating='84' data-position='CM' data-rarity='rare' data-tradeability='untradeable'></article></section><aside data-requirements><p data-requirement='Players: 11'></p><p data-requirement='Team Overall Rating: Min. 84'></p></aside></main>",
   "mutations": []
 }

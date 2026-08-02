@@ -62,5 +62,5 @@ export type Observation<TValue> = {
   source: ObservationSource;
   observedAt: string;
   status: ObservationStatus;
-  evidence?: string[];
+  evidence?: string[] | undefined;
 };

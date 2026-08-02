@@ -5,7 +5,12 @@
   "type": "module",
   "exports": {
     "./backup": "./src/backup.ts",
-    "./database": "./src/database.ts"
+    "./database": "./src/database.ts",
+    "./duplicates": "./src/duplicates.ts",
+    "./market-journal": "./src/market-journal.ts",
+    "./observations": "./src/observations.ts",
+    "./personalization": "./src/personalization.ts",
+    "./workspaces": "./src/workspaces.ts"
   },
   "scripts": {
     "typecheck": "tsc --noEmit"

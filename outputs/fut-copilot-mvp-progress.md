@@ -1,73 +1,87 @@
-# FUT Copilot MVP — Build Progress
+# FUT Copilot MVP — Build progress
 
 Date: 2026-08-01
-Current milestone: foundation complete; live observation next
 
-## What is implemented
+Current milestone: player-pick and final manual live gates remain
 
-- A pnpm TypeScript monorepo on Git branch `main`.
-- A WXT/React Chrome MV3 extension with a functional side panel.
-- Chrome access limited to `storage`, `sidePanel`, and the exact official EA Ultimate Team Web App content-script path.
-- `commands` correctly represented as a top-level manifest entry, not a permission.
-- Runtime-validated models for profiles, card definitions, owned cards, protection rules, duplicates, SBCs, market history, recommendations, compatibility, and all normalized adapter events.
-- Explicit observation states: known, inferred, unknown, and stale.
-- Required explicit tradeability: tradeable, untradeable, or unknown.
-- A 12-table, version-one Dexie/IndexedDB database.
-- Versioned JSON backup export, validation preview, merge/replace import, imported-record-wins conflict behavior, and backup-before-replace.
-- A deterministic EA screen fixture harness with timed DOM mutations.
-- Eight synthetic fixture categories: selected card, active squad, pack result, player pick, duplicate, SBC, market, and unsupported.
-- Automated fixture secret/account-data scanning.
-- Automated verification of the final generated Chrome manifest.
+## Implemented
 
-The extension intentionally does not read live EA data yet. That boundary will be implemented only after a visible-UI observation session produces minimal, redacted evidence.
+- WXT/React Chrome MV3 side panel with only `storage` and `sidePanel` permissions.
+- Exact official EA Ultimate Team Web App content-script match and no broad host permission.
+- Runtime-validated card, profile, duplicate, SBC, market, recommendation, compatibility, and adapter-event contracts.
+- Known, inferred, unknown, and stale observation states plus explicit tradeability.
+- Twelve-table Dexie database schema v2 with tested version-1 migration.
+- Validated schema-v2 JSON export/import, preview, merge/replace, and backup-before-replace.
+- Eight synthetic/redacted fixture categories, fourteen account-free fixture files,
+  and a deterministic fixture harness.
+- Live-tested English Club screen classifier and selected-card extractor.
+- Live-tested English Active Squad extractor with ordered 11 / 7 / 5 player
+  groups and manager exclusion.
+- Live-tested English Transfer List detail extractor with ownership-safe local
+  persistence and read-only displayed coin values.
+- Live-tested English empty-SBC requirements extractor with mirrored-list and
+  11 + 12 slot-shape agreement.
+- Live-tested English populated SBC-builder extractor with pitch-before-work-
+  area order, compact rating/position facts, and deliberately unknown names.
+- Live-tested English Transfer Market Search Results extractor with a selected
+  detail card, labeled start/Buy Now values, and no owned-card mutation.
+- Live-tested English Unassigned player pack-result extractor preserves ordered
+  Items and Duplicates sections and creates idempotent local duplicate cases.
+- Read-only normalized player-pick summaries are implemented and tested; their
+  live EA selectors remain gated.
+- Typed Chrome messaging and loading, empty, ready, unsupported, and degraded panel states.
+- Local PlayStation profile, seven tags, protection rules, notes, and non-collapsing identity resolution.
+- User-clicked FUT.GG exact-or-search links with no API, scraping, or background request.
+- Keep, sell, and SBC recommendation models with editable weights, reasons,
+  confidence, uncertainty, and protection override.
+- Duplicate case creation/triage with identity provenance and bounded
+  cross-runtime observation deduplication.
+- A tested, non-interactive Shadow-DOM protection badge with explicit cleanup.
+- Rating-only SBC planner with corrected correction-factor rounding, broad
+  integer-reference coverage, duplicate cleanup, club preservation, and
+  low-cost strategies.
+- Manual market price/cost input, tax calculation, break-even, P/L, transaction journal, and selling guard.
+- Settings/compatibility summary and installation, backup, rollback, privacy, limitations, and smoke-test documentation.
 
-## Verification result
+## Verification
 
-`pnpm verify` passes:
-
-- Prettier formatting
-- ESLint
-- TypeScript checks across all workspaces
-- 5 test files / 16 tests
-- 8 fixture files passing redaction checks
-- Chrome MV3 production build
-- Generated permission and host allowlist
-- No application-source remote-request primitives
+`pnpm verify` runs formatting, ESLint, recursive TypeScript checks, Vitest,
+fixture redaction, the Chrome production build, and generated permission/runtime
+safety checks. The latest exact counts and bundle sizes are recorded after the
+final release-gate verification run, not hand-maintained here.
 
 Generated unpacked extension:
 
 `apps/chrome-extension/.output/chrome-mv3/`
 
-## How to run it
+## Live support matrix
 
-Prerequisites: Node.js 22 or newer and pnpm 11.
+| Context | Contract/tests | Live adapter | Status |
+| --- | --- | --- | --- |
+| Club selected card | Yes | Yes | Live validated |
+| Active squad/bench/reserves | Yes | Yes | Live validated |
+| Pack result | Yes | Yes | Live + exact-build panel validated |
+| Player pick | Yes | No | User-created visible state required |
+| Duplicate | Yes | Yes | Live + repeated-observation idempotency validated |
+| Empty SBC requirements | Yes | Yes | Live + exact-build panel validated |
+| Populated SBC cards | Yes | Yes | Live + exact-build panel validated |
+| Transfer List detail | Yes | Yes | Live validated |
+| Transfer Market search results | Yes | Yes | Live + exact-build panel validated |
 
-```bash
-pnpm install
-pnpm verify
-pnpm dev
-```
+Unsupported live screens fail closed; synthetic coverage is never presented as
+proof of EA DOM compatibility.
 
-For the production build:
+## Remaining release gates
 
-1. Open `chrome://extensions`.
-2. Enable **Developer mode**.
-3. Choose **Load unpacked**.
-4. Select `apps/chrome-extension/.output/chrome-mv3/`.
-5. Click the FUT Copilot toolbar action; Chrome opens the side panel.
-
-## Next implementation slice
-
-FCP-008 through FCP-012 will establish the first useful vertical slice:
-
-1. Observe only visible UI structure on the signed-in EA Web App.
-2. Hand-author the smallest redacted fixture fragments needed for a selected card.
-3. Record stable semantic anchors and deliberately treat fragile selectors as compatibility risks.
-4. Implement screen classification, adapter health, and selected-card extraction.
-5. Send a validated event to the side panel with distinct empty, loading, unsupported, degraded, and known states.
-
-The live session should begin with a harmless club screen and one selected card. It must not capture HAR data, network responses, cookies, tokens, account identifiers, coin balance, raw full-page HTML, or game-changing actions.
+1. Let the owner naturally create the pending player-pick state manually.
+2. Record only sanitized structural evidence, implement the extractor slice,
+   and add compatibility notes.
+3. Run every item in `docs/release/manual-smoke-checklist.md`.
+4. Mark the draft PR ready only after all required gates pass or are explicitly
+   waived by the owner.
 
 ## Safety boundary retained
 
-The project still contains no automatic buy, bid, list, submit, open-pack, discard, quick-sell, or recovery action. FUT.GG remains a deep-link/manual-observation integration until a documented and explicitly authorized API exists.
+There is no automatic buy, bid, list, submit, open-pack, select, discard,
+quick-sell, or recovery action. The runtime does not capture EA or FUT.GG
+credentials, cookies, tokens, raw authenticated responses, or raw page HTML.

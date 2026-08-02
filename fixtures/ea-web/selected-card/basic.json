@@ -2,14 +2,14 @@
   "schemaVersion": 1,
   "id": "selected-card-basic",
   "category": "selected-card",
-  "description": "A synthetic card appears after a user selection.",
-  "initialHtml": "<main data-fixture-screen='club'><section id='selection'></section></main>",
+  "description": "A synthetic Club card becomes active in the detail carousel after user selection.",
+  "initialHtml": "<main class='ut-root-view'><section class='ut-navigation-container-view'><div class='ut-navigation-bar-view'><h1 class='title'>My Club Players</h1></div><div id='selection-root'></div></section></main>",
   "mutations": [
     {
       "atMs": 100,
       "operation": "append-html",
-      "selector": "#selection",
-      "html": "<article data-fixture-card data-name='Alex Example' data-overall='91' data-position='ST' data-club='North London FC' data-league='Premier Division' data-nation='Example Nation' data-rarity='Special'></article>"
+      "selector": "#selection-root",
+      "html": "<div class='DetailView has-next has-prev'><div class='detail-carousel'><div class='slider tns-slider tns-carousel'><div class='tns-item tns-slide-active'><div class='large player item specials ut-item-loaded'><div class='name main-view'>Alex Example</div><div class='ut-item-view--main ut-item-view'><div class='playerOverview'><div class='rating'>91</div><div class='position'>ST</div><div class='icon_chemistry_first_owner fut_icon' data-fcp-visible='true'></div></div><div class='item-view--player-stats'><div class='item-view--player-stat'><span class='Pace statLabel'>PAC</span><span class='Pace statValue'>92</span></div><div class='item-view--player-stat'><span class='Shooting statLabel'>SHO</span><span class='Shooting statValue'>91</span></div><div class='item-view--player-stat'><span class='Passing statLabel'>PAS</span><span class='Passing statValue'>86</span></div><div class='item-view--player-stat'><span class='Dribbling statLabel'>DRI</span><span class='Dribbling statValue'>93</span></div><div class='item-view--player-stat'><span class='Defending statLabel'>DEF</span><span class='Defending statValue'>44</span></div><div class='item-view--player-stat'><span class='Header statLabel'>PHY</span><span class='Header statValue'>88</span></div></div></div></div></div></div></div><div class='DetailPanel'><div class='ut-button-group'><button data-fcp-visible='true'><span class='btn-text'>List on Transfer Market</span></button><button data-fcp-visible='true'><span class='btn-text'>Player Bio</span></button><button style='display:none'><span class='btn-text'>Hidden action</span></button></div></div></div>"
     }
   ]
 }

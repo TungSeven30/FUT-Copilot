@@ -48,6 +48,28 @@ export const backupEnvelopeSchema = z.object({
   data: backupDataSchema,
 });
 
+const legacyBackupDataSchema = z.object({
+  profiles: z.array(z.unknown()),
+  cardDefinitions: z.array(z.unknown()),
+  ownedCards: z.array(z.unknown()),
+  observations: z.array(z.unknown()),
+  personalTags: z.array(z.unknown()),
+  protectionRules: z.array(z.unknown()),
+  duplicateCases: z.array(z.unknown()),
+  sbcDefinitions: z.array(z.unknown()),
+  sbcProposals: z.array(z.unknown()),
+  marketObservations: z.array(z.unknown()),
+  marketTransactions: z.array(z.unknown()),
+  compatibilityRecords: z.array(z.unknown()),
+});
+
+const legacyBackupEnvelopeSchema = z.object({
+  format: z.literal('fut-copilot-backup'),
+  schemaVersion: z.literal(1),
+  createdAt: isoDateTimeSchema,
+  data: legacyBackupDataSchema,
+});
+
 export type BackupEnvelope = z.infer<typeof backupEnvelopeSchema>;
 export type BackupData = BackupEnvelope['data'];
 export type ImportMode = 'merge' | 'replace';
@@ -72,6 +94,65 @@ export type ImportResult = ImportPreview['summary'] & {
   mode: ImportMode;
   priorBackup?: BackupEnvelope;
 };
+
+function legacyRecord(value: unknown): Record<string, unknown> {
+  if (typeof value !== 'object' || value === null || Array.isArray(value)) {
+    throw new Error('Legacy backup record must be an object.');
+  }
+  return { ...(value as Record<string, unknown>) };
+}
+
+function migrateLegacyBackup(input: unknown): BackupEnvelope {
+  const legacy = legacyBackupEnvelopeSchema.parse(input);
+  const duplicateCases = legacy.data.duplicateCases.map((value) => {
+    const record = legacyRecord(value);
+    if (record.state === 'open') record.state = 'detected';
+    if (record.updatedAt === undefined) record.updatedAt = record.detectedAt;
+    return record;
+  });
+  const sbcProposals = legacy.data.sbcProposals.map((value) => {
+    const record = legacyRecord(value);
+    const candidateIds = Array.isArray(record.candidateOwnedCardIds)
+      ? record.candidateOwnedCardIds
+      : [];
+    record.requiredPlayers = Math.max(1, candidateIds.length || 11);
+    record.requiredRating =
+      typeof record.estimatedRating === 'number' ? record.estimatedRating : 1;
+    record.strategy = 'club-preservation';
+    record.independentlyValidated = false;
+    record.warnings = [
+      ...(Array.isArray(record.warnings) ? record.warnings : []),
+      'Migrated from schema v1; validate this proposal again.',
+    ];
+    return record;
+  });
+  const transactionTypeMap: Record<string, string> = {
+    purchase: 'purchased',
+    sale: 'sold',
+    listing: 'listed',
+    'expired-listing': 'expired',
+  };
+  const marketTransactions = legacy.data.marketTransactions.map((value) => {
+    const record = legacyRecord(value);
+    if (typeof record.transactionType === 'string') {
+      record.transactionType =
+        transactionTypeMap[record.transactionType] ?? record.transactionType;
+    }
+    return record;
+  });
+
+  return backupEnvelopeSchema.parse({
+    format: legacy.format,
+    schemaVersion: DATABASE_VERSION,
+    createdAt: legacy.createdAt,
+    data: {
+      ...legacy.data,
+      duplicateCases,
+      sbcProposals,
+      marketTransactions,
+    },
+  });
+}
 
 export async function exportDatabase(
   database: FutCopilotDatabase,
@@ -126,7 +207,13 @@ export async function exportDatabase(
 }
 
 export function previewImport(input: unknown): ImportPreview {
-  const backup = backupEnvelopeSchema.parse(input);
+  const version = z
+    .object({ schemaVersion: z.number().int() })
+    .parse(input).schemaVersion;
+  const backup =
+    version === 1
+      ? migrateLegacyBackup(input)
+      : backupEnvelopeSchema.parse(input);
   const tableCounts = Object.fromEntries(
     tableNames.map((tableName) => [tableName, backup.data[tableName].length]),
   ) as Record<DatabaseTableName, number>;

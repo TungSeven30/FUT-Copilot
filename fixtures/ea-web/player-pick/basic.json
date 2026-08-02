@@ -3,6 +3,6 @@
   "id": "player-pick-basic",
   "category": "player-pick",
   "description": "Synthetic player-pick options.",
-  "initialHtml": "<main data-fixture-screen='player-pick'><section data-pick-options></section></main>",
+  "initialHtml": "<main data-fixture-screen='player-pick' data-selected-index=''><section data-pick-options><article data-card data-id='bf0bf2f4-da15-4d82-be4f-47de9d911f80' data-name='Pick One' data-rating='90' data-position='ST' data-rarity='special' data-tradeability='untradeable'></article><article data-card data-id='4a680d50-d30f-4310-a0a0-558e8d5c7a85' data-name='Pick Two' data-rating='89' data-position='CM' data-rarity='special' data-tradeability='untradeable'></article><article data-card data-id='26b865d7-b689-4890-8a26-f37933eeb4f7' data-name='Pick Three' data-rating='88' data-position='CB' data-rarity='special' data-tradeability='untradeable'></article></section></main>",
   "mutations": []
 }

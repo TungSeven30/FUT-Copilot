@@ -7,6 +7,10 @@
     "./adapter-events": "./src/adapter-events.ts",
     "./cards": "./src/cards.ts",
     "./common": "./src/common.ts",
+    "./event-signature": "./src/event-signature.ts",
+    "./futgg": "./src/futgg.ts",
+    "./identity": "./src/identity.ts",
+    "./messages": "./src/messages.ts",
     "./observation": "./src/observation.ts",
     "./profile": "./src/profile.ts",
     "./workflows": "./src/workflows.ts"

@@ -1,7 +1,7 @@
 import type { PersonalProfile, PersonalTag } from '@fut-copilot/domain/profile';
 
 import { exportDatabase, importDatabase, previewImport } from './backup';
-import { FutCopilotDatabase } from './database';
+import { FutCopilotDatabase, tableNames } from './database';
 
 const databases: FutCopilotDatabase[] = [];
 const timestamp = '2026-08-01T15:00:00.000Z';
@@ -26,6 +26,24 @@ function makeProfile(id = crypto.randomUUID()): PersonalProfile {
   };
 }
 
+function known<T>(value: T) {
+  return {
+    value,
+    source: 'fixture' as const,
+    observedAt: timestamp,
+    status: 'known' as const,
+  };
+}
+
+function unknown<T>() {
+  return {
+    value: null as T | null,
+    source: 'fixture' as const,
+    observedAt: timestamp,
+    status: 'unknown' as const,
+  };
+}
+
 function createDatabase() {
   const database = new FutCopilotDatabase(
     `fut-copilot-backup-test-${crypto.randomUUID()}`,
@@ -39,6 +57,168 @@ afterEach(async () => {
 });
 
 describe('database backup and import', () => {
+  it('round-trips one validated record from every schema-v2 table', async () => {
+    const source = createDatabase();
+    const target = createDatabase();
+    const profileId = 'e07d731e-13c5-464c-94c0-572c50d90501';
+    const definitionId = 'dbaca814-2bed-48dc-83d0-465e5a42c08e';
+    const ownedCardId = '4f855824-d25a-4a82-9b74-b2ce3980b61f';
+    const tagId = 'b16bc233-55a6-41a9-8f03-371191645426';
+    const eventId = '95f3c758-df92-4033-9195-cb47184a85b9';
+    const sbcDefinitionId = '4e7421c2-40d1-4e96-9790-8e6b2bd6cd69';
+
+    await source.profiles.add(makeProfile(profileId));
+    await source.cardDefinitions.add({
+      id: definitionId,
+      fcYear: 26,
+      assetId: unknown(),
+      resourceId: unknown(),
+      name: known('Backup Example'),
+      overall: known(84),
+      position: known('CM'),
+      club: known('Example Club'),
+      league: unknown(),
+      nation: unknown(),
+      rarity: known('rare'),
+      promotion: unknown(),
+      identityConfidence: 1,
+      createdAt: timestamp,
+      updatedAt: timestamp,
+    });
+    await source.personalTags.add({
+      id: tagId,
+      profileId,
+      name: 'Protected example',
+      color: '#bfff36',
+      protectsCard: true,
+      createdAt: timestamp,
+    });
+    await source.ownedCards.add({
+      id: ownedCardId,
+      cardDefinitionId: definitionId,
+      profileId,
+      ownershipStatus: 'owned',
+      tradeability: 'untradeable',
+      firstOwner: unknown(),
+      location: 'club',
+      platform: 'playstation',
+      protected: true,
+      personalTagIds: [tagId],
+      notes: 'Synthetic backup coverage.',
+      firstObservedAt: timestamp,
+      lastObservedAt: timestamp,
+    });
+    await source.observations.add({
+      eventVersion: 1,
+      eventId,
+      type: 'card.selected',
+      webAppBuild: unknown(),
+      occurredAt: timestamp,
+      confidence: 1,
+      extractionStatus: 'known',
+      adapterVersion: 'fixture-v1',
+      payload: { screen: 'club', card: null },
+    });
+    await source.protectionRules.add({
+      id: '73b629d7-160e-4f30-a8ff-a3ba2c57bab2',
+      profileId,
+      name: 'Protect the synthetic tag',
+      enabled: true,
+      priority: 10,
+      match: { kind: 'tag', tagId },
+      createdAt: timestamp,
+      updatedAt: timestamp,
+    });
+    await source.duplicateCases.add({
+      id: 'eb8431b7-5faf-49ad-8b49-f244e165f3e7',
+      profileId,
+      cardDefinitionId: definitionId,
+      sourceEventId: eventId,
+      existingOwnedCardId: ownedCardId,
+      tradeability: 'untradeable',
+      state: 'detected',
+      detectedAt: timestamp,
+      updatedAt: timestamp,
+    });
+    await source.sbcDefinitions.add({
+      id: sbcDefinitionId,
+      fcYear: 26,
+      name: 'Synthetic Challenge',
+      segmentName: 'Synthetic Segment',
+      requirements: [
+        {
+          id: '07601082-d5d2-4fc1-8d00-03ec3f37c70a',
+          label: 'Team Overall Rating: Min. 84',
+          kind: 'minimum-rating',
+          threshold: 84,
+          status: 'known',
+        },
+      ],
+      observedAt: timestamp,
+    });
+    await source.sbcProposals.add({
+      id: '78d99d10-a862-4b52-a682-96867088752c',
+      profileId,
+      sbcDefinitionId,
+      candidateOwnedCardIds: [ownedCardId],
+      excludedProtectedCardIds: [],
+      estimatedRating: 84,
+      requiredPlayers: 1,
+      requiredRating: 84,
+      strategy: 'club-preservation',
+      independentlyValidated: true,
+      warnings: ['Synthetic one-player proposal; never submit automatically.'],
+      state: 'draft',
+      createdAt: timestamp,
+    });
+    await source.marketObservations.add({
+      id: '48026fd9-98f6-416e-9f8b-a1f5232ef08c',
+      profileId,
+      cardDefinitionId: definitionId,
+      platform: 'playstation',
+      amount: 12_000,
+      priceKind: 'buy-now',
+      source: 'user',
+      observedAt: timestamp,
+      notes: 'Synthetic manual observation.',
+    });
+    await source.marketTransactions.add({
+      id: 'dd52fd3f-7c57-4bdb-910c-b761deeb5ad7',
+      profileId,
+      cardDefinitionId: definitionId,
+      ownedCardId,
+      platform: 'playstation',
+      transactionType: 'target-created',
+      amount: 12_000,
+      occurredAt: timestamp,
+      userConfirmed: true,
+      notes: 'Synthetic manual journal record.',
+    });
+    await source.compatibilityRecords.add({
+      id: '9d22fb3b-7762-4f24-955d-796df8e84070',
+      adapterVersion: 'fixture-v1',
+      fcYear: 26,
+      webAppBuild: null,
+      routeFamily: 'synthetic',
+      locale: 'en-US',
+      fixtureId: 'backup-all-tables',
+      result: 'pass',
+      observedFields: ['synthetic'],
+      ambiguityNotes: ['No live account data used.'],
+      testedAt: timestamp,
+    });
+
+    const backup = await exportDatabase(source);
+    const preview = previewImport(backup);
+    await importDatabase(target, backup, { mode: 'replace' });
+
+    expect(preview.summary.totalRecords).toBe(tableNames.length);
+    for (const tableName of tableNames) {
+      expect(preview.summary.tableCounts[tableName]).toBe(1);
+      expect(await target.table(tableName).count()).toBe(1);
+    }
+  });
+
   it('round-trips supported data and previews counts', async () => {
     const source = createDatabase();
     const target = createDatabase();
@@ -79,7 +259,7 @@ describe('database backup and import', () => {
 
     const invalidFutureBackup = {
       format: 'fut-copilot-backup',
-      schemaVersion: 2,
+      schemaVersion: 3,
       createdAt: timestamp,
       data: {},
     };
@@ -134,5 +314,54 @@ describe('database backup and import', () => {
     expect(await target.profiles.get(preservedProfile.id)).toEqual(
       preservedProfile,
     );
+  });
+
+  it('migrates a schema-v1 journal event before import', async () => {
+    const database = createDatabase();
+    const current = await exportDatabase(database);
+    const preview = previewImport({
+      ...current,
+      schemaVersion: 1,
+      data: {
+        ...current.data,
+        marketTransactions: [
+          {
+            id: '5aa4f409-2e46-49a2-b7f3-76f9e80a8115',
+            profileId: '353e123c-4549-4421-bde6-5110e592374c',
+            cardDefinitionId: '55e69da8-50f1-42be-a2e5-43c8188a14ab',
+            platform: 'playstation',
+            transactionType: 'purchase',
+            amount: 10_000,
+            occurredAt: timestamp,
+            userConfirmed: true,
+            notes: '',
+          },
+        ],
+      },
+    });
+
+    expect(preview.backup.schemaVersion).toBe(2);
+    expect(preview.backup.data.marketTransactions[0]?.transactionType).toBe(
+      'purchased',
+    );
+  });
+
+  it('removes unknown sensitive-shaped fields from exported records', async () => {
+    const database = createDatabase();
+    const profile = {
+      ...makeProfile(),
+      cookie: 'synthetic-private-field',
+      rawHtml: '<main>synthetic private page</main>',
+      accessToken: 'synthetic-private-field',
+    } as PersonalProfile;
+    await database.profiles.add(profile);
+
+    const serialized = JSON.stringify(await exportDatabase(database));
+
+    expect(serialized).not.toContain('synthetic-private-field');
+    expect(serialized).not.toContain('synthetic private page');
+    expect(serialized).not.toContain('cookie');
+    expect(serialized).not.toContain('accessToken');
+    expect(serialized).not.toContain('rawHtml');
   });
 });
