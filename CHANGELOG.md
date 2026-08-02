@@ -37,7 +37,7 @@
 - Sanitized active-squad compatibility evidence and an account-free live-contract
   fixture covering partial-field and structural ambiguity behavior.
 - A least-privilege GitHub Actions gate that runs the complete `pnpm verify`
-  release pipeline for pull requests and protected project branches.
+  release pipeline for pull requests and the main branch.
 
 ### Fixed
 
