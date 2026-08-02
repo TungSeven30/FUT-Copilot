@@ -16,7 +16,7 @@ Implementation style: local-first, assistive, testable, and AI-agent-friendly
   Market Search Results, empty SBC-requirements, and Unassigned player
   pack-result/duplicate slices are live-tested.
   Automated verification covers
-  formatting, linting, TypeScript, 131 tests, thirteen synthetic/redacted fixture
+  formatting, linting, TypeScript, 132 tests, thirteen synthetic/redacted fixture
   files, the production build, and generated runtime/permission safety checks.
 - FCP-008 remains partially open for player pick, non-player pack items, and
   populated SBC cards. FCP-018 has live pack-result evidence but remains open

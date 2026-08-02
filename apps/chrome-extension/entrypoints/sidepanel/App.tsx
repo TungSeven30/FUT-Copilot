@@ -1932,12 +1932,13 @@ function SettingsWorkspace({ snapshot }: { snapshot: AdapterSnapshot | null }) {
           <div className="fact-row">
             <span>Live-supported screens</span>
             <strong>
-              English Club card, squad, Transfer List, market + empty SBC
+              English Club card, squad, Unassigned pack, Transfer List, market +
+              empty SBC
             </strong>
           </div>
           <div className="fact-row">
             <span>Synthetic-only contexts</span>
-            <strong>3 workflow contexts</strong>
+            <strong>Player pick + populated SBC</strong>
           </div>
           <div className="fact-row">
             <span>Last successful observation</span>

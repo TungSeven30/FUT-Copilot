@@ -11,10 +11,10 @@ HTML, cookie, token, header, or authenticated response.
 - Prettier and ESLint passed.
 - TypeScript passed for domain, EA adapter, recommendation engine, storage, and
   Chrome extension workspaces.
-- Vitest passed: **28 files, 131 tests**.
+- Vitest passed: **28 files, 132 tests**.
 - Fixture redaction passed for **13 synthetic fixture files**.
 - The Chrome MV3 production build completed at
-  `apps/chrome-extension/.output/chrome-mv3/` (**727.1 kB** total).
+  `apps/chrome-extension/.output/chrome-mv3/` (**727.12 kB** total).
 - The generated manifest declared exactly `storage` and `sidePanel` permissions.
 - The production artifact contained no programmatic background/content route
   activation, runtime network path, or dynamic-code escape rejected by the
@@ -64,6 +64,8 @@ Focused regression evidence includes:
 - Client-rendered summaries preserve normalized pack and player-pick order,
   expose duplicate triage status, include no game-action controls, and reject a
   player-pick selection index outside the visible option list.
+- The client-rendered compatibility dashboard reports Unassigned pack support
+  and keeps player pick plus populated SBC visibly pending.
 - The live Unassigned contract preserves Items followed by Duplicates, marks
   duplicate indexes, leaves row tradeability unknown, and fails closed on
   unloaded, incomplete, unknown-section, or concept rows.

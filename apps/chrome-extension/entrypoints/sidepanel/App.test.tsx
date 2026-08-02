@@ -163,6 +163,35 @@ describe('FUT Copilot side panel', () => {
     }
   });
 
+  it('reports the current live and synthetic compatibility boundary', async () => {
+    const container = document.createElement('div');
+    mountedRoot = createRoot(container);
+    await act(async () => mountedRoot?.render(<App />));
+    await flushUi();
+
+    const settings = Array.from(container.querySelectorAll('button')).find(
+      (button) => button.textContent === 'settings',
+    );
+    if (settings === undefined) throw new Error('Missing settings tab.');
+    await act(async () => {
+      settings.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    });
+    for (let attempt = 0; attempt < 20; attempt += 1) {
+      if (container.textContent.includes('Live-supported screens')) break;
+      await act(async () => {
+        await new Promise((resolve) => setTimeout(resolve, 5));
+      });
+    }
+
+    expect(container.textContent).toContain(
+      'English Club card, squad, Unassigned pack, Transfer List, market + empty SBC',
+    );
+    expect(container.textContent).toContain(
+      'Synthetic-only contextsPlayer pick + populated SBC',
+    );
+    expect(container.textContent).toContain('fc26-web-v0.6.0');
+  });
+
   it('shows a fail-closed error when the active tab cannot be observed', async () => {
     const container = document.createElement('div');
     mountedRoot = createRoot(container);
