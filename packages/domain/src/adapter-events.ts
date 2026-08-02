@@ -111,14 +111,27 @@ export const packResultVisibleEventSchema = z.object({
   payload: z.object({ cards: z.array(visibleCardSchema).min(1) }),
 });
 
-export const playerPickVisibleEventSchema = z.object({
-  ...eventBase,
-  type: z.literal('playerPick.visible'),
-  payload: z.object({
-    options: z.array(visibleCardSchema).min(1),
-    selectedIndex: z.number().int().nonnegative().nullable(),
-  }),
-});
+export const playerPickVisibleEventSchema = z
+  .object({
+    ...eventBase,
+    type: z.literal('playerPick.visible'),
+    payload: z.object({
+      options: z.array(visibleCardSchema).min(1),
+      selectedIndex: z.number().int().nonnegative().nullable(),
+    }),
+  })
+  .superRefine((event, context) => {
+    if (
+      event.payload.selectedIndex !== null &&
+      event.payload.selectedIndex >= event.payload.options.length
+    ) {
+      context.addIssue({
+        code: 'custom',
+        path: ['payload', 'selectedIndex'],
+        message: 'Selected player-pick index must identify a visible option.',
+      });
+    }
+  });
 
 export const duplicateDetectedEventSchema = z.object({
   ...eventBase,

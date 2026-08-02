@@ -15,7 +15,7 @@ Implementation style: local-first, assistive, testable, and AI-agent-friendly
 - The English FC 26 Club selected-card, Active Squad, Transfer List, Transfer
   Market Search Results, and empty SBC-requirements slices are live-tested.
   Automated verification covers
-  formatting, linting, TypeScript, 117 tests, twelve synthetic/redacted fixture
+  formatting, linting, TypeScript, 121 tests, twelve synthetic/redacted fixture
   files, the production build, and generated runtime/permission safety checks.
 - FCP-008 remains partially open for pack result, player pick, duplicate, and
   populated SBC cards. FCP-018 remains blocked on the corresponding live

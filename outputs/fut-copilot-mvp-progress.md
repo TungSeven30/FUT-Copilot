@@ -23,6 +23,8 @@ Current milestone: pack, player-pick, duplicate, and final manual live gates rem
   11 + 12 slot-shape agreement; populated SBC cards fail closed.
 - Live-tested English Transfer Market Search Results extractor with a selected
   detail card, labeled start/Buy Now values, and no owned-card mutation.
+- Read-only normalized pack-result, player-pick, and duplicate summaries are
+  implemented and tested; only their live EA selectors remain gated.
 - Typed Chrome messaging and loading, empty, ready, unsupported, and degraded panel states.
 - Local PlayStation profile, seven tags, protection rules, notes, and non-collapsing identity resolution.
 - User-clicked FUT.GG exact-or-search links with no API, scraping, or background request.

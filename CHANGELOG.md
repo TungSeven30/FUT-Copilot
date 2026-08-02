@@ -51,11 +51,16 @@
 - Live English Transfer Market Search Results extraction with one selected
   detailed card, labeled start and Buy Now values, observation-only storage,
   and no Watch, Bid, Buy, Compare, or listing action.
+- Read-only side-panel summaries for normalized pack-result, player-pick, and
+  duplicate events, preserving visible order and exposing no game-action
+  controls.
 
 ### Fixed
 
 - GitHub verification now uses the current Node 24-based checkout, pnpm setup,
   and Node setup action majors instead of deprecated Node 20 action runtimes.
+- Player-pick event validation now rejects a selected index outside the visible
+  option array.
 - Market journal summaries now keep the newest target and listing from newest-first history.
 - Rating-only SBC calculations now round the correction-adjusted total before
   dividing by squad size, fixing valid top-heavy combinations at rating

@@ -36,6 +36,9 @@
 - [x] Live English FC 26 Transfer Market Search Results extraction with one
       selected detailed card, labeled start/Buy Now values, observation-only
       storage, and no market action.
+- [x] Read-only pack-result, player-pick, and duplicate side-panel summaries for
+      normalized events, including ordered rendering and bounded pick-index
+      validation.
 
 ## Active release gates
 

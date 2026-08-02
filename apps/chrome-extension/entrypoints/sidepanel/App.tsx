@@ -1,4 +1,5 @@
 import { createFutggResearchLink } from '@fut-copilot/domain/futgg';
+import type { VisibleCard } from '@fut-copilot/domain/adapter-events';
 import {
   adapterAcknowledgeResponseSchema,
   adapterSnapshotChangedMessageSchema,
@@ -343,6 +344,37 @@ function StateNotice({
   );
 }
 
+function OrderedVisibleCards({
+  ariaLabel,
+  cards,
+  itemLabel,
+  selectedIndex = null,
+}: {
+  ariaLabel: string;
+  cards: VisibleCard[];
+  itemLabel: string;
+  selectedIndex?: number | null;
+}) {
+  return (
+    <ul aria-label={ariaLabel} className="compact-list compact-list--cards">
+      {cards.map((card, index) => (
+        <li key={`${index}:${card.localObservationId}`}>
+          <span className="compact-list__detail">
+            <span>
+              {itemLabel} {index + 1}
+              {selectedIndex === index ? ' · visibly selected' : ''}
+            </span>
+            <small>{formatValue(card.name)}</small>
+          </span>
+          <strong>
+            {formatValue(card.overall)} · {formatValue(card.position)}
+          </strong>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
 function ReadyObservation({ snapshot }: { snapshot: AdapterSnapshot }) {
   if (snapshot.event.type === 'marketContext.visible') {
     const card = snapshot.event.payload.selectedCard;
@@ -542,6 +574,113 @@ function ReadyObservation({ snapshot }: { snapshot: AdapterSnapshot }) {
           fills or submits the squad.
         </p>
 
+        <footer className="observation-meta">
+          <span>{confidence}% extraction confidence</span>
+          <span>{snapshot.event.adapterVersion}</span>
+        </footer>
+      </article>
+    );
+  }
+
+  if (
+    snapshot.event.type === 'packResult.visible' ||
+    snapshot.event.type === 'cards.visible'
+  ) {
+    const cards = snapshot.event.payload.cards;
+    const packResult = snapshot.event.type === 'packResult.visible';
+    const confidence = Math.round(snapshot.event.confidence * 100);
+    return (
+      <article className="observation-card observation-card--ready">
+        <div className="selected-card-heading">
+          <div>
+            <p className="card-eyebrow">
+              {packResult ? 'Pack result' : 'Visible cards'}
+            </p>
+            <h2>{cards.length} visible cards</h2>
+          </div>
+          <span className="identity-pill">read only</span>
+        </div>
+        <OrderedVisibleCards
+          ariaLabel={packResult ? 'Ordered pack-result cards' : 'Visible cards'}
+          cards={cards}
+          itemLabel={packResult ? 'Pack card' : 'Card'}
+        />
+        <p className="helper-text">
+          Visible order is preserved. FUT Copilot cannot open the pack, send an
+          item, or advance the result screen.
+        </p>
+        <footer className="observation-meta">
+          <span>{confidence}% extraction confidence</span>
+          <span>{snapshot.event.adapterVersion}</span>
+        </footer>
+      </article>
+    );
+  }
+
+  if (snapshot.event.type === 'playerPick.visible') {
+    const { options, selectedIndex } = snapshot.event.payload;
+    const confidence = Math.round(snapshot.event.confidence * 100);
+    return (
+      <article className="observation-card observation-card--ready">
+        <div className="selected-card-heading">
+          <div>
+            <p className="card-eyebrow">Player pick</p>
+            <h2>{options.length} visible options</h2>
+          </div>
+          <span className="identity-pill">
+            {selectedIndex === null
+              ? 'no option selected'
+              : `option ${selectedIndex + 1} visible`}
+          </span>
+        </div>
+        <OrderedVisibleCards
+          ariaLabel="Ordered player-pick options"
+          cards={options}
+          itemLabel="Option"
+          selectedIndex={selectedIndex}
+        />
+        <p className="helper-text">
+          Options are read-only observations. FUT Copilot never selects or
+          confirms a player-pick option.
+        </p>
+        <footer className="observation-meta">
+          <span>{confidence}% extraction confidence</span>
+          <span>{snapshot.event.adapterVersion}</span>
+        </footer>
+      </article>
+    );
+  }
+
+  if (snapshot.event.type === 'duplicate.detected') {
+    const { duplicate, existingCard } = snapshot.event.payload;
+    const confidence = Math.round(snapshot.event.confidence * 100);
+    return (
+      <article className="observation-card observation-card--ready">
+        <div className="selected-card-heading">
+          <div>
+            <p className="card-eyebrow">Duplicate detected</p>
+            <h2>{formatValue(duplicate.name)}</h2>
+          </div>
+          <div
+            aria-label={`Overall ${formatValue(duplicate.overall)}`}
+            className="rating-badge"
+          >
+            {formatValue(duplicate.overall)}
+            <span>{formatValue(duplicate.position)}</span>
+          </div>
+        </div>
+        <div className="facts">
+          <FactRow label="Tradeability" observation={duplicate.tradeability} />
+          <div className="fact-row">
+            <span>Existing copy visible</span>
+            <strong>{existingCard === null ? 'No' : 'Yes'}</strong>
+          </div>
+        </div>
+        <p className="helper-text">
+          The normalized event creates or updates one local triage case. FUT
+          Copilot never sends, lists, submits, discards, or quick-sells either
+          item.
+        </p>
         <footer className="observation-meta">
           <span>{confidence}% extraction confidence</span>
           <span>{snapshot.event.adapterVersion}</span>

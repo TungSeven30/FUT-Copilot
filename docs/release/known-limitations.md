@@ -11,6 +11,9 @@
   labeled start/Buy Now values.
 - Synthetic-only adapter contracts: pack result, player pick, duplicate, and
   populated SBC-card contexts.
+- Normalized pack-result, player-pick, and duplicate events have complete
+  read-only side-panel summaries, but live EA selectors remain disabled until
+  their naturally reached layouts are observed.
 - Small Active Squad cards do not expose player names as accessible visible
   text. Squad observations therefore preserve slot, rating, position, and
   narrow state markers while leaving names and hidden identity fields unknown.

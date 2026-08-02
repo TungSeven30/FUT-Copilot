@@ -1,4 +1,7 @@
-import type { NormalizedAdapterEvent } from './adapter-events';
+import {
+  playerPickVisibleEventSchema,
+  type NormalizedAdapterEvent,
+} from './adapter-events';
 import {
   adapterSnapshotSchema,
   createAdapterSnapshot,
@@ -11,6 +14,40 @@ const unknownBuild = {
   source: 'ea-visible-ui' as const,
   observedAt: timestamp,
   status: 'unknown' as const,
+};
+const visiblePickOption = {
+  localObservationId: '6cbe5309-17fe-4ec4-845a-fd69d67d24b7',
+  name: {
+    value: 'Pick Example',
+    source: 'fixture' as const,
+    observedAt: timestamp,
+    status: 'known' as const,
+  },
+  overall: {
+    value: 88,
+    source: 'fixture' as const,
+    observedAt: timestamp,
+    status: 'known' as const,
+  },
+  position: {
+    value: 'CM',
+    source: 'fixture' as const,
+    observedAt: timestamp,
+    status: 'known' as const,
+  },
+  club: unknownBuild,
+  league: unknownBuild,
+  nation: unknownBuild,
+  rarity: unknownBuild,
+  tradeability: unknownBuild,
+  firstOwner: unknownBuild,
+  loan: {
+    value: false,
+    source: 'fixture' as const,
+    observedAt: timestamp,
+    status: 'known' as const,
+  },
+  faceStats: [],
 };
 
 function makeEvent(
@@ -64,5 +101,21 @@ describe('adapter snapshots', () => {
         tagNames: ['favorite'],
       }),
     ).toMatchObject({ status: 'protected', tagNames: ['favorite'] });
+  });
+
+  it('rejects a player-pick selection outside the visible option list', () => {
+    expect(
+      playerPickVisibleEventSchema.safeParse({
+        eventVersion: 1,
+        eventId: 'e3b6f165-d697-4bbd-b0c3-5e7ba93aa1c7',
+        type: 'playerPick.visible',
+        webAppBuild: unknownBuild,
+        occurredAt: timestamp,
+        confidence: 0.9,
+        extractionStatus: 'known',
+        adapterVersion: 'synthetic-fixture-v1',
+        payload: { options: [visiblePickOption], selectedIndex: 1 },
+      }).success,
+    ).toBe(false);
   });
 });

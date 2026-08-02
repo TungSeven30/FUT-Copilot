@@ -11,10 +11,10 @@ HTML, cookie, token, header, or authenticated response.
 - Prettier and ESLint passed.
 - TypeScript passed for domain, EA adapter, recommendation engine, storage, and
   Chrome extension workspaces.
-- Vitest passed: **27 files, 117 tests**.
+- Vitest passed: **27 files, 121 tests**.
 - Fixture redaction passed for **12 synthetic fixture files**.
 - The Chrome MV3 production build completed at
-  `apps/chrome-extension/.output/chrome-mv3/` (**714.67 kB** total).
+  `apps/chrome-extension/.output/chrome-mv3/` (**719.06 kB** total).
 - The generated manifest declared exactly `storage` and `sidePanel` permissions.
 - The production artifact contained no programmatic background/content route
   activation, runtime network path, or dynamic-code escape rejected by the
@@ -61,6 +61,9 @@ Focused regression evidence includes:
 - The live Transfer Market contract scopes one selected result/detail card and
   separately labels the visible start and Buy Now values. It does not create or
   update local owned-card context.
+- Client-rendered summaries preserve normalized pack and player-pick order,
+  expose duplicate triage status, include no game-action controls, and reject a
+  player-pick selection index outside the visible option list.
 - GitHub Actions independently passes the same complete `pnpm verify` release
   pipeline on the draft pull request.
 

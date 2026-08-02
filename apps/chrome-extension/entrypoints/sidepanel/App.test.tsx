@@ -3,6 +3,7 @@ import { createRoot, type Root } from 'react-dom/client';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { adapterSnapshotSchema } from '@fut-copilot/domain/messages';
+import type { VisibleCard } from '@fut-copilot/domain/adapter-events';
 
 const browserMocks = vi.hoisted(() => {
   const listeners = new Set<(message: unknown) => unknown>();
@@ -52,6 +53,55 @@ async function flushUi(): Promise<void> {
   await act(async () => {
     await new Promise((resolve) => setTimeout(resolve, 0));
   });
+}
+
+function makeVisibleCard(input: {
+  id: string;
+  name: string;
+  observedAt: string;
+  overall: number;
+  position: string;
+}): VisibleCard {
+  const unknown = {
+    value: null,
+    source: 'ea-visible-ui' as const,
+    observedAt: input.observedAt,
+    status: 'unknown' as const,
+  };
+  return {
+    localObservationId: input.id,
+    name: {
+      value: input.name,
+      source: 'ea-visible-ui',
+      observedAt: input.observedAt,
+      status: 'known',
+    },
+    overall: {
+      value: input.overall,
+      source: 'ea-visible-ui',
+      observedAt: input.observedAt,
+      status: 'known',
+    },
+    position: {
+      value: input.position,
+      source: 'ea-visible-ui',
+      observedAt: input.observedAt,
+      status: 'known',
+    },
+    club: unknown,
+    league: unknown,
+    nation: unknown,
+    rarity: unknown,
+    tradeability: unknown,
+    firstOwner: unknown,
+    loan: {
+      value: false,
+      source: 'ea-visible-ui',
+      observedAt: input.observedAt,
+      status: 'inferred',
+    },
+    faceStats: [],
+  };
 }
 
 afterEach(async () => {
@@ -469,5 +519,170 @@ describe('FUT Copilot side panel', () => {
       'Number of Players in the Squad: 1',
     );
     expect(container.textContent).toContain('never fills or submits the squad');
+  });
+
+  it('renders pack-result cards in normalized visible order', async () => {
+    const observedAt = '2026-08-02T14:00:00.000Z';
+    const unknownString = {
+      value: null,
+      source: 'ea-visible-ui',
+      observedAt,
+      status: 'unknown',
+    } as const;
+    browserMocks.state.snapshot = {
+      state: 'ready',
+      updatedAt: observedAt,
+      event: {
+        eventVersion: 1,
+        eventId: '98e61e96-a230-414b-89e7-70a68df42276',
+        type: 'packResult.visible',
+        webAppBuild: unknownString,
+        occurredAt: observedAt,
+        confidence: 0.91,
+        extractionStatus: 'known',
+        adapterVersion: 'synthetic-fixture-v1',
+        payload: {
+          cards: [
+            makeVisibleCard({
+              id: '438a2c4f-68bd-49a2-809c-5989970b65c5',
+              name: 'Pack First',
+              observedAt,
+              overall: 90,
+              position: 'ST',
+            }),
+            makeVisibleCard({
+              id: 'f62cfa13-63a7-449b-a2b8-bffab8b7f2a2',
+              name: 'Pack Second',
+              observedAt,
+              overall: 86,
+              position: 'CM',
+            }),
+          ],
+        },
+      },
+    };
+
+    const container = document.createElement('div');
+    mountedRoot = createRoot(container);
+    await act(async () => mountedRoot?.render(<App />));
+    await flushUi();
+
+    expect(container.textContent).toContain('Pack result');
+    expect(container.textContent).toContain('2 visible cards');
+    expect(
+      Array.from(
+        container.querySelectorAll(
+          '[aria-label="Ordered pack-result cards"] small',
+        ),
+      ).map((element) => element.textContent),
+    ).toEqual(['Pack First', 'Pack Second']);
+    expect(container.textContent).toContain(
+      'cannot open the pack, send an item, or advance the result screen',
+    );
+  });
+
+  it('renders player-pick options without a selection control', async () => {
+    const observedAt = '2026-08-02T14:10:00.000Z';
+    const unknownString = {
+      value: null,
+      source: 'ea-visible-ui',
+      observedAt,
+      status: 'unknown',
+    } as const;
+    browserMocks.state.snapshot = {
+      state: 'ready',
+      updatedAt: observedAt,
+      event: {
+        eventVersion: 1,
+        eventId: '2267124c-6b70-4e16-910c-87bf8fb193fa',
+        type: 'playerPick.visible',
+        webAppBuild: unknownString,
+        occurredAt: observedAt,
+        confidence: 0.9,
+        extractionStatus: 'known',
+        adapterVersion: 'synthetic-fixture-v1',
+        payload: {
+          options: [
+            makeVisibleCard({
+              id: '7402da34-d8f6-4a30-92f0-b481a20b572a',
+              name: 'Pick First',
+              observedAt,
+              overall: 92,
+              position: 'LW',
+            }),
+            makeVisibleCard({
+              id: 'd6dd01e1-0428-45a2-9cec-693148652627',
+              name: 'Pick Second',
+              observedAt,
+              overall: 91,
+              position: 'RW',
+            }),
+          ],
+          selectedIndex: null,
+        },
+      },
+    };
+
+    const container = document.createElement('div');
+    mountedRoot = createRoot(container);
+    await act(async () => mountedRoot?.render(<App />));
+    await flushUi();
+
+    expect(container.textContent).toContain('Player pick');
+    expect(container.textContent).toContain('no option selected');
+    expect(container.textContent).toContain('Option 1Pick First92 · LW');
+    expect(container.textContent).toContain('Option 2Pick Second91 · RW');
+    expect(container.textContent).toContain(
+      'never selects or confirms a player-pick option',
+    );
+  });
+
+  it('renders duplicate detection as a local-only triage event', async () => {
+    const observedAt = '2026-08-02T14:20:00.000Z';
+    const unknownString = {
+      value: null,
+      source: 'ea-visible-ui',
+      observedAt,
+      status: 'unknown',
+    } as const;
+    browserMocks.state.snapshot = {
+      state: 'ready',
+      updatedAt: observedAt,
+      event: {
+        eventVersion: 1,
+        eventId: '5e84901d-286d-4ed8-a6f3-528707b60c3f',
+        type: 'duplicate.detected',
+        webAppBuild: unknownString,
+        occurredAt: observedAt,
+        confidence: 0.95,
+        extractionStatus: 'known',
+        adapterVersion: 'synthetic-fixture-v1',
+        payload: {
+          duplicate: makeVisibleCard({
+            id: 'a18f4058-d984-4d62-9547-afd45d55107c',
+            name: 'Duplicate Example',
+            observedAt,
+            overall: 88,
+            position: 'CB',
+          }),
+          existingCard: null,
+        },
+      },
+    };
+
+    const container = document.createElement('div');
+    mountedRoot = createRoot(container);
+    await act(async () => mountedRoot?.render(<App />));
+    await flushUi();
+
+    expect(container.textContent).toContain('Duplicate detected');
+    expect(container.textContent).toContain('Duplicate Example');
+    expect(container.textContent).toContain('Existing copy visibleNo');
+    expect(container.textContent).toContain(
+      'creates or updates one local triage case',
+    );
+    expect(container.textContent).toContain(
+      'never sends, lists, submits, discards, or quick-sells',
+    );
   });
 });
