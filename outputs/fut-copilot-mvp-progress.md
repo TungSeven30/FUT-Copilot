@@ -2,7 +2,7 @@
 
 Date: 2026-08-01
 
-Current milestone: local MVP workspaces complete; live workflow adapter gates remain
+Current milestone: pack, player-pick, duplicate, and final manual live gates remain
 
 ## Implemented
 
@@ -12,8 +12,15 @@ Current milestone: local MVP workspaces complete; live workflow adapter gates re
 - Known, inferred, unknown, and stale observation states plus explicit tradeability.
 - Twelve-table Dexie database schema v2 with tested version-1 migration.
 - Validated schema-v2 JSON export/import, preview, merge/replace, and backup-before-replace.
-- Eight synthetic/redacted fixture categories and a deterministic fixture harness.
+- Eight synthetic/redacted fixture categories, eleven account-free fixture files,
+  and a deterministic fixture harness.
 - Live-tested English Club screen classifier and selected-card extractor.
+- Live-tested English Active Squad extractor with ordered 11 / 7 / 5 player
+  groups and manager exclusion.
+- Live-tested English Transfer List detail extractor with ownership-safe local
+  persistence and read-only displayed coin values.
+- Live-tested English empty-SBC requirements extractor with mirrored-list and
+  11 + 12 slot-shape agreement; populated SBC cards fail closed.
 - Typed Chrome messaging and loading, empty, ready, unsupported, and degraded panel states.
 - Local PlayStation profile, seven tags, protection rules, notes, and non-collapsing identity resolution.
 - User-clicked FUT.GG exact-or-search links with no API, scraping, or background request.
@@ -44,24 +51,31 @@ Generated unpacked extension:
 | Context | Contract/tests | Live adapter | Status |
 | --- | --- | --- | --- |
 | Club selected card | Yes | Yes | Live validated |
-| Active squad/bench/reserves | Yes | No | User-assisted observation required |
+| Active squad/bench/reserves | Yes | Yes | Live validated |
 | Pack result | Yes | No | User-created visible state required |
 | Player pick | Yes | No | User-created visible state required |
 | Duplicate | Yes | No | User-created visible state required |
-| SBC segment | Yes | No | Safe live navigation/observation required |
-| Transfer context | Yes | No | Safe read-only observation required |
+| Empty SBC requirements | Yes | Yes | Live validated; exact-build panel confirmation pending |
+| Populated SBC cards | Yes | No | User-created visible state required |
+| Transfer List detail | Yes | Yes | Live validated |
+| Transfer Market search results | Yes | No | Safe read-only observation required |
 
 Unsupported live screens fail closed; synthetic coverage is never presented as
 proof of EA DOM compatibility.
 
 ## Remaining release gates
 
-1. The owner acknowledges EA's authentication-expired prompt and signs in
-   manually; FUT Copilot never handles authentication.
-2. Let the owner create or navigate to each pending visible state manually.
-3. Record only sanitized structural evidence, implement one extractor slice at a time, and add compatibility notes.
-4. Run every item in `docs/release/manual-smoke-checklist.md`.
-5. Mark the draft PR ready only after all required gates pass or are explicitly waived by the owner.
+1. Confirm the exact production side panel displays the live empty-SBC heading
+   and both requirement labels.
+2. Let the owner naturally create each pending pack-result, player-pick, and
+   duplicate visible state manually.
+3. Record only sanitized structural evidence, implement one extractor slice at
+   a time, and add compatibility notes.
+4. Safely observe Transfer Market search results if that screen remains in the
+   accepted release scope.
+5. Run every item in `docs/release/manual-smoke-checklist.md`.
+6. Mark the draft PR ready only after all required gates pass or are explicitly
+   waived by the owner.
 
 ## Safety boundary retained
 
