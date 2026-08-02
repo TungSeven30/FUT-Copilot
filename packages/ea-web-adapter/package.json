@@ -10,6 +10,7 @@
     "./fixture-harness": "./src/testing/fixture-harness.ts",
     "./synthetic-context-extractor": "./src/testing/synthetic-context-extractor.ts",
     "./screen-classifier": "./src/screen-classifier.ts",
+    "./sbc-context": "./src/sbc-context.ts",
     "./selected-card": "./src/selected-card.ts",
     "./transfer-list": "./src/transfer-list.ts",
     "./visible-context": "./src/visible-context.ts"

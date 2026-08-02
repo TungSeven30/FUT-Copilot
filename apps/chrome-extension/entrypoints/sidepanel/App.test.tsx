@@ -308,4 +308,65 @@ describe('FUT Copilot side panel', () => {
       'not saved as a market price or used to click any transfer action',
     );
   });
+
+  it('renders live SBC requirements as read-only context', async () => {
+    const observedAt = '2026-08-01T21:00:00.000Z';
+    const unknownString = {
+      value: null,
+      source: 'ea-visible-ui',
+      observedAt,
+      status: 'unknown',
+    } as const;
+    browserMocks.state.snapshot = {
+      state: 'ready',
+      updatedAt: observedAt,
+      event: {
+        eventVersion: 1,
+        eventId: '838af32e-cf54-40d7-9554-b5560542ae59',
+        type: 'sbcContext.visible',
+        webAppBuild: unknownString,
+        occurredAt: observedAt,
+        confidence: 0.94,
+        extractionStatus: 'inferred',
+        adapterVersion: 'fc26-web-v0.4.0',
+        payload: {
+          challengeName: {
+            value: 'Daily Login Example',
+            source: 'ea-visible-ui',
+            observedAt,
+            status: 'known',
+          },
+          segmentName: unknownString,
+          requirementLabels: [
+            {
+              value: 'Player Quality: Exactly Bronze',
+              source: 'ea-visible-ui',
+              observedAt,
+              status: 'known',
+            },
+            {
+              value: 'Number of Players in the Squad: 1',
+              source: 'ea-visible-ui',
+              observedAt,
+              status: 'known',
+            },
+          ],
+          cards: [],
+        },
+      },
+    };
+
+    const container = document.createElement('div');
+    mountedRoot = createRoot(container);
+    await act(async () => mountedRoot?.render(<App />));
+    await flushUi();
+
+    expect(container.textContent).toContain('SBC context');
+    expect(container.textContent).toContain('Daily Login Example');
+    expect(container.textContent).toContain('Player Quality: Exactly Bronze');
+    expect(container.textContent).toContain(
+      'Number of Players in the Squad: 1',
+    );
+    expect(container.textContent).toContain('never fills or submits the squad');
+  });
 });

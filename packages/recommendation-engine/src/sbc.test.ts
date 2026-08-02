@@ -156,6 +156,20 @@ describe('rating-only SBC planner', () => {
     });
   });
 
+  it('keeps the observed Bronze-only challenge fail closed', () => {
+    expect(
+      parseRatingOnlyRequirements([
+        'Player Quality: Exactly Bronze',
+        'Number of Players in the Squad: 1',
+      ]),
+    ).toEqual({
+      supported: false,
+      requiredPlayers: 1,
+      requiredRating: null,
+      unsupportedLabels: ['Player Quality: Exactly Bronze'],
+    });
+  });
+
   it('calculates uniform and mixed squad rating boundaries', () => {
     expect(calculateSquadRating(Array.from({ length: 11 }, () => 84))).toBe(84);
     expect(

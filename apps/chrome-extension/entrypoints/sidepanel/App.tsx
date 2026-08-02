@@ -502,6 +502,59 @@ function ReadyObservation({ snapshot }: { snapshot: AdapterSnapshot }) {
     );
   }
 
+  if (snapshot.event.type === 'sbcContext.visible') {
+    const confidence = Math.round(snapshot.event.confidence * 100);
+    return (
+      <article className="observation-card observation-card--ready">
+        <div className="selected-card-heading">
+          <div>
+            <p className="card-eyebrow">SBC context</p>
+            <h2>{formatValue(snapshot.event.payload.challengeName)}</h2>
+          </div>
+          <span className="identity-pill">read only</span>
+        </div>
+
+        <div className="facts">
+          <FactRow
+            label="Distinct segment name"
+            observation={snapshot.event.payload.segmentName}
+          />
+          <div className="fact-row">
+            <span>Loaded player cards</span>
+            <strong>{snapshot.event.payload.cards.length}</strong>
+          </div>
+        </div>
+
+        <ul
+          aria-label="Visible SBC requirements"
+          className="compact-list compact-list--cards"
+        >
+          {snapshot.event.payload.requirementLabels.map(
+            (requirement, index) => (
+              <li key={`${index}:${requirement.value ?? 'unknown'}`}>
+                <span className="compact-list__detail">
+                  <span>Requirement {index + 1}</span>
+                </span>
+                <strong>{formatValue(requirement)}</strong>
+              </li>
+            ),
+          )}
+        </ul>
+
+        <p className="helper-text">
+          Requirement labels are visible read-only context. Unsupported
+          constraints keep planner proposals blocked, and FUT Copilot never
+          fills or submits the squad.
+        </p>
+
+        <footer className="observation-meta">
+          <span>{confidence}% extraction confidence</span>
+          <span>{snapshot.event.adapterVersion}</span>
+        </footer>
+      </article>
+    );
+  }
+
   if (
     snapshot.event.type !== 'card.selected' ||
     snapshot.event.payload.card === null
@@ -1732,11 +1785,11 @@ function SettingsWorkspace({ snapshot }: { snapshot: AdapterSnapshot | null }) {
           </div>
           <div className="fact-row">
             <span>Live-supported screens</span>
-            <strong>English Club card, squad + Transfer List</strong>
+            <strong>English Club card, squad, Transfer List + empty SBC</strong>
           </div>
           <div className="fact-row">
             <span>Synthetic-only contexts</span>
-            <strong>4 workflow contexts</strong>
+            <strong>3 workflow contexts</strong>
           </div>
           <div className="fact-row">
             <span>Last successful observation</span>

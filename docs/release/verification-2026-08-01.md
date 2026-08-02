@@ -11,10 +11,10 @@ HTML, cookie, token, header, or authenticated response.
 - Prettier and ESLint passed.
 - TypeScript passed for domain, EA adapter, recommendation engine, storage, and
   Chrome extension workspaces.
-- Vitest passed: **25 files, 101 tests**.
-- Fixture redaction passed for **10 synthetic fixture files**.
+- Vitest passed: **26 files, 109 tests**.
+- Fixture redaction passed for **11 synthetic fixture files**.
 - The Chrome MV3 production build completed at
-  `apps/chrome-extension/.output/chrome-mv3/` (**706.75 kB** total).
+  `apps/chrome-extension/.output/chrome-mv3/` (**711.1 kB** total).
 - The generated manifest declared exactly `storage` and `sidePanel` permissions.
 - The production artifact contained no programmatic background/content route
   activation, runtime network path, or dynamic-code escape rejected by the
@@ -53,6 +53,11 @@ Focused regression evidence includes:
   list, and fails closed on active-card or panel ambiguity.
 - A newly observed Transfer List card is locally unknown-owned and excluded
   from SBC inventory until a Club observation confirms ownership.
+- The live empty-SBC contract requires matching duplicated requirement lists,
+  preserves visible requirement order, validates 11 pitch plus 12 work-area
+  slots, and degrades when any card is populated or the structure changes.
+- The observed Bronze-only requirement is displayed but rejected by the
+  rating-only planner, while its one-player count remains understood.
 - GitHub Actions independently passes the same complete `pnpm verify` release
   pipeline on the draft pull request.
 
@@ -76,10 +81,17 @@ Focused regression evidence includes:
   contract without clicking re-list, search, bid, buy, listing, or clearing
   controls.
 - Compatibility record: `docs/compatibility/2026-08-01-fc26-transfer-list.md`.
+- Supported screen: **SBC challenge detail**, with an empty squad and mirrored
+  visible requirement lists.
+- Result: sanitized read-only structural observation matched the extractor
+  contract without using Squad Builder, placing cards, clearing, submitting,
+  exchanging, or claiming.
+- Compatibility record: `docs/compatibility/2026-08-01-fc26-sbc-requirements.md`.
 
 ## Open live gates
 
-Pack result, player pick, duplicate, SBC, and the complete manual regression
-checklist remain open. These screens require owner-assisted, naturally reached
-visible states; FUT Copilot will not open a pack, select a pick, submit an SBC,
-search/bid/buy, list, discard, or quick-sell for the owner.
+Pack result, player pick, duplicate, populated SBC-card handling, and the
+complete manual regression checklist remain open. These screens require
+owner-assisted, naturally reached visible states; FUT Copilot will not open a
+pack, select a pick, place or submit an SBC card, search/bid/buy, list, discard,
+or quick-sell for the owner.

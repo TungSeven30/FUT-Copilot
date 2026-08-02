@@ -5,9 +5,10 @@
 - Live-validated: English FC 26 Web App, **My Club Players**, one visible
   selected card; and **Active Squad**, with 11 starting player slots, 7
   substitutes, and 5 reserves; and **Transfer List**, with one selected detailed
-  card and scoped displayed coin values.
+  card and scoped displayed coin values; and an **empty SBC challenge**, with
+  mirrored visible requirements, 11 pitch slots, and 12 work-area slots.
 - Synthetic-only adapter contracts: pack result, player pick, duplicate, and
-  SBC contexts.
+  populated SBC-card contexts.
 - Small Active Squad cards do not expose player names as accessible visible
   text. Squad observations therefore preserve slot, rating, position, and
   narrow state markers while leaving names and hidden identity fields unknown.
@@ -28,6 +29,8 @@
 
 - The planner supports rating-only squads. Chemistry and complex rarity,
   league, club, or nation constraints are flagged as unsupported.
+- The live SBC adapter currently supports only an empty challenge. A populated
+  squad degrades until its visible card shape is separately validated.
 - The correction-factor rating model is based on current public community
   documentation because EA does not publish an exact formula. It has broad
   integer-reference tests but remains provisional until live SBC confirmation;

@@ -43,6 +43,11 @@
   context summary.
 - Ownership-safe Transfer List persistence: newly observed listings remain
   `ownershipStatus: unknown` until a later Club observation confirms ownership.
+- Live English empty-SBC extraction with one challenge heading, mirrored
+  requirement-list agreement, 11 pitch plus 12 work-area slot validation, and
+  fail-closed handling for populated or structurally changed squads.
+- A read-only SBC context summary that exposes visible requirements while
+  preserving the planner block on unsupported constraints.
 
 ### Fixed
 
@@ -63,7 +68,7 @@
 
 ### Known limitations
 
-- Live EA extraction supports the English Club selected-card, Active Squad, and
-  Transfer List contexts. Pack result, player pick, duplicate, and SBC event
-  contracts remain synthetic-only until user-assisted validation produces
-  sanitized compatibility evidence.
+- Live EA extraction supports the English Club selected-card, Active Squad,
+  Transfer List, and empty SBC-requirements contexts. Pack result, player pick,
+  duplicate, and populated SBC-card contracts remain synthetic-only until
+  user-assisted validation produces sanitized compatibility evidence.

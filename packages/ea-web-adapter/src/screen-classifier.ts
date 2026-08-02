@@ -14,8 +14,8 @@ function normalizeText(value: string | null): string {
 }
 
 export function classifyScreen(document: Document): ScreenClassification {
-  const heading = document.querySelector('.ut-root-view h1.title');
-  const headingText = normalizeText(heading?.textContent ?? null);
+  const headings = document.querySelectorAll('.ut-root-view h1.title');
+  const headingText = normalizeText(headings[0]?.textContent ?? null);
   const transferLists = document.querySelectorAll('.ut-transfer-list-view');
   if (headingText === TRANSFER_LIST_HEADING && transferLists.length === 1) {
     return {
@@ -24,6 +24,33 @@ export function classifyScreen(document: Document): ScreenClassification {
       evidenceCodes: [
         'transfer-list-heading-visible',
         'transfer-list-view-visible',
+      ],
+    };
+  }
+
+  const sbcPanels = document.querySelectorAll('.SquadPanel.SBCSquadPanel');
+  const sbcDetails = document.querySelectorAll(
+    '.ut-sbc-challenge-details-view',
+  );
+  const sbcPitches = document.querySelectorAll('.ut-squad-pitch-view.sbc');
+  const sbcDocks = document.querySelectorAll('.ut-squad-slot-dock-view.sbc');
+  if (
+    headings.length === 1 &&
+    headingText !== '' &&
+    sbcPanels.length === 1 &&
+    sbcDetails.length === 1 &&
+    sbcPitches.length === 1 &&
+    sbcDocks.length === 1
+  ) {
+    return {
+      screen: 'sbc',
+      confidence: 0.99,
+      evidenceCodes: [
+        'sbc-challenge-heading-visible',
+        'sbc-challenge-panel-visible',
+        'sbc-details-view-visible',
+        'sbc-pitch-visible',
+        'sbc-work-area-visible',
       ],
     };
   }
