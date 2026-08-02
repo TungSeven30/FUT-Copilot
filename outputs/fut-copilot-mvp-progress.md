@@ -2,7 +2,7 @@
 
 Date: 2026-08-01
 
-Current milestone: player-pick, exact pack/duplicate confirmation, and final manual live gates remain
+Current milestone: player-pick, populated SBC, and final manual live gates remain
 
 ## Implemented
 
@@ -58,9 +58,9 @@ Generated unpacked extension:
 | --- | --- | --- | --- |
 | Club selected card | Yes | Yes | Live validated |
 | Active squad/bench/reserves | Yes | Yes | Live validated |
-| Pack result | Yes | Yes | Live observed; exact panel confirmation pending |
+| Pack result | Yes | Yes | Live + exact-build panel validated |
 | Player pick | Yes | No | User-created visible state required |
-| Duplicate | Yes | Yes | Live pack state; exact local-case confirmation pending |
+| Duplicate | Yes | Yes | Live + repeated-observation idempotency validated |
 | Empty SBC requirements | Yes | Yes | Live + exact-build panel validated |
 | Populated SBC cards | Yes | No | User-created visible state required |
 | Transfer List detail | Yes | Yes | Live validated |
@@ -71,8 +71,8 @@ proof of EA DOM compatibility.
 
 ## Remaining release gates
 
-1. Confirm the rebuilt pack/duplicate summary, then let the owner naturally
-   create the pending player-pick state manually.
+1. Let the owner naturally create the pending player-pick and populated-SBC
+   states manually.
 2. Record only sanitized structural evidence, implement one extractor slice at
    a time, and add compatibility notes.
 3. Run every item in `docs/release/manual-smoke-checklist.md`.

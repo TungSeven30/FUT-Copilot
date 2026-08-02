@@ -51,12 +51,12 @@ or raw page HTML into this file.
 - [x] Active squad, bench, and reserves validated as distinct. Owner-assisted
       read-only observation confirmed the 11 + manager / 7 / 5 shape on
       2026-08-01; no account or player values were retained.
-- [ ] Pack result preserves visible card order. Sanitized structure was
-      live-observed on 2026-08-02; exact rebuilt panel confirmation is pending.
+- [x] Pack result preserves visible card order. Sanitized structure and the
+      exact rebuilt production summary were owner-confirmed on 2026-08-02.
 - [ ] Player pick preserves option order and never selects.
-- [ ] Visible duplicate creates one idempotent local case. The live Duplicates
-      section and automated multi-duplicate idempotency are confirmed; exact
-      rebuilt local-case confirmation is pending.
+- [x] Visible duplicate creates one idempotent local case. After the live
+      Duplicates section was observed, the owner repeated the read-only
+      observation and confirmed the unresolved case count did not increase.
 - [x] Visible SBC requirements label unsupported constraints. The owner
       confirmed the reloaded production panel matched the challenge name, both
       ordered requirement labels, and zero loaded player cards on 2026-08-02.

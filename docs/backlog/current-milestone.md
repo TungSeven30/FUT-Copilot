@@ -45,7 +45,7 @@
 
 ## Active release gates
 
-- [ ] Owner-confirm the exact rebuilt pack summary and idempotent duplicate
+- [x] Owner-confirm the exact rebuilt pack summary and idempotent duplicate
       queue without moving or resolving any item.
 - [ ] Live-observe the player-pick layout without opening or selecting an option
       on the user's behalf.
@@ -69,6 +69,8 @@ owner-assisted observation occurred on 2026-08-02, when the owner opened a pack
 manually and stopped on its populated
 Unassigned result. Sanitized read-only observation validated the ordered Items
 and Duplicates section contract without retaining any player or account value.
-Exact-build side-panel confirmation and the naturally reached player-pick state
-remain open. FUT Copilot will not submit an SBC, open a pack, move an item, or
-select an option for the owner.
+The owner then confirmed the exact rebuilt pack summary and verified that a
+second read-only observation did not increase the unresolved duplicate-case
+count. The naturally reached player-pick and populated-SBC states remain open.
+FUT Copilot will not submit an SBC, open a pack, move an item, or select an
+option for the owner.

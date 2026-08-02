@@ -10,7 +10,8 @@ Implementation style: local-first, assistive, testable, and AI-agent-friendly
 - FCP-001–007, FCP-009–017, FCP-020–021, FCP-023–030, and the
   automated portions of FCP-031–032 are implemented in the workspace.
 - FCP-019 now uses the live Unassigned Duplicates section and idempotent
-  normalized-event persistence to create local triage cases.
+  normalized-event persistence to create local triage cases; an owner-confirmed
+  repeated observation did not increase the unresolved case count.
 - The production Chrome MV3 build is generated at `apps/chrome-extension/.output/chrome-mv3/`.
 - The English FC 26 Club selected-card, Active Squad, Transfer List, Transfer
   Market Search Results, empty SBC-requirements, and Unassigned player
@@ -19,8 +20,8 @@ Implementation style: local-first, assistive, testable, and AI-agent-friendly
   formatting, linting, TypeScript, 132 tests, thirteen synthetic/redacted fixture
   files, the production build, and generated runtime/permission safety checks.
 - FCP-008 remains partially open for player pick, non-player pack items, and
-  populated SBC cards. FCP-018 has live pack-result evidence but remains open
-  for player-pick evidence.
+  populated SBC cards. FCP-018 has exact-build pack-result evidence but remains
+  open for player-pick evidence.
 - FCP-022 supports the live empty-SBC requirement and slot contract but
   deliberately degrades on populated cards until their visible shape is
   separately observed.

@@ -62,3 +62,10 @@ partial pack when:
 Non-player pack items were not present in this observation and remain
 unsupported. Player-pick layouts require a separate naturally reached live
 observation.
+
+## Exact-build confirmation
+
+After reloading the production extension, the owner confirmed the read-only
+pack summary matched every visible row and duplicate marker. Repeating the
+observation did not increase the unresolved local duplicate-case count. No
+duplicate was moved or resolved as part of this confirmation.

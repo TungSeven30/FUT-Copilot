@@ -117,15 +117,16 @@ Focused regression evidence includes:
   sections after the owner opened a pack manually.
 - Result: sanitized read-only structure confirmed one loaded compact player per
   row and separate ordered result sections without activating send, list,
-  compare, discard, quick-sell, or result-advance controls. The rebuilt exact
-  production side-panel summary remains to be owner-confirmed.
+  compare, discard, quick-sell, or result-advance controls. The owner confirmed
+  the rebuilt production summary matched all visible rows and duplicate
+  markers, then repeated the observation and confirmed the unresolved local
+  case count did not increase.
 - Compatibility record:
   `docs/compatibility/2026-08-02-fc26-pack-result-duplicates.md`.
 
 ## Open live gates
 
-Exact-build pack/duplicate panel confirmation, player pick, populated SBC-card
-handling, and the complete manual regression checklist remain open. Pending
-screens require owner-assisted, naturally reached visible states; FUT Copilot
-will not open a pack, select a pick, place or submit an SBC card,
-search/bid/buy, list, discard, or quick-sell for the owner.
+Player pick, populated SBC-card handling, and the remaining manual regression
+checklist stay open. Pending screens require owner-assisted, naturally reached
+visible states; FUT Copilot will not open a pack, select a pick, place or submit
+an SBC card, search/bid/buy, list, discard, or quick-sell for the owner.
