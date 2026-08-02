@@ -4,9 +4,10 @@ import {
   type NormalizedAdapterEvent,
 } from '@fut-copilot/domain/adapter-events';
 
+import { ADAPTER_VERSION } from './adapter-version';
 import { classifyScreen } from './screen-classifier';
 
-export const ADAPTER_VERSION = 'fc26-web-v0.1.0';
+export { ADAPTER_VERSION } from './adapter-version';
 
 const ACTIVE_CARD_SELECTOR =
   '.DetailView .detail-carousel .tns-slide-active > .item.player.ut-item-loaded';

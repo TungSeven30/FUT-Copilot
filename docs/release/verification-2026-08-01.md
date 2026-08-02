@@ -11,10 +11,10 @@ HTML, cookie, token, header, or authenticated response.
 - Prettier and ESLint passed.
 - TypeScript passed for domain, EA adapter, recommendation engine, storage, and
   Chrome extension workspaces.
-- Vitest passed: **22 files, 81 tests**.
-- Fixture redaction passed for **8 synthetic fixture files**.
+- Vitest passed: **24 files, 91 tests**.
+- Fixture redaction passed for **9 synthetic fixture files**.
 - The Chrome MV3 production build completed at
-  `apps/chrome-extension/.output/chrome-mv3/` (**694.92 kB** total).
+  `apps/chrome-extension/.output/chrome-mv3/` (**701.47 kB** total).
 - The generated manifest declared exactly `storage` and `sidePanel` permissions.
 - The production artifact contained no programmatic background/content route
   activation, runtime network path, or dynamic-code escape rejected by the
@@ -43,6 +43,11 @@ Focused regression evidence includes:
   repeated observation inside a five-minute stability window after a runtime
   restart, preserve later occurrences, and keep duplicate case creation
   idempotent.
+- The live active-squad contract emits exactly 11 starting slots, 7 substitute
+  slots, and 5 reserve slots while excluding the manager, preserving empty
+  slots, and degrading on a partially loaded or structurally ambiguous card.
+- The client-rendered side panel summarizes normalized squad groups and exposes
+  the unknown-name boundary instead of matching through images or hidden data.
 
 ## Owner-assisted live evidence
 
@@ -52,11 +57,16 @@ Focused regression evidence includes:
 - Result: the owner confirmed the selected visible name, rating, and position
   matched after reloading the unpacked extension.
 - Compatibility record: `docs/compatibility/2026-08-01-fc26-club-selected-card.md`.
+- Supported screen: **Active Squad**, with 11 starting player slots, one
+  manager slot, 7 substitutes, and 5 reserves.
+- Result: sanitized read-only structural observation confirmed visible rating,
+  position, broad card-state markers, and the absence of accessible player-name
+  text on small squad cards.
+- Compatibility record: `docs/compatibility/2026-08-01-fc26-active-squad.md`.
 
 ## Open live gates
 
-Active squad/bench/reserves, pack result, player pick, duplicate, SBC, transfer
-context, and the complete manual regression checklist remain open. During the
-latest owner-assisted attempt, EA displayed an authentication-expired dialog on
-the Squads hub. The dialog was left for the owner; FUT Copilot did not dismiss
-it or perform a login action. Live validation resumes only after manual sign-in.
+Pack result, player pick, duplicate, SBC, transfer context, and the complete
+manual regression checklist remain open. These screens require owner-assisted,
+naturally reached visible states; FUT Copilot will not open a pack, select a
+pick, submit an SBC, search/bid/buy, list, discard, or quick-sell for the owner.

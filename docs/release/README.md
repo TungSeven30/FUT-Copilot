@@ -15,8 +15,8 @@ It is intentionally not committed because it is reproducible build output.
 
 ## Release status
 
-The selected-card workflow is live-validated against the English FC 26 Web
-App Club screen. Duplicate, pack, pick, SBC, squad, and market context contracts
+The selected-card and Active Squad workflows are live-validated against the
+English FC 26 Web App. Duplicate, pack, pick, SBC, and market context contracts
 have synthetic regression coverage, but their live EA page adapters remain
 release gates. The manual side-panel workspaces are usable without those live
 extractors.

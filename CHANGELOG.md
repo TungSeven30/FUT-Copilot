@@ -11,7 +11,7 @@
 - Sanitized FC 26 Club-screen compatibility evidence and selected-card fixture.
 - Live Club screen classification and selected-card extraction with explicit uncertainty.
 - Typed Chrome message pipeline and side-panel loading, empty, ready, unsupported, and degraded states.
-- Manual **Observe selected card** gesture with normalized local snapshot caching.
+- Manual **Observe visible context** gesture with normalized local snapshot caching.
 - Default local PlayStation profile with seven personal tags, notes, and protection rules.
 - Ambiguity-safe card identity resolution and user-clicked FUT.GG exact-or-search links.
 - Explainable keep, sell, and SBC recommendation models with protection overrides.
@@ -31,6 +31,11 @@
 - Selected-card regressions for concept, loan, unrecognized Evolution rarity,
   incomplete fields, and ambiguous active-card anchors.
 - Full schema-v2 backup round-trip coverage across all twelve local tables.
+- Live English active-squad extraction with ordered starting XI, substitutes,
+  reserves, manager exclusion, empty-slot preservation, and a side-panel squad
+  summary.
+- Sanitized active-squad compatibility evidence and an account-free live-contract
+  fixture covering partial-field and structural ambiguity behavior.
 
 ### Fixed
 
@@ -51,4 +56,7 @@
 
 ### Known limitations
 
-- Live EA extraction remains limited to the English Club selected-card context. Other workflow event contracts are synthetic-only until user-assisted live validation produces sanitized compatibility evidence.
+- Live EA extraction supports the English Club selected-card and Active Squad
+  contexts. Pack result, player pick, duplicate, SBC, and transfer-market event
+  contracts remain synthetic-only until user-assisted validation produces
+  sanitized compatibility evidence.

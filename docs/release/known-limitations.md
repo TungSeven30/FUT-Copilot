@@ -3,9 +3,13 @@
 ## Live EA support
 
 - Live-validated: English FC 26 Web App, **My Club Players**, one visible
-  selected card.
-- Synthetic-only adapter contracts: active squad, pack result, player pick,
-  duplicate, SBC, and transfer market contexts.
+  selected card; and **Active Squad**, with 11 starting player slots, 7
+  substitutes, and 5 reserves.
+- Synthetic-only adapter contracts: pack result, player pick, duplicate, SBC,
+  and transfer market contexts.
+- Small Active Squad cards do not expose player names as accessible visible
+  text. Squad observations therefore preserve slot, rating, position, and
+  narrow state markers while leaving names and hidden identity fields unknown.
 - The panel fails closed on unsupported or changed layouts; it does not guess a
   card when required anchors are missing or ambiguous.
 - EA Web App UI changes or non-English text may require a versioned adapter

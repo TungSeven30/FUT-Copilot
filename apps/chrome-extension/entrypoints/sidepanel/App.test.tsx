@@ -5,12 +5,14 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 const browserMocks = vi.hoisted(() => {
   const listeners = new Set<(message: unknown) => unknown>();
+  const state = { snapshot: null as unknown };
   return {
     listeners,
+    state,
     sendMessage: vi.fn(async (message: unknown) => {
       const kind = (message as { kind?: string }).kind;
       if (kind === 'adapter.snapshot.get') {
-        return { kind: 'adapter.snapshot', snapshot: null };
+        return { kind: 'adapter.snapshot', snapshot: state.snapshot };
       }
       if (kind === 'adapter.observe.request') {
         return {
@@ -57,6 +59,7 @@ afterEach(async () => {
   }
   browserMocks.listeners.clear();
   browserMocks.sendMessage.mockClear();
+  browserMocks.state.snapshot = null;
 });
 
 describe('FUT Copilot side panel', () => {
@@ -76,7 +79,7 @@ describe('FUT Copilot side panel', () => {
     expect(markup).toContain(
       'No automatic buy, list, submit, discard, or quick-sell.',
     );
-    expect(markup).toContain('Observing selected card…');
+    expect(markup).toContain('Observing visible context…');
   });
 
   it('moves through every side-panel workspace after a disconnected start', async () => {
@@ -115,7 +118,7 @@ describe('FUT Copilot side panel', () => {
     await flushUi();
 
     const observe = Array.from(container.querySelectorAll('button')).find(
-      (button) => button.textContent === 'Observe selected card',
+      (button) => button.textContent === 'Observe visible context',
     );
     if (observe === undefined) throw new Error('Missing observe button.');
     await act(async () => {
@@ -125,5 +128,87 @@ describe('FUT Copilot side panel', () => {
 
     expect(container.textContent).toContain('Could not observe the active tab');
     expect(container.textContent).toContain('active-tab-unavailable');
+  });
+
+  it('renders a live active-squad summary without inventing player names', async () => {
+    const observedAt = '2026-08-01T18:00:00.000Z';
+    const unknownString = {
+      value: null,
+      source: 'ea-visible-ui',
+      observedAt,
+      status: 'unknown',
+    } as const;
+    const groups = [
+      ['starting', 'START', 11],
+      ['bench', 'SUB', 7],
+      ['reserves', 'RES', 5],
+    ] as const;
+    browserMocks.state.snapshot = {
+      state: 'ready',
+      updatedAt: observedAt,
+      event: {
+        eventVersion: 1,
+        eventId: '9d1a83a0-d505-461f-a44a-2f999d93bcbc',
+        type: 'activeSquad.visible',
+        webAppBuild: unknownString,
+        occurredAt: observedAt,
+        confidence: 0.9,
+        extractionStatus: 'inferred',
+        adapterVersion: 'fc26-web-v0.2.0',
+        payload: {
+          slots: groups.flatMap(([group, prefix, count]) =>
+            Array.from({ length: count }, (_, index) => ({
+              slot: `${prefix}-${index + 1}`,
+              group,
+              card:
+                group === 'starting' && index === 0
+                  ? {
+                      localObservationId:
+                        'b28833ed-3d5d-4f3d-bb97-cb9b31ac551a',
+                      name: unknownString,
+                      overall: {
+                        value: 89,
+                        source: 'ea-visible-ui',
+                        observedAt,
+                        status: 'known',
+                      },
+                      position: {
+                        value: 'ST',
+                        source: 'ea-visible-ui',
+                        observedAt,
+                        status: 'known',
+                      },
+                      club: unknownString,
+                      league: unknownString,
+                      nation: unknownString,
+                      rarity: unknownString,
+                      tradeability: unknownString,
+                      firstOwner: unknownString,
+                      loan: {
+                        value: false,
+                        source: 'ea-visible-ui',
+                        observedAt,
+                        status: 'inferred',
+                      },
+                      faceStats: [],
+                    }
+                  : null,
+            })),
+          ),
+        },
+      },
+    };
+
+    const container = document.createElement('div');
+    mountedRoot = createRoot(container);
+    await act(async () => mountedRoot?.render(<App />));
+    await flushUi();
+
+    expect(container.textContent).toContain('Active squad');
+    expect(container.textContent).toContain('1/23 player slots occupied');
+    expect(container.textContent).toContain('89 · ST');
+    expect(container.textContent).toContain(
+      'keeps them unknown instead of matching by image or hidden data',
+    );
   });
 });

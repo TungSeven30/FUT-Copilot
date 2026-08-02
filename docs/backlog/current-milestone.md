@@ -24,11 +24,12 @@
 - [x] Interactive side-panel shell and isolated Shadow-DOM badge regressions.
 - [x] Tag, note, and protection persistence across a database close/reopen.
 - [x] Duplicate identity provenance and bounded cross-runtime event deduplication.
+- [x] Live English FC 26 active-squad extraction with ordered starting XI,
+      substitutes, reserves, explicit manager exclusion, and unknown-name
+      boundaries.
 
 ## Active release gates
 
-- [ ] Live-observe active squad, bench, and reserves; add sanitized compatibility
-      evidence before implementing selectors.
 - [ ] Live-observe pack result and player-pick layouts without opening a pack or
       making a pick on the user's behalf.
 - [ ] Live-observe duplicate state and prove idempotent local case creation.
@@ -44,8 +45,9 @@ order/grouping, fail closed on ambiguity, use a synthetic or aggressively
 redacted fixture, and receive a compatibility-log entry. No raw HTML or account
 data may be stored. All game-changing actions remain manual.
 
-The owner-assisted Chrome connection was restored on 2026-08-01 and reached the
-EA Squads hub. An EA authentication-expired dialog prevented navigation to the
-active squad. FUT Copilot did not dismiss the dialog, trigger login, or retain
-any account value. No new selector assumption was promoted from that session;
-live work resumes only after the owner signs in manually.
+The owner restored the EA session manually on 2026-08-01. Read-only observation
+then validated the active-squad 11 + manager / 7 / 5 slot shape and the narrow
+visible card fields. No player name, club identity, balance, credential,
+authenticated response, or raw HTML was retained. The next owner-assisted gate
+is a naturally reached pack-result or player-pick screen; FUT Copilot will not
+open a pack or select an option for the owner.

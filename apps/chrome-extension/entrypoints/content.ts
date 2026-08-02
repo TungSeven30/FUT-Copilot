@@ -4,7 +4,7 @@ import {
   protectionStatusResponseSchema,
 } from '@fut-copilot/domain/messages';
 import { createAdapterEventSignature } from '@fut-copilot/ea-web-adapter/event-signature';
-import { extractSelectedCardEvent } from '@fut-copilot/ea-web-adapter/selected-card';
+import { extractVisibleContextEvent } from '@fut-copilot/ea-web-adapter/visible-context';
 import { browser } from 'wxt/browser';
 
 import {
@@ -24,7 +24,7 @@ export default defineContentScript({
     let lastSignature: string | undefined;
 
     const publishObservation = async (force: boolean) => {
-      const event = extractSelectedCardEvent(document);
+      const event = extractVisibleContextEvent(document);
       const signature = createAdapterEventSignature(event);
       if (!force && signature === lastSignature) {
         return;

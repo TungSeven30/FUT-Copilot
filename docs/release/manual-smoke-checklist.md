@@ -48,7 +48,9 @@ or raw page HTML into this file.
 
 ## Pending live adapter gates
 
-- [ ] Active squad, bench, and reserves validated as distinct.
+- [x] Active squad, bench, and reserves validated as distinct. Owner-assisted
+      read-only observation confirmed the 11 + manager / 7 / 5 shape on
+      2026-08-01; no account or player values were retained.
 - [ ] Pack result preserves visible card order.
 - [ ] Player pick preserves option order and never selects.
 - [ ] Visible duplicate creates one idempotent local case.

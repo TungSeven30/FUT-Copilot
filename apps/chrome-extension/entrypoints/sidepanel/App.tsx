@@ -13,6 +13,7 @@ import {
   type MarketTransaction,
   type SbcProposal,
 } from '@fut-copilot/domain/workflows';
+import { ADAPTER_VERSION } from '@fut-copilot/ea-web-adapter/adapter-version';
 import {
   calculateMarket,
   summarizeMarketJournal,
@@ -155,7 +156,7 @@ function useAdapterPanelState() {
     };
   }, []);
 
-  const observeSelectedCard = useCallback(() => {
+  const observeVisibleContext = useCallback(() => {
     setState({ kind: 'loading' });
     void browser.runtime
       .sendMessage({ kind: 'adapter.observe.request' })
@@ -174,7 +175,7 @@ function useAdapterPanelState() {
       });
   }, []);
 
-  return { state, observeSelectedCard };
+  return { state, observeVisibleContext };
 }
 
 function selectedCardFromSnapshot(snapshot: AdapterSnapshot | null) {
@@ -346,6 +347,81 @@ function StateNotice({
 }
 
 function ReadyObservation({ snapshot }: { snapshot: AdapterSnapshot }) {
+  if (snapshot.event.type === 'activeSquad.visible') {
+    const slots = snapshot.event.payload.slots;
+    const groupSummary = (
+      [
+        ['starting', 'Starting XI'],
+        ['bench', 'Substitutes'],
+        ['reserves', 'Reserves'],
+      ] as const
+    ).map(([group, label]) => {
+      const groupSlots = slots.filter((slot) => slot.group === group);
+      return {
+        group,
+        label,
+        occupied: groupSlots.filter((slot) => slot.card !== null).length,
+        total: groupSlots.length,
+      };
+    });
+    const occupied = slots.filter((slot) => slot.card !== null).length;
+    const confidence = Math.round(snapshot.event.confidence * 100);
+
+    return (
+      <article className="observation-card observation-card--ready">
+        <div className="selected-card-heading">
+          <div>
+            <p className="card-eyebrow">Active squad</p>
+            <h2>
+              {occupied}/{slots.length} player slots occupied
+            </h2>
+          </div>
+          <span className="identity-pill">live context</span>
+        </div>
+
+        <div className="calculation-grid calculation-grid--compact">
+          {groupSummary.map((summary) => (
+            <div key={summary.group}>
+              <span>{summary.label}</span>
+              <strong>
+                {summary.occupied}/{summary.total}
+              </strong>
+            </div>
+          ))}
+        </div>
+
+        <ul
+          aria-label="Visible active squad slots"
+          className="compact-list compact-list--cards"
+        >
+          {slots.map((slot) => (
+            <li key={slot.slot}>
+              <span className="compact-list__detail">
+                <span>{slot.slot}</span>
+                <small>{slot.group}</small>
+              </span>
+              <strong>
+                {slot.card === null
+                  ? 'Empty'
+                  : `${formatValue(slot.card.overall)} · ${formatValue(slot.card.position)}`}
+              </strong>
+            </li>
+          ))}
+        </ul>
+
+        <p className="helper-text">
+          This screen does not expose player names as visible text. FUT Copilot
+          keeps them unknown instead of matching by image or hidden data.
+        </p>
+
+        <footer className="observation-meta">
+          <span>{confidence}% extraction confidence</span>
+          <span>{snapshot.event.adapterVersion}</span>
+        </footer>
+      </article>
+    );
+  }
+
   if (
     snapshot.event.type !== 'card.selected' ||
     snapshot.event.payload.card === null
@@ -354,7 +430,7 @@ function ReadyObservation({ snapshot }: { snapshot: AdapterSnapshot }) {
       <StateNotice
         eyebrow="Adapter warning"
         title="Observation mismatch"
-        detail="The stored event did not contain a selected card. Observe again."
+        detail="The stored event did not contain a supported visible context. Observe again."
       />
     );
   }
@@ -407,8 +483,8 @@ function ObservationContent({ state }: { state: PanelState }) {
     return (
       <StateNotice
         eyebrow="Reading visible UI"
-        title="Observing selected card…"
-        detail="Only normalized card fields cross the adapter boundary."
+        title="Observing visible context…"
+        detail="Only normalized visible fields cross the adapter boundary."
       />
     );
   }
@@ -417,7 +493,7 @@ function ObservationContent({ state }: { state: PanelState }) {
       <StateNotice
         eyebrow="Waiting for EA"
         title="No Web App observation yet"
-        detail="Open the EA Web App, visit My Club Players, and select a card."
+        detail="Open the EA Web App on Active Squad or select a card in My Club Players."
       />
     );
   }
@@ -1563,7 +1639,7 @@ function SettingsWorkspace({ snapshot }: { snapshot: AdapterSnapshot | null }) {
             <p className="card-eyebrow">Adapter compatibility</p>
             <h3>{adapterStatus}</h3>
           </div>
-          <span className="identity-pill">fc26-web-v0.1.0</span>
+          <span className="identity-pill">{ADAPTER_VERSION}</span>
         </div>
         <div className="facts">
           <div className="fact-row">
@@ -1575,12 +1651,12 @@ function SettingsWorkspace({ snapshot }: { snapshot: AdapterSnapshot | null }) {
             <strong>{diagnostics.lastKnownWebAppBuild ?? 'Not exposed'}</strong>
           </div>
           <div className="fact-row">
-            <span>Live-supported screen</span>
-            <strong>English Club selected card</strong>
+            <span>Live-supported screens</span>
+            <strong>English Club card + active squad</strong>
           </div>
           <div className="fact-row">
-            <span>Workflow fixtures</span>
-            <strong>6 synthetic contexts</strong>
+            <span>Synthetic-only contexts</span>
+            <strong>5 workflow contexts</strong>
           </div>
           <div className="fact-row">
             <span>Last successful observation</span>
@@ -1780,7 +1856,7 @@ function ProfileSettingsForm({
 }
 
 export function App() {
-  const { state, observeSelectedCard } = useAdapterPanelState();
+  const { state, observeVisibleContext } = useAdapterPanelState();
   const snapshot = state.kind === 'snapshot' ? state.snapshot : null;
   const workspace = useCardWorkspace(snapshot);
   const [activeView, setActiveView] = useState<
@@ -1793,8 +1869,8 @@ export function App() {
         <p className="eyebrow">Personal FUT workspace</p>
         <h1>FUT Copilot</h1>
         <p className="hero__summary">
-          Understand the selected card, keep your rules local, and make every
-          game action yourself.
+          Understand the visible FUT context, keep your rules local, and make
+          every game action yourself.
         </p>
       </header>
 
@@ -1867,10 +1943,10 @@ export function App() {
 
         <button
           className="observe-button"
-          onClick={observeSelectedCard}
+          onClick={observeVisibleContext}
           type="button"
         >
-          Observe selected card
+          Observe visible context
         </button>
       </section>
 

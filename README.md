@@ -13,7 +13,7 @@ The 0.1.0 MVP preview provides:
 - Runtime-validated models for cards, ownership, preferences, duplicates, SBCs, market observations, recommendations, and adapter events.
 - A versioned local IndexedDB database with schema migration plus validated JSON backup and restore.
 - A deterministic fixture harness for developing EA Web App observation without depending on a live account.
-- A versioned FC 26 adapter that recognizes the English My Club Players screen and extracts the active visible card.
+- A versioned FC 26 adapter that recognizes the English My Club Players and Active Squad screens, extracting a selected card or the ordered 11/7/5 squad groups.
 - A typed content-script/background/side-panel message flow with explicit loading, empty, ready, unsupported, and degraded states.
 - Persistent personal tags, notes, protection rules, and identity-safe local card context.
 - A public FUT.GG exact-or-search link that opens only after a user click.
@@ -21,7 +21,7 @@ The 0.1.0 MVP preview provides:
 - Full local duplicate destination/resolution logging, rating-only SBC planning with visible-card protection scans, a manual market calculator, transaction journal, selling guard, settings, and compatibility workspaces.
 - Automated permission, fixture-redaction, formatting, lint, type, test, and production-build checks.
 
-The selected-card Club slice has been smoke-tested against the live English FC 26 Web App. Active-squad, pack, pick, duplicate, SBC, and market context contracts have deterministic synthetic coverage; their live page adapters are still release gates and are reported as unsupported instead of guessed. See [`docs/release/known-limitations.md`](docs/release/known-limitations.md).
+The selected-card Club and Active Squad slices have been validated against the live English FC 26 Web App. Pack, pick, duplicate, SBC, and market context contracts have deterministic synthetic coverage; their live page adapters are still release gates and are reported as unsupported instead of guessed. See [`docs/release/known-limitations.md`](docs/release/known-limitations.md).
 
 ## Goals
 
