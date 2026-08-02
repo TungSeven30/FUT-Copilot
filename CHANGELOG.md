@@ -51,6 +51,8 @@
 
 ### Fixed
 
+- GitHub verification now uses the current Node 24-based checkout, pnpm setup,
+  and Node setup action majors instead of deprecated Node 20 action runtimes.
 - Market journal summaries now keep the newest target and listing from newest-first history.
 - Rating-only SBC calculations now round the correction-adjusted total before
   dividing by squad size, fixing valid top-heavy combinations at rating
