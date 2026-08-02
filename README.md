@@ -20,6 +20,7 @@ The 0.1.0 MVP preview provides:
 - Explainable keep, sell, and SBC recommendations driven by editable favorite-player, favorite-club, Evolution, meta, market, and SBC weights, with protection overrides.
 - Full local duplicate destination/resolution logging, rating-only SBC planning with visible-card protection scans, a manual market calculator, transaction journal, selling guard, settings, and compatibility workspaces.
 - Automated permission, fixture-redaction, formatting, lint, type, test, and production-build checks.
+- A GitHub Actions gate that runs the same `pnpm verify` pipeline on pull requests and project branches.
 
 The selected-card Club and Active Squad slices have been validated against the live English FC 26 Web App. Pack, pick, duplicate, SBC, and market context contracts have deterministic synthetic coverage; their live page adapters are still release gates and are reported as unsupported instead of guessed. See [`docs/release/known-limitations.md`](docs/release/known-limitations.md).
 
