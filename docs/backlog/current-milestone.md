@@ -19,6 +19,11 @@
 - [x] Fail-closed visible-SBC protection scan against resolved local identities.
 - [x] Selected-card concept, loan, Evolution-rarity, incomplete, and ambiguity regressions.
 - [x] Export/import regression with one validated record in every schema-v2 table.
+- [x] Corrected SBC rating boundaries with integer-reference matrix coverage.
+- [x] Fail-closed SBC label parser for constrained or unknown requirements.
+- [x] Interactive side-panel shell and isolated Shadow-DOM badge regressions.
+- [x] Tag, note, and protection persistence across a database close/reopen.
+- [x] Duplicate identity provenance and bounded cross-runtime event deduplication.
 
 ## Active release gates
 

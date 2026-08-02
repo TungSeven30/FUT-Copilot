@@ -128,9 +128,20 @@ describe('workspace storage services', () => {
     expect(await getDuplicateQueueRows(database)).toMatchObject([
       {
         cardName: 'Workspace Example',
+        identityProvenance: 'local-inference',
         protected: false,
         protectingTagNames: [],
       },
+    ]);
+
+    await database.cardDefinitions.update(context.cardDefinition.id, {
+      resourceId: {
+        ...known('synthetic-visible-resource-id'),
+        source: 'ea-visible-ui',
+      },
+    });
+    expect(await getDuplicateQueueRows(database)).toMatchObject([
+      { identityProvenance: 'ea-confirmed' },
     ]);
 
     const protectingTag = (await database.personalTags.toArray()).find(

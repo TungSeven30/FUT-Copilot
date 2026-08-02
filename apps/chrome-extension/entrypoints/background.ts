@@ -9,6 +9,7 @@ import {
 } from '@fut-copilot/domain/messages';
 import { FutCopilotDatabase } from '@fut-copilot/storage/database';
 import { createDuplicateCaseFromEvent } from '@fut-copilot/storage/duplicates';
+import { persistNormalizedAdapterEvent } from '@fut-copilot/storage/observations';
 import { ensureSelectedCardContext } from '@fut-copilot/storage/personalization';
 import { browser } from 'wxt/browser';
 
@@ -33,11 +34,12 @@ async function broadcastSnapshot(snapshot: AdapterSnapshot): Promise<void> {
 
 async function persistAdapterEvent(
   event: Parameters<typeof createAdapterSnapshot>[0],
-): Promise<void> {
-  await database.observations.put(event);
-  if (event.type === 'duplicate.detected') {
-    await createDuplicateCaseFromEvent(database, event);
+): Promise<Parameters<typeof createAdapterSnapshot>[0]> {
+  const persisted = await persistNormalizedAdapterEvent(database, event);
+  if (persisted.event.type === 'duplicate.detected') {
+    await createDuplicateCaseFromEvent(database, persisted.event);
   }
+  return persisted.event;
 }
 
 async function requestObservationFromActiveTab() {
@@ -69,8 +71,7 @@ export default defineBackground(() => {
   browser.runtime.onMessage.addListener((message: unknown) => {
     const eventMessage = adapterEventMessageSchema.safeParse(message);
     if (eventMessage.success) {
-      const snapshot = createAdapterSnapshot(eventMessage.data.event);
-      if (snapshot === null) {
+      if (createAdapterSnapshot(eventMessage.data.event) === null) {
         return Promise.resolve({
           kind: 'adapter.ack' as const,
           accepted: false,
@@ -78,10 +79,17 @@ export default defineBackground(() => {
         });
       }
 
-      return persistAdapterEvent(eventMessage.data.event)
-        .then(() => storeSnapshot(snapshot))
-        .then(() => broadcastSnapshot(snapshot))
-        .then(() => ({ kind: 'adapter.ack' as const, accepted: true }));
+      return persistAdapterEvent(eventMessage.data.event).then(
+        async (event) => {
+          const snapshot = createAdapterSnapshot(event);
+          if (snapshot === null) {
+            throw new Error('Persisted adapter event became unsupported.');
+          }
+          await storeSnapshot(snapshot);
+          await broadcastSnapshot(snapshot);
+          return { kind: 'adapter.ack' as const, accepted: true };
+        },
+      );
     }
 
     if (adapterSnapshotGetMessageSchema.safeParse(message).success) {

@@ -23,6 +23,10 @@
 
 - The planner supports rating-only squads. Chemistry and complex rarity,
   league, club, or nation constraints are flagged as unsupported.
+- The correction-factor rating model is based on current public community
+  documentation because EA does not publish an exact formula. It has broad
+  integer-reference tests but remains provisional until live SBC confirmation;
+  see the [SBC rating model](../research/sbc-rating-model.md).
 - A visible SBC card blocks local proposal validity when its local identity is
   unresolved or any matching owned copy is protected. This check depends on
   cards already known to FUT Copilot and is not a full-club ownership sync.

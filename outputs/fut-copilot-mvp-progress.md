@@ -17,9 +17,14 @@ Current milestone: local MVP workspaces complete; live workflow adapter gates re
 - Typed Chrome messaging and loading, empty, ready, unsupported, and degraded panel states.
 - Local PlayStation profile, seven tags, protection rules, notes, and non-collapsing identity resolution.
 - User-clicked FUT.GG exact-or-search links with no API, scraping, or background request.
-- Keep, sell, and SBC recommendation models with reasons, confidence, uncertainty, and protection override.
-- Duplicate case creation/triage and a non-interactive on-page protection badge.
-- Rating-only SBC planner with duplicate cleanup, club preservation, and low-cost strategies.
+- Keep, sell, and SBC recommendation models with editable weights, reasons,
+  confidence, uncertainty, and protection override.
+- Duplicate case creation/triage with identity provenance and bounded
+  cross-runtime observation deduplication.
+- A tested, non-interactive Shadow-DOM protection badge with explicit cleanup.
+- Rating-only SBC planner with corrected correction-factor rounding, broad
+  integer-reference coverage, duplicate cleanup, club preservation, and
+  low-cost strategies.
 - Manual market price/cost input, tax calculation, break-even, P/L, transaction journal, and selling guard.
 - Settings/compatibility summary and installation, backup, rollback, privacy, limitations, and smoke-test documentation.
 
@@ -51,8 +56,9 @@ proof of EA DOM compatibility.
 
 ## Remaining release gates
 
-1. Restore a stable Chrome-control connection to the signed-in EA tab.
-2. Let the user create or navigate to each pending visible state manually.
+1. The owner acknowledges EA's authentication-expired prompt and signs in
+   manually; FUT Copilot never handles authentication.
+2. Let the owner create or navigate to each pending visible state manually.
 3. Record only sanitized structural evidence, implement one extractor slice at a time, and add compatibility notes.
 4. Run every item in `docs/release/manual-smoke-checklist.md`.
 5. Mark the draft PR ready only after all required gates pass or are explicitly waived by the owner.

@@ -110,6 +110,40 @@ describe('personalized selected-card storage', () => {
     expect(await database.cardDefinitions.count()).toBe(1);
   });
 
+  it('restores personalization after the local database is closed and reopened', async () => {
+    const databaseName = `fut-copilot-restart-${crypto.randomUUID()}`;
+    const firstSession = new FutCopilotDatabase(databaseName);
+    const firstContext = await ensureSelectedCardContext(
+      firstSession,
+      visibleCard(),
+      { now: () => new Date(observedAt) },
+    );
+    const favoriteTag = firstContext.tags.find(
+      (tag) => tag.name === 'favorite',
+    );
+    if (firstContext.ownedCard === null || favoriteTag === undefined) {
+      throw new Error('Expected a persisted owned-card context.');
+    }
+    await updateOwnedCardPersonalization(firstSession, {
+      ownedCardId: firstContext.ownedCard.id,
+      personalTagIds: [favoriteTag.id],
+      notes: 'Persists across extension restarts.',
+    });
+    firstSession.close();
+
+    const reopened = new FutCopilotDatabase(databaseName);
+    databases.push(reopened);
+    const restored = await ensureSelectedCardContext(reopened, visibleCard(), {
+      now: () => new Date('2026-08-01T16:00:00.000Z'),
+    });
+
+    expect(restored.ownedCard).toMatchObject({
+      protected: true,
+      personalTagIds: [favoriteTag.id],
+      notes: 'Persists across extension restarts.',
+    });
+  });
+
   it('returns ambiguity instead of choosing between duplicate definitions', async () => {
     const database = createDatabase();
     const baseContext = await ensureSelectedCardContext(

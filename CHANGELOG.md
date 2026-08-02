@@ -35,6 +35,19 @@
 ### Fixed
 
 - Market journal summaries now keep the newest target and listing from newest-first history.
+- Rating-only SBC calculations now round the correction-adjusted total before
+  dividing by squad size, fixing valid top-heavy combinations at rating
+  boundaries.
+- SBC requirement parsing now accepts only complete known rating/player-count
+  labels, preventing constrained-player or unknown requirements from being
+  silently reinterpreted or ignored.
+- The on-page protection badge is isolated behind a tested Shadow-DOM module
+  with idempotent updates, pointer-event isolation, and explicit cleanup.
+- Duplicate triage rows now distinguish EA-visible stable identity from local
+  composite inference or unresolved identity.
+- Normalized observations now deduplicate at the IndexedDB boundary across
+  extension restarts, updating timestamps while preserving real state changes
+  and duplicate-case idempotency.
 
 ### Known limitations
 

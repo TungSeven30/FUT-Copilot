@@ -82,6 +82,21 @@ function plannerCard(
   };
 }
 
+function referenceSquadRating(ratings: number[]): number {
+  if (ratings.length === 0) return 0;
+  const playerCount = ratings.length;
+  const sum = ratings.reduce((total, rating) => total + rating, 0);
+  const excessNumerator = ratings.reduce(
+    (total, rating) => total + Math.max(0, rating * playerCount - sum),
+    0,
+  );
+  const correctedNumerator = sum * playerCount + excessNumerator;
+  const roundedCorrectedTotal = Math.floor(
+    (2 * correctedNumerator + playerCount) / (2 * playerCount),
+  );
+  return Math.floor(roundedCorrectedTotal / playerCount);
+}
+
 describe('rating-only SBC planner', () => {
   it('parses supported visible labels and rejects complex requirements', () => {
     expect(
@@ -101,6 +116,44 @@ describe('rating-only SBC planner', () => {
         'Team Chemistry: Min. 20',
       ]).supported,
     ).toBe(false);
+    expect(
+      parseRatingOnlyRequirements([
+        'Number of Players in the Squad: 11',
+        'Squad Rating: Min. 84',
+      ]),
+    ).toMatchObject({
+      supported: true,
+      requiredPlayers: 11,
+      requiredRating: 84,
+    });
+  });
+
+  it('never mistakes constrained-player or unknown labels for squad size', () => {
+    const rarePlayers = parseRatingOnlyRequirements([
+      'Players: 11',
+      'Team Overall Rating: Min. 84',
+      'Rare Players: Min. 2',
+    ]);
+    expect(rarePlayers).toMatchObject({
+      supported: false,
+      requiredPlayers: 11,
+      requiredRating: 84,
+      unsupportedLabels: ['Rare Players: Min. 2'],
+    });
+
+    const totwOnly = parseRatingOnlyRequirements([
+      'TOTW Players: Min. 1',
+      'Unrecognized special constraint',
+    ]);
+    expect(totwOnly).toMatchObject({
+      supported: false,
+      requiredPlayers: null,
+      requiredRating: null,
+      unsupportedLabels: [
+        'TOTW Players: Min. 1',
+        'Unrecognized special constraint',
+      ],
+    });
   });
 
   it('calculates uniform and mixed squad rating boundaries', () => {
@@ -111,6 +164,24 @@ describe('rating-only SBC planner', () => {
     expect(
       calculateSquadRating([86, 86, 86, 86, 86, 84, 84, 84, 84, 84, 84]),
     ).toBe(85);
+    expect(calculateSquadRating([91, 91, ...Array(9).fill(88)])).toBe(89);
+    expect(calculateSquadRating([90, 90, ...Array(9).fill(87)])).toBe(88);
+  });
+
+  it('matches an integer reference across the full practical rating range', () => {
+    for (let lower = 40; lower <= 99; lower += 1) {
+      for (let higher = lower; higher <= 99; higher += 1) {
+        for (let higherCount = 0; higherCount <= 11; higherCount += 1) {
+          const ratings = [
+            ...Array(higherCount).fill(higher),
+            ...Array(11 - higherCount).fill(lower),
+          ] as number[];
+          expect(calculateSquadRating(ratings)).toBe(
+            referenceSquadRating(ratings),
+          );
+        }
+      }
+    }
   });
 
   it('excludes protected cards even when they are needed for rating', () => {

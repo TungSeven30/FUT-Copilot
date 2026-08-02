@@ -6,6 +6,7 @@ import {
   resolveDuplicateCase,
   updateDuplicateCaseState,
 } from './duplicates';
+import { persistNormalizedAdapterEvent } from './observations';
 
 const databases: FutCopilotDatabase[] = [];
 const observedAt = '2026-08-01T15:00:00.000Z';
@@ -75,6 +76,41 @@ describe('duplicate triage storage', () => {
     expect(first.status).toBe('created');
     expect(repeated.status).toBe('existing');
     expect(await database.duplicateCases.count()).toBe(1);
+  });
+
+  it('remains idempotent when the extension runtime emits a new event ID', async () => {
+    const database = createDatabase();
+    const firstEvent = (
+      await persistNormalizedAdapterEvent(database, duplicateEvent)
+    ).event;
+    if (firstEvent.type !== 'duplicate.detected') {
+      throw new Error('Expected a persisted duplicate event.');
+    }
+    const first = await createDuplicateCaseFromEvent(database, firstEvent, {
+      now: () => new Date(observedAt),
+    });
+    const repeatedInput: typeof duplicateEvent = {
+      ...duplicateEvent,
+      eventId: '86466f5d-4fdc-44e9-a151-42864019b657',
+      occurredAt: '2026-08-01T15:01:00.000Z',
+    };
+    const repeatedEvent = (
+      await persistNormalizedAdapterEvent(database, repeatedInput)
+    ).event;
+    if (repeatedEvent.type !== 'duplicate.detected') {
+      throw new Error('Expected a persisted duplicate event.');
+    }
+    const repeated = await createDuplicateCaseFromEvent(
+      database,
+      repeatedEvent,
+      { now: () => new Date('2026-08-01T15:01:00.000Z') },
+    );
+
+    expect(first.status).toBe('created');
+    expect(repeated.status).toBe('existing');
+    expect(repeatedEvent.eventId).toBe(duplicateEvent.eventId);
+    expect(await database.duplicateCases.count()).toBe(1);
+    expect(await database.observations.count()).toBe(1);
   });
 
   it('stores an explicit user-confirmed resolution', async () => {

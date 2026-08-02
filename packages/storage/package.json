@@ -8,6 +8,7 @@
     "./database": "./src/database.ts",
     "./duplicates": "./src/duplicates.ts",
     "./market-journal": "./src/market-journal.ts",
+    "./observations": "./src/observations.ts",
     "./personalization": "./src/personalization.ts",
     "./workspaces": "./src/workspaces.ts"
   },

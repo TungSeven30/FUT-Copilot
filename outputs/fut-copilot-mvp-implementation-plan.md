@@ -7,10 +7,14 @@ Implementation style: local-first, assistive, testable, and AI-agent-friendly
 
 ## Implementation status — August 1, 2026
 
-- FCP-001–010, FCP-012–017, FCP-019–021, FCP-023–030, and the automated portions of FCP-031–032 are implemented in the workspace.
+- FCP-001–007, FCP-009–010, FCP-012–017, FCP-020–021, FCP-023–030,
+  and the automated portions of FCP-031–032 are implemented in the workspace.
+- FCP-019 has idempotent normalized-event persistence and local triage coverage,
+  but its live duplicate-state observation remains gated by FCP-008.
 - The production Chrome MV3 build is generated at `apps/chrome-extension/.output/chrome-mv3/`.
 - The English FC 26 Club selected-card slice is live-tested; automated verification covers formatting, linting, TypeScript, tests, eight synthetic fixture categories, the production build, and generated runtime/permission safety checks.
-- FCP-011, FCP-018, and FCP-022 still require user-assisted live EA observations before selectors may be implemented.
+- FCP-008, FCP-011, FCP-018, and FCP-022 still require user-assisted live EA
+  observations before selectors may be implemented.
 - FCP-031–032 remain open until the pending live contexts and full manual smoke checklist pass.
 
 ## 1. MVP outcome

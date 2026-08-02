@@ -11,10 +11,10 @@ HTML, cookie, token, header, or authenticated response.
 - Prettier and ESLint passed.
 - TypeScript passed for domain, EA adapter, recommendation engine, storage, and
   Chrome extension workspaces.
-- Vitest passed: **19 files, 68 tests**.
+- Vitest passed: **22 files, 81 tests**.
 - Fixture redaction passed for **8 synthetic fixture files**.
 - The Chrome MV3 production build completed at
-  `apps/chrome-extension/.output/chrome-mv3/`.
+  `apps/chrome-extension/.output/chrome-mv3/` (**694.92 kB** total).
 - The generated manifest declared exactly `storage` and `sidePanel` permissions.
 - The production artifact contained no programmatic background/content route
   activation, runtime network path, or dynamic-code escape rejected by the
@@ -32,6 +32,17 @@ Focused regression evidence includes:
   active-card anchors are handled conservatively.
 - A populated schema-v2 backup round-trips one validated record from each of all
   twelve persisted tables.
+- The SBC rating implementation matches an independent integer reference across
+  every two-rating, eleven-player combination from 40 through 99, including
+  public FC 26 boundary examples.
+- Client-rendered side-panel tests exercise the disconnected state, all five
+  workspace tabs, and fail-closed observation errors.
+- Shadow-DOM badge tests prove one non-interactive status, idempotent updates,
+  and cleanup when the owning context disappears.
+- Persistence-level event signatures ignore generated IDs/timestamps, update a
+  repeated observation inside a five-minute stability window after a runtime
+  restart, preserve later occurrences, and keep duplicate case creation
+  idempotent.
 
 ## Owner-assisted live evidence
 

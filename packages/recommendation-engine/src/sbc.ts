@@ -36,8 +36,10 @@ export type ParsedRatingOnlyRequirements = {
   unsupportedLabels: string[];
 };
 
-const PLAYER_COUNT_PATTERN = /\bplayers?\s*:?\s*(?:min\.?\s*)?(\d+)\b/i;
-const RATING_PATTERN = /(?:team\s+overall\s+rating|squad\s+rating)[^\d]*(\d+)/i;
+const PLAYER_COUNT_PATTERN =
+  /^(?:number\s+of\s+)?players?(?:\s+in\s+(?:the\s+)?squad)?\s*:?\s*(?:min\.?\s*)?(\d+)$/i;
+const RATING_PATTERN =
+  /^(?:team\s+overall\s+rating|squad\s+rating)\s*:?\s*(?:min\.?\s*)?(\d+)$/i;
 
 export function parseRatingOnlyRequirements(
   labels: string[],
@@ -53,7 +55,7 @@ export function parseRatingOnlyRequirements(
       requiredPlayers = Number.parseInt(playerMatch[1], 10);
     } else if (ratingMatch?.[1] !== undefined) {
       requiredRating = Number.parseInt(ratingMatch[1], 10);
-    } else if (/chemistry|league|nation|club|rarity|quality/i.test(label)) {
+    } else {
       unsupportedLabels.push(label);
     }
   }
@@ -77,7 +79,8 @@ export function calculateSquadRating(ratings: number[]): number {
     (total, rating) => total + Math.max(0, rating - average),
     0,
   );
-  return Math.floor((sum + correction) / ratings.length);
+  const correctedTotal = Math.round(sum + correction);
+  return Math.floor(correctedTotal / ratings.length);
 }
 
 function isProtected(card: SbcPlannerCard): boolean {

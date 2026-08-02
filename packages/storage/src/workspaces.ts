@@ -28,6 +28,7 @@ import { visibleCardIdentityFacts } from './personalization';
 export type DuplicateQueueRow = {
   duplicateCase: DuplicateCase;
   cardName: string;
+  identityProvenance: 'ea-confirmed' | 'local-inference' | 'unresolved';
   protected: boolean;
   protectingTagNames: string[];
 };
@@ -62,11 +63,8 @@ export async function getDuplicateQueueRows(
     database.ownedCards.toArray(),
     database.personalTags.toArray(),
   ]);
-  const names = new Map(
-    definitions.map((definition) => [
-      definition.id,
-      definition.name.value ?? 'Unknown card',
-    ]),
+  const definitionsById = new Map(
+    definitions.map((definition) => [definition.id, definition]),
   );
   const ownedById = new Map(
     ownedCards.map((ownedCard) => [ownedCard.id, ownedCard]),
@@ -77,6 +75,7 @@ export async function getDuplicateQueueRows(
     .map((duplicateCase) => duplicateCaseSchema.parse(duplicateCase))
     .sort((left, right) => right.updatedAt.localeCompare(left.updatedAt))
     .map((duplicateCase) => {
+      const definition = definitionsById.get(duplicateCase.cardDefinitionId);
       const caseOwnedCards = [
         duplicateCase.existingOwnedCardId,
         duplicateCase.duplicateOwnedCardId,
@@ -97,7 +96,16 @@ export async function getDuplicateQueueRows(
       ];
       return {
         duplicateCase,
-        cardName: names.get(duplicateCase.cardDefinitionId) ?? 'Unknown card',
+        cardName: definition?.name.value ?? 'Unknown card',
+        identityProvenance:
+          definition === undefined
+            ? 'unresolved'
+            : (definition.resourceId.value !== null &&
+                  definition.resourceId.source === 'ea-visible-ui') ||
+                (definition.assetId.value !== null &&
+                  definition.assetId.source === 'ea-visible-ui')
+              ? 'ea-confirmed'
+              : 'local-inference',
         protected:
           caseOwnedCards.some((ownedCard) => ownedCard.protected) ||
           protectingTagNames.length > 0,

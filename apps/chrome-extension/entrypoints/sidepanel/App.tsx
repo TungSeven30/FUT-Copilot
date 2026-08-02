@@ -1094,6 +1094,10 @@ function DuplicatesWorkspace({
               <strong>{row.duplicateCase.tradeability}</strong>
             </div>
             <div className="fact-row">
+              <span>Identity</span>
+              <strong>{row.identityProvenance.replaceAll('-', ' ')}</strong>
+            </div>
+            <div className="fact-row">
               <span>Detected</span>
               <strong>
                 {new Date(row.duplicateCase.detectedAt).toLocaleDateString()}
