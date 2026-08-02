@@ -45,9 +45,12 @@
 
 ## Active release gates
 
-- [ ] Live-observe pack result and player-pick layouts without opening a pack or
-      making a pick on the user's behalf.
-- [ ] Live-observe duplicate state and prove idempotent local case creation.
+- [ ] Owner-confirm the exact rebuilt pack summary and idempotent duplicate
+      queue without moving or resolving any item.
+- [ ] Live-observe the player-pick layout without opening or selecting an option
+      on the user's behalf.
+- [ ] Live-observe one owner-populated SBC slot without placing, clearing,
+      exchanging, or submitting any card on the user's behalf.
 - [ ] Run the complete manual smoke checklist on the supported EA build.
 
 ## Acceptance target
@@ -62,7 +65,8 @@ then validated the active-squad 11 + manager / 7 / 5 slot shape and the narrow
 visible card fields, plus an empty SBC challenge with matching requirement
 lists and an 11 + 12 slot shape. No player name, club identity, balance,
 credential, authenticated response, or raw HTML was retained. The next
-On 2026-08-02 the owner opened a pack manually and stopped on its populated
+owner-assisted observation occurred on 2026-08-02, when the owner opened a pack
+manually and stopped on its populated
 Unassigned result. Sanitized read-only observation validated the ordered Items
 and Duplicates section contract without retaining any player or account value.
 Exact-build side-panel confirmation and the naturally reached player-pick state
