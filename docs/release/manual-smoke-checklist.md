@@ -54,7 +54,9 @@ or raw page HTML into this file.
 - [ ] Pack result preserves visible card order.
 - [ ] Player pick preserves option order and never selects.
 - [ ] Visible duplicate creates one idempotent local case.
-- [ ] Visible SBC requirements label unsupported constraints.
+- [x] Visible SBC requirements label unsupported constraints. The owner
+      confirmed the reloaded production panel matched the challenge name, both
+      ordered requirement labels, and zero loaded player cards on 2026-08-02.
 - [x] Visible Transfer List context reads one selected card and scoped coin
       values without performing a market action. Owner-assisted read-only
       observation confirmed the live structure on 2026-08-01; no listing or

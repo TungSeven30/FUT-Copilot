@@ -88,7 +88,9 @@ Focused regression evidence includes:
   visible requirement lists.
 - Result: sanitized read-only structural observation matched the extractor
   contract without using Squad Builder, placing cards, clearing, submitting,
-  exchanging, or claiming.
+  exchanging, or claiming. On 2026-08-02, the owner confirmed the reloaded
+  production side panel matched the challenge name, both ordered requirement
+  labels, and zero loaded player cards.
 - Compatibility record: `docs/compatibility/2026-08-01-fc26-sbc-requirements.md`.
 - Supported screen: **Transfer Market Search Results**, with one selected
   visible result and detailed card.

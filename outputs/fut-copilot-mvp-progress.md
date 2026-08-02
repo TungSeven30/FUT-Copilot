@@ -57,7 +57,7 @@ Generated unpacked extension:
 | Pack result | Yes | No | User-created visible state required |
 | Player pick | Yes | No | User-created visible state required |
 | Duplicate | Yes | No | User-created visible state required |
-| Empty SBC requirements | Yes | Yes | Live validated; exact-build panel confirmation pending |
+| Empty SBC requirements | Yes | Yes | Live + exact-build panel validated |
 | Populated SBC cards | Yes | No | User-created visible state required |
 | Transfer List detail | Yes | Yes | Live validated |
 | Transfer Market search results | Yes | Yes | Live + exact-build panel validated |
@@ -67,14 +67,12 @@ proof of EA DOM compatibility.
 
 ## Remaining release gates
 
-1. Confirm the exact production side panel displays the live empty-SBC heading
-   and both requirement labels.
-2. Let the owner naturally create each pending pack-result, player-pick, and
+1. Let the owner naturally create each pending pack-result, player-pick, and
    duplicate visible state manually.
-3. Record only sanitized structural evidence, implement one extractor slice at
+2. Record only sanitized structural evidence, implement one extractor slice at
    a time, and add compatibility notes.
-4. Run every item in `docs/release/manual-smoke-checklist.md`.
-5. Mark the draft PR ready only after all required gates pass or are explicitly
+3. Run every item in `docs/release/manual-smoke-checklist.md`.
+4. Mark the draft PR ready only after all required gates pass or are explicitly
    waived by the owner.
 
 ## Safety boundary retained
