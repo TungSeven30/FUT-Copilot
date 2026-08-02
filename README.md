@@ -13,7 +13,7 @@ The 0.1.0 MVP preview provides:
 - Runtime-validated models for cards, ownership, preferences, duplicates, SBCs, market observations, recommendations, and adapter events.
 - A versioned local IndexedDB database with schema migration plus validated JSON backup and restore.
 - A deterministic fixture harness for developing EA Web App observation without depending on a live account.
-- A versioned FC 26 adapter that recognizes the English My Club Players, Active Squad, Unassigned player pack result, Transfer List, Transfer Market Search Results, and empty SBC challenge screens, extracting a selected card, ordered 11/7/5 squad groups, ordered pack/duplicate rows, read-only market detail, or mirrored visible requirement labels.
+- A versioned FC 26 adapter that recognizes the English My Club Players, Active Squad, Unassigned player pack result, Transfer List, Transfer Market Search Results, and empty or populated SBC challenge screens, extracting a selected card, ordered 11/7/5 squad groups, ordered pack/duplicate rows, read-only market detail, mirrored visible requirement labels, or compact SBC-card facts.
 - A typed content-script/background/side-panel message flow with explicit loading, empty, ready, unsupported, and degraded states.
 - Persistent personal tags, notes, protection rules, and identity-safe local card context.
 - A public FUT.GG exact-or-search link that opens only after a user click.
@@ -22,7 +22,7 @@ The 0.1.0 MVP preview provides:
 - Automated permission, fixture-redaction, formatting, lint, type, test, and production-build checks.
 - A GitHub Actions gate that runs the same `pnpm verify` pipeline on pull requests and the main branch.
 
-The selected-card Club, Active Squad, Unassigned player pack result with duplicates, Transfer List, Transfer Market Search Results, and empty SBC-requirements slices have been validated against the live English FC 26 Web App. Player-pick, non-player pack-item, and populated SBC-card contracts remain release gates and are reported as unsupported instead of guessed. See [`docs/release/known-limitations.md`](docs/release/known-limitations.md).
+The selected-card Club, Active Squad, Unassigned player pack result with duplicates, Transfer List, Transfer Market Search Results, and empty plus one-card populated SBC slices have been validated against the live English FC 26 Web App. Player-pick and non-player pack-item contracts remain unsupported instead of guessed. See [`docs/release/known-limitations.md`](docs/release/known-limitations.md).
 
 ## Goals
 
@@ -195,8 +195,8 @@ The latest reproducible automated and owner-assisted evidence is recorded in
 - [x] Rating-oriented SBC proposal workflow and synthetic event contract
 - [x] Manual market journal and calculator
 - [x] Local-first recommendation engine
-- [x] Live active-squad, player pack-result/duplicate, empty SBC-requirements, Transfer List, and Transfer Market extractors
-- [ ] Live player-pick and populated SBC-card extractors
+- [x] Live active-squad, player pack-result/duplicate, empty/populated SBC, Transfer List, and Transfer Market extractors
+- [ ] Live player-pick extractor
 - [ ] Full manual regression matrix on a supported EA Web App build
 - [ ] iPhone companion exploration after the Chrome MVP
 

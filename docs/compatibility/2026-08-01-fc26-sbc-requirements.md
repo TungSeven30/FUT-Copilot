@@ -46,9 +46,8 @@ The adapter degrades instead of emitting SBC context when:
 - the two requirement checklists are absent, empty, or disagree;
 - the pitch/work-area slot shape is not exactly 11 + 12;
 - an empty slot lacks the observed player shell; or
-- any SBC player card is loaded.
+- the detail route unexpectedly contains a loaded SBC card.
 
-Populated SBC cards remain unsupported until a separate user-assisted
-observation validates their visible card shape and ordering. This deliberately
-prevents the active-squad card contract from being guessed onto a different
-workflow.
+The separately observed populated builder layout is documented in
+[`2026-08-02-fc26-sbc-populated-card.md`](2026-08-02-fc26-sbc-populated-card.md).
+The two layouts retain distinct heading and requirement-list contracts.

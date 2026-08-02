@@ -60,6 +60,12 @@ or raw page HTML into this file.
 - [x] Visible SBC requirements label unsupported constraints. The owner
       confirmed the reloaded production panel matched the challenge name, both
       ordered requirement labels, and zero loaded player cards on 2026-08-02.
+- [x] One owner-populated SBC slot exposes compact rating/position facts while
+      its unproven identity stays unknown. Sanitized read-only observation on
+      2026-08-02 retained no player or account value and performed no SBC
+      action. The owner then confirmed the rebuilt panel matched the one loaded
+      card, unknown-name boundary, visible rating/position, ordered
+      requirements, and adapter `fc26-web-v0.7.0`.
 - [x] Visible Transfer List context reads one selected card and scoped coin
       values without performing a market action. Owner-assisted read-only
       observation confirmed the live structure on 2026-08-01; no listing or

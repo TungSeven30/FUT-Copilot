@@ -5,19 +5,22 @@
 - Live-validated: English FC 26 Web App, **My Club Players**, one visible
   selected card; and **Active Squad**, with 11 starting player slots, 7
   substitutes, and 5 reserves; and **Transfer List**, with one selected detailed
-  card and scoped displayed coin values; and an **empty SBC challenge**, with
-  mirrored visible requirements, 11 pitch slots, and 12 work-area slots; and
+  card and scoped displayed coin values; and **empty and populated SBC
+  challenge layouts**, with visible requirements, 11 pitch slots, 12 work-area
+  slots, and compact loaded-card rating/position facts; and
   **Transfer Market Search Results**, with one selected detailed card and
   labeled start/Buy Now values; and **Unassigned**, with ordered player Items
   and Duplicates sections.
-- Synthetic-only adapter contracts: player pick and populated SBC-card
-  contexts. Non-player pack items have not been live-observed and cause the
-  player-only pack adapter to fail closed.
+- Synthetic-only adapter contract: player pick. Non-player pack items have not
+  been live-observed and cause the player-only pack adapter to fail closed.
 - Visible pack duplicates create idempotent local triage cases. The adapter does
   not infer tradeability for every pack row from the selected row actions.
 - Small Active Squad cards do not expose player names as accessible visible
   text. Squad observations therefore preserve slot, rating, position, and
   narrow state markers while leaving names and hidden identity fields unknown.
+- Compact populated SBC cards likewise do not expose a visible player name.
+  A separate pinned row is not provably linked to a loaded slot, so the adapter
+  refuses to attach that row's identity and the protection scan stays blocked.
 - The panel fails closed on unsupported or changed layouts; it does not guess a
   card when required anchors are missing or ambiguous.
 - EA Web App UI changes or non-English text may require a versioned adapter
@@ -35,8 +38,9 @@
 
 - The planner supports rating-only squads. Chemistry and complex rarity,
   league, club, or nation constraints are flagged as unsupported.
-- The live SBC adapter currently supports only an empty challenge. A populated
-  squad degrades until its visible card shape is separately validated.
+- The live SBC adapter supports the observed empty detail layout and the
+  populated builder layout with compact player cards. Other SBC layouts or
+  changed builder anchors fail closed.
 - The correction-factor rating model is based on current public community
   documentation because EA does not publish an exact formula. It has broad
   integer-reference tests but remains provisional until live SBC confirmation;

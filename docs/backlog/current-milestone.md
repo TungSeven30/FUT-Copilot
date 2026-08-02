@@ -31,8 +31,9 @@
       scoped displayed coin values, empty-state handling, and ownership-safe
       local persistence.
 - [x] Live English FC 26 empty-SBC requirement extraction with mirrored-list
-      agreement, 11 + 12 slot validation, and populated-squad fail-closed
-      behavior.
+      agreement and 11 + 12 slot validation.
+- [x] Live English FC 26 populated SBC-builder extraction with pitch-before-
+      work-area order, compact visible facts, and unknown-name safety.
 - [x] Live English FC 26 Transfer Market Search Results extraction with one
       selected detailed card, labeled start/Buy Now values, observation-only
       storage, and no market action.
@@ -49,7 +50,7 @@
       queue without moving or resolving any item.
 - [ ] Live-observe the player-pick layout without opening or selecting an option
       on the user's behalf.
-- [ ] Live-observe one owner-populated SBC slot without placing, clearing,
+- [x] Live-observe one owner-populated SBC slot without placing, clearing,
       exchanging, or submitting any card on the user's behalf.
 - [ ] Run the complete manual smoke checklist on the supported EA build.
 
@@ -71,6 +72,12 @@ Unassigned result. Sanitized read-only observation validated the ordered Items
 and Duplicates section contract without retaining any player or account value.
 The owner then confirmed the exact rebuilt pack summary and verified that a
 second read-only observation did not increase the unresolved duplicate-case
-count. The naturally reached player-pick and populated-SBC states remain open.
+count. The owner then manually placed one expendable, unprotected SBC card and
+stopped. Sanitized read-only observation validated the populated builder's 11 +
+12 slot shape, single visible requirement list, compact rating/position
+anchors, and missing slot-name boundary without retaining the card identity or
+any account value. The owner confirmed the rebuilt panel matched the one loaded
+card, unknown-name boundary, visible rating/position, ordered requirements, and
+adapter `fc26-web-v0.7.0`. The naturally reached player-pick state remains open.
 FUT Copilot will not submit an SBC, open a pack, move an item, or select an
 option for the owner.

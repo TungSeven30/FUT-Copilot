@@ -4,6 +4,8 @@ const CLUB_HEADING = 'My Club Players';
 const PACK_RESULT_HEADING = 'Unassigned';
 const TRANSFER_LIST_HEADING = 'Transfer List';
 const TRANSFER_MARKET_RESULTS_HEADING = 'Search Results';
+const SBC_BUILDER_HEADING_SELECTOR =
+  '.ut-root-view > .ut-tab-bar-view.game-navigation > .ut-navigation-container-view > .ut-navigation-bar-view.navbar-style-landscape h1.title';
 
 export type ScreenClassification = {
   screen: ScreenKind;
@@ -103,6 +105,39 @@ export function classifyScreen(document: Document): ScreenClassification {
         'sbc-details-view-visible',
         'sbc-pitch-visible',
         'sbc-work-area-visible',
+      ],
+    };
+  }
+
+  const sbcBuilderHeadings = document.querySelectorAll(
+    SBC_BUILDER_HEADING_SELECTOR,
+  );
+  const sbcOverviews = document.querySelectorAll('.ut-squad-overview');
+  const sbcRequirementLists = document.querySelectorAll(
+    '.sbc-requirements-checklist',
+  );
+  const sbcItemSearchViews = document.querySelectorAll(
+    '.ut-item-search-view.filter-container',
+  );
+  if (
+    sbcBuilderHeadings.length === 1 &&
+    normalizeText(sbcBuilderHeadings[0]?.textContent ?? null) !== '' &&
+    sbcOverviews.length === 1 &&
+    sbcPitches.length === 1 &&
+    sbcDocks.length === 1 &&
+    sbcRequirementLists.length === 1 &&
+    sbcItemSearchViews.length === 1
+  ) {
+    return {
+      screen: 'sbc',
+      confidence: 0.99,
+      evidenceCodes: [
+        'sbc-builder-heading-visible',
+        'sbc-overview-visible',
+        'sbc-pitch-visible',
+        'sbc-work-area-visible',
+        'sbc-requirements-visible',
+        'sbc-item-search-visible',
       ],
     };
   }

@@ -2,7 +2,7 @@
 
 Date: 2026-08-01
 
-Current milestone: player-pick, populated SBC, and final manual live gates remain
+Current milestone: player-pick and final manual live gates remain
 
 ## Implemented
 
@@ -12,7 +12,7 @@ Current milestone: player-pick, populated SBC, and final manual live gates remai
 - Known, inferred, unknown, and stale observation states plus explicit tradeability.
 - Twelve-table Dexie database schema v2 with tested version-1 migration.
 - Validated schema-v2 JSON export/import, preview, merge/replace, and backup-before-replace.
-- Eight synthetic/redacted fixture categories, thirteen account-free fixture files,
+- Eight synthetic/redacted fixture categories, fourteen account-free fixture files,
   and a deterministic fixture harness.
 - Live-tested English Club screen classifier and selected-card extractor.
 - Live-tested English Active Squad extractor with ordered 11 / 7 / 5 player
@@ -20,7 +20,9 @@ Current milestone: player-pick, populated SBC, and final manual live gates remai
 - Live-tested English Transfer List detail extractor with ownership-safe local
   persistence and read-only displayed coin values.
 - Live-tested English empty-SBC requirements extractor with mirrored-list and
-  11 + 12 slot-shape agreement; populated SBC cards fail closed.
+  11 + 12 slot-shape agreement.
+- Live-tested English populated SBC-builder extractor with pitch-before-work-
+  area order, compact rating/position facts, and deliberately unknown names.
 - Live-tested English Transfer Market Search Results extractor with a selected
   detail card, labeled start/Buy Now values, and no owned-card mutation.
 - Live-tested English Unassigned player pack-result extractor preserves ordered
@@ -62,7 +64,7 @@ Generated unpacked extension:
 | Player pick | Yes | No | User-created visible state required |
 | Duplicate | Yes | Yes | Live + repeated-observation idempotency validated |
 | Empty SBC requirements | Yes | Yes | Live + exact-build panel validated |
-| Populated SBC cards | Yes | No | User-created visible state required |
+| Populated SBC cards | Yes | Yes | Live + exact-build panel validated |
 | Transfer List detail | Yes | Yes | Live validated |
 | Transfer Market search results | Yes | Yes | Live + exact-build panel validated |
 
@@ -71,10 +73,9 @@ proof of EA DOM compatibility.
 
 ## Remaining release gates
 
-1. Let the owner naturally create the pending player-pick and populated-SBC
-   states manually.
-2. Record only sanitized structural evidence, implement one extractor slice at
-   a time, and add compatibility notes.
+1. Let the owner naturally create the pending player-pick state manually.
+2. Record only sanitized structural evidence, implement the extractor slice,
+   and add compatibility notes.
 3. Run every item in `docs/release/manual-smoke-checklist.md`.
 4. Mark the draft PR ready only after all required gates pass or are explicitly
    waived by the owner.

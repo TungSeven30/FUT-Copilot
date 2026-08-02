@@ -57,7 +57,7 @@ async function flushUi(): Promise<void> {
 
 function makeVisibleCard(input: {
   id: string;
-  name: string;
+  name: string | null;
   observedAt: string;
   overall: number;
   position: string;
@@ -70,12 +70,15 @@ function makeVisibleCard(input: {
   };
   return {
     localObservationId: input.id,
-    name: {
-      value: input.name,
-      source: 'ea-visible-ui',
-      observedAt: input.observedAt,
-      status: 'known',
-    },
+    name:
+      input.name === null
+        ? unknown
+        : {
+            value: input.name,
+            source: 'ea-visible-ui',
+            observedAt: input.observedAt,
+            status: 'known',
+          },
     overall: {
       value: input.overall,
       source: 'ea-visible-ui',
@@ -187,12 +190,12 @@ describe('FUT Copilot side panel', () => {
     }
 
     expect(container.textContent).toContain(
-      'English Club card, squad, Unassigned pack, Transfer List, market + empty SBC',
+      'English Club card, squad, Unassigned pack, Transfer List, market + SBC builder',
     );
     expect(container.textContent).toContain(
-      'Synthetic-only contextsPlayer pick + populated SBC',
+      'Synthetic-only contextsPlayer pick',
     );
-    expect(container.textContent).toContain('fc26-web-v0.6.0');
+    expect(container.textContent).toContain('fc26-web-v0.7.0');
   });
 
   it('shows a fail-closed error when the active tab cannot be observed', async () => {
@@ -534,7 +537,15 @@ describe('FUT Copilot side panel', () => {
               status: 'known',
             },
           ],
-          cards: [],
+          cards: [
+            makeVisibleCard({
+              id: '3d8d013f-34e7-461f-b940-a665078c3829',
+              name: null,
+              observedAt,
+              overall: 82,
+              position: 'CM',
+            }),
+          ],
         },
       },
     };
@@ -550,6 +561,10 @@ describe('FUT Copilot side panel', () => {
     expect(container.textContent).toContain(
       'Number of Players in the Squad: 1',
     );
+    expect(container.textContent).toContain('SBC card 1');
+    expect(container.textContent).toContain('SBC card 1Unknown82 · CM');
+    expect(container.textContent).toContain('82 · CM');
+    expect(container.textContent).toContain('pitch then work-area order');
     expect(container.textContent).toContain('never fills or submits the squad');
   });
 

@@ -11,10 +11,12 @@
   challenge, mirrored requirements, pitch, and work-area boundaries.
 - `2026-08-02-fc26-pack-result-duplicates.md` — English Unassigned pack result,
   ordered Items and Duplicates sections, and local-only duplicate detection.
+- `2026-08-02-fc26-sbc-populated-card.md` — English SBC challenge builder with
+  one owner-populated slot, compact visible facts, and unknown-identity safety.
 
-The player-pick and populated SBC-card fixtures validate domain contracts and
-fail-closed behavior only. They are not live compatibility evidence and must
-not be listed as supported screens until a user-assisted observation produces a
-sanitized record here.
+The player-pick fixture validates domain contracts and fail-closed behavior
+only. It is not live compatibility evidence and must not be listed as a
+supported screen until a user-assisted observation produces a sanitized record
+here.
 
 When live observation begins, record the date, route family, locale, anonymized fixture ID, adapter version, observed fields, ambiguity cases, and test result. Never include account identifiers, credentials, cookies, tokens, raw authenticated payloads, or raw page HTML.

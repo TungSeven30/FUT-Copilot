@@ -1,6 +1,6 @@
 # FUT Co-Pilot MVP Implementation Plan
 
-Status: local MVP and six live context slices implemented; final live gates remain
+Status: local MVP and seven live context slices implemented; final live gates remain
 Updated: August 2, 2026
 Target: EA SPORTS FC 26 Web App on desktop Chrome, PlayStation market profile
 Implementation style: local-first, assistive, testable, and AI-agent-friendly
@@ -14,17 +14,17 @@ Implementation style: local-first, assistive, testable, and AI-agent-friendly
   repeated observation did not increase the unresolved case count.
 - The production Chrome MV3 build is generated at `apps/chrome-extension/.output/chrome-mv3/`.
 - The English FC 26 Club selected-card, Active Squad, Transfer List, Transfer
-  Market Search Results, empty SBC-requirements, and Unassigned player
+  Market Search Results, empty and populated SBC, and Unassigned player
   pack-result/duplicate slices are live-tested.
   Automated verification covers
-  formatting, linting, TypeScript, 132 tests, thirteen synthetic/redacted fixture
+  formatting, linting, TypeScript, 137 tests, fourteen synthetic/redacted fixture
   files, the production build, and generated runtime/permission safety checks.
-- FCP-008 remains partially open for player pick, non-player pack items, and
-  populated SBC cards. FCP-018 has exact-build pack-result evidence but remains
-  open for player-pick evidence.
-- FCP-022 supports the live empty-SBC requirement and slot contract but
-  deliberately degrades on populated cards until their visible shape is
-  separately observed.
+- FCP-008 remains partially open for player pick and non-player pack items.
+  FCP-018 has exact-build pack-result evidence but remains open for player-pick
+  evidence.
+- FCP-022 supports both the live empty-SBC requirement contract and the
+  populated builder's ordered compact-card contract. Names stay unknown when
+  the loaded slot does not expose them directly.
 - FCP-031–032 remain open until the pending live contexts and full manual smoke checklist pass.
 
 ## 1. MVP outcome

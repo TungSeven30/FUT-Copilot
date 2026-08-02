@@ -6,15 +6,15 @@ HTML, cookie, token, header, or authenticated response.
 
 ## Automated release evidence
 
-`pnpm verify` passed from the repository root on 2026-08-01:
+`pnpm verify` passed from the repository root most recently on 2026-08-02:
 
 - Prettier and ESLint passed.
 - TypeScript passed for domain, EA adapter, recommendation engine, storage, and
   Chrome extension workspaces.
-- Vitest passed: **28 files, 132 tests**.
-- Fixture redaction passed for **13 synthetic fixture files**.
+- Vitest passed: **28 files, 137 tests**.
+- Fixture redaction passed for **14 synthetic fixture files**.
 - The Chrome MV3 production build completed at
-  `apps/chrome-extension/.output/chrome-mv3/` (**727.17 kB** total).
+  `apps/chrome-extension/.output/chrome-mv3/` (**730.88 kB** total).
 - The generated manifest declared exactly `storage` and `sidePanel` permissions.
 - The production artifact contained no programmatic background/content route
   activation, runtime network path, or dynamic-code escape rejected by the
@@ -54,8 +54,12 @@ Focused regression evidence includes:
 - A newly observed Transfer List card is locally unknown-owned and excluded
   from SBC inventory until a Club observation confirms ownership.
 - The live empty-SBC contract requires matching duplicated requirement lists,
-  preserves visible requirement order, validates 11 pitch plus 12 work-area
-  slots, and degrades when any card is populated or the structure changes.
+  preserves visible requirement order, and validates 11 pitch plus 12 work-area
+  slots.
+- The live populated SBC-builder contract requires one primary heading, one
+  visible requirement list, 11 + 12 slots, and unique rating/position anchors
+  on every loaded compact card. It preserves pitch-before-work-area order and
+  refuses to attach a separate pinned-row name to a slot.
 - The observed Bronze-only requirement is displayed but rejected by the
   rating-only planner, while its one-player count remains understood.
 - The live Transfer Market contract scopes one selected result/detail card and
@@ -64,9 +68,9 @@ Focused regression evidence includes:
 - Client-rendered summaries preserve normalized pack and player-pick order,
   expose duplicate triage status, include no game-action controls, and reject a
   player-pick selection index outside the visible option list.
-- The client-rendered compatibility dashboard reports Unassigned pack support
-  and keeps player pick plus populated SBC visibly pending; its disconnected
-  recovery path names every live-supported context.
+- The client-rendered compatibility dashboard reports Unassigned pack and
+  populated SBC-builder support, keeps player pick visibly pending, and names
+  every live-supported context in its disconnected recovery path.
 - The live Unassigned contract preserves Items followed by Duplicates, marks
   duplicate indexes, leaves row tradeability unknown, and fails closed on
   unloaded, incomplete, unknown-section, or concept rows.
@@ -123,10 +127,21 @@ Focused regression evidence includes:
   case count did not increase.
 - Compatibility record:
   `docs/compatibility/2026-08-02-fc26-pack-result-duplicates.md`.
+- Supported screen: **SBC challenge builder**, after the owner manually placed
+  one expendable, unprotected card and stopped.
+- Result: sanitized read-only structure confirmed one loaded pitch card, 11 +
+  12 slot shape, one visible requirement list, compact rating/position anchors,
+  and no player name on the slot. A separate pinned row was not treated as the
+  same item. The owner then confirmed the rebuilt production panel matched the
+  one loaded card, unknown-name boundary, visible rating/position, ordered
+  requirements, and adapter `fc26-web-v0.7.0`. No SBC control was activated and
+  no player or account value was retained.
+- Compatibility record:
+  `docs/compatibility/2026-08-02-fc26-sbc-populated-card.md`.
 
 ## Open live gates
 
-Player pick, populated SBC-card handling, and the remaining manual regression
-checklist stay open. Pending screens require owner-assisted, naturally reached
-visible states; FUT Copilot will not open a pack, select a pick, place or submit
-an SBC card, search/bid/buy, list, discard, or quick-sell for the owner.
+Player pick and the remaining manual regression checklist stay open. Pending
+states require owner-assisted, naturally reached visible states; FUT Copilot
+will not open a pack, select a pick, place or submit an SBC card,
+search/bid/buy, list, discard, or quick-sell for the owner.

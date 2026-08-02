@@ -571,10 +571,20 @@ function ReadyObservation({ snapshot }: { snapshot: AdapterSnapshot }) {
           )}
         </ul>
 
+        {snapshot.event.payload.cards.length > 0 ? (
+          <OrderedVisibleCards
+            ariaLabel="Ordered visible SBC cards"
+            cards={snapshot.event.payload.cards}
+            duplicateIndexes={[]}
+            itemLabel="SBC card"
+          />
+        ) : null}
+
         <p className="helper-text">
-          Requirement labels are visible read-only context. Unsupported
-          constraints keep planner proposals blocked, and FUT Copilot never
-          fills or submits the squad.
+          Requirement labels and loaded cards are visible read-only context.
+          Loaded cards preserve pitch then work-area order. Unknown or protected
+          identities keep planner proposals blocked, and FUT Copilot never fills
+          or submits the squad.
         </p>
 
         <footer className="observation-meta">
@@ -1933,12 +1943,12 @@ function SettingsWorkspace({ snapshot }: { snapshot: AdapterSnapshot | null }) {
             <span>Live-supported screens</span>
             <strong>
               English Club card, squad, Unassigned pack, Transfer List, market +
-              empty SBC
+              SBC builder
             </strong>
           </div>
           <div className="fact-row">
             <span>Synthetic-only contexts</span>
-            <strong>Player pick + populated SBC</strong>
+            <strong>Player pick</strong>
           </div>
           <div className="fact-row">
             <span>Last successful observation</span>

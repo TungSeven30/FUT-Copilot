@@ -59,12 +59,17 @@
   boundaries, and fail-closed handling for changed or unsupported rows.
 - Local duplicate-case derivation from visible pack duplicate markers without
   activating send, list, discard, quick-sell, or result-advance controls.
+- Live English populated SBC-builder extraction with 11 pitch plus 12 work-area
+  ordering, compact rating/position facts, a deliberately unknown player name,
+  and fail-closed concept or ambiguous-card handling.
+- A populated SBC side-panel summary and sanitized live-contract fixture that
+  never links a separate pinned item row to a squad slot by weak attributes.
 
 ### Fixed
 
-- The in-panel compatibility dashboard now lists the live Unassigned pack
-  context and names player pick plus populated SBC as the remaining
-  synthetic-only contexts.
+- The in-panel compatibility dashboard now lists the live Unassigned pack and
+  populated SBC-builder contexts and names player pick as the remaining
+  synthetic-only context.
 - The disconnected-panel recovery message now names every currently supported
   live context instead of pointing only to Club and Active Squad.
 - GitHub verification now uses the current Node 24-based checkout, pnpm setup,
@@ -93,6 +98,6 @@
 
 - Live EA extraction supports the English Club selected-card, Active Squad,
   Unassigned player pack result with duplicates, Transfer List, Transfer Market
-  Search Results, and empty SBC-requirements contexts. Player pick, non-player
-  pack items, and populated SBC-card contracts remain synthetic-only until
-  user-assisted validation produces sanitized compatibility evidence.
+  Search Results, and empty plus populated SBC contexts. Player pick and
+  non-player pack items remain unsupported until user-assisted validation
+  produces sanitized compatibility evidence.

@@ -1,7 +1,9 @@
 import {
   adapterDegradedEventSchema,
   sbcContextVisibleEventSchema,
+  visibleCardSchema,
   type NormalizedAdapterEvent,
+  type VisibleCard,
 } from '@fut-copilot/domain/adapter-events';
 
 import { ADAPTER_VERSION } from './adapter-version';
@@ -13,6 +15,8 @@ const SLOT_SELECTOR = '.ut-squad-slot-view';
 const PITCH_SELECTOR = '.ut-squad-pitch-view.sbc';
 const DOCK_SELECTOR = '.ut-squad-slot-dock-view.sbc';
 const LOADED_PLAYER_SELECTOR = '.player.ut-item-loaded';
+const SBC_BUILDER_HEADING_SELECTOR =
+  '.ut-root-view > .ut-tab-bar-view.game-navigation > .ut-navigation-container-view > .ut-navigation-bar-view.navbar-style-landscape h1.title';
 
 type ExtractSbcContextOptions = {
   createId?: () => string;
@@ -21,6 +25,27 @@ type ExtractSbcContextOptions = {
 
 function normalizeText(value: string | null): string {
   return (value ?? '').trim().replace(/\s+/g, ' ');
+}
+
+function parseRating(value: string): number | null {
+  const parsed = Number.parseInt(value, 10);
+  return Number.isInteger(parsed) && parsed >= 1 && parsed <= 99
+    ? parsed
+    : null;
+}
+
+function isVisible(element: Element): boolean {
+  if (element.getAttribute('data-fcp-visible') === 'true') return true;
+  const view = element.ownerDocument.defaultView;
+  if (view === null) return false;
+  const style = view.getComputedStyle(element);
+  const bounds = element.getBoundingClientRect();
+  return (
+    style.display !== 'none' &&
+    style.visibility !== 'hidden' &&
+    bounds.width > 0 &&
+    bounds.height > 0
+  );
 }
 
 function unknownString(observedAt: string, evidence?: string[]) {
@@ -40,6 +65,132 @@ function knownString(value: string, observedAt: string, evidence: string[]) {
     observedAt,
     status: 'known' as const,
     evidence,
+  };
+}
+
+function rarityObservation(card: Element, observedAt: string) {
+  const value = card.classList.contains('specials')
+    ? 'special'
+    : card.classList.contains('rare')
+      ? 'rare'
+      : null;
+  return value === null
+    ? unknownString(observedAt, ['unrecognized-sbc-card-rarity'])
+    : {
+        value,
+        source: 'ea-visible-ui' as const,
+        observedAt,
+        status: 'inferred' as const,
+        evidence: ['visible-sbc-card-rarity-class'],
+      };
+}
+
+function cardFromSlot(
+  slot: Element,
+  group: 'pitch' | 'work-area',
+  index: number,
+  observedAt: string,
+  createId: () => string,
+): { card: VisibleCard | null; reasonCodes: string[] } {
+  const slotCode = `${group}-${index + 1}`;
+  const loadedPlayers = slot.querySelectorAll(LOADED_PLAYER_SELECTOR);
+  if (loadedPlayers.length === 0) return { card: null, reasonCodes: [] };
+  if (loadedPlayers.length !== 1) {
+    return {
+      card: null,
+      reasonCodes: [`${slotCode}-player-anchor-ambiguous`],
+    };
+  }
+
+  const card = loadedPlayers[0];
+  if (card === undefined) {
+    return {
+      card: null,
+      reasonCodes: [`${slotCode}-player-anchor-ambiguous`],
+    };
+  }
+  if (card.classList.contains('concept')) {
+    return {
+      card: null,
+      reasonCodes: [`${slotCode}-concept-card-not-owned`],
+    };
+  }
+
+  const ratingAnchors = card.querySelectorAll('.rating');
+  const positionAnchors = card.querySelectorAll('.position');
+  const rating =
+    ratingAnchors.length === 1
+      ? parseRating(normalizeText(ratingAnchors[0]?.textContent ?? null))
+      : null;
+  const position =
+    positionAnchors.length === 1
+      ? normalizeText(positionAnchors[0]?.textContent ?? null)
+      : '';
+  const reasonCodes = [
+    ...(rating === null ? [`${slotCode}-missing-or-ambiguous-rating`] : []),
+    ...(position === '' ? [`${slotCode}-missing-or-ambiguous-position`] : []),
+  ];
+  if (reasonCodes.length > 0 || rating === null) {
+    return { card: null, reasonCodes };
+  }
+
+  const firstOwnerMarker = card.querySelector('.icon_chemistry_first_owner');
+  const firstOwnerVisible =
+    firstOwnerMarker !== null && isVisible(firstOwnerMarker);
+
+  return {
+    reasonCodes: [],
+    card: visibleCardSchema.parse({
+      localObservationId: createId(),
+      name: unknownString(observedAt, [
+        'name-not-exposed-on-compact-sbc-card',
+        'visible-pinned-row-not-provably-linked-to-sbc-slot',
+      ]),
+      overall: {
+        value: rating,
+        source: 'ea-visible-ui',
+        observedAt,
+        status: 'known',
+        evidence: ['visible-sbc-card-rating'],
+      },
+      position: knownString(position, observedAt, [
+        'visible-sbc-card-position',
+      ]),
+      club: unknownString(observedAt),
+      league: unknownString(observedAt),
+      nation: unknownString(observedAt),
+      rarity: rarityObservation(card, observedAt),
+      tradeability: {
+        value: null,
+        source: 'ea-visible-ui',
+        observedAt,
+        status: 'unknown',
+        evidence: ['tradeability-not-exposed-on-live-sbc-card'],
+      },
+      firstOwner: firstOwnerVisible
+        ? {
+            value: true,
+            source: 'ea-visible-ui',
+            observedAt,
+            status: 'inferred',
+            evidence: ['visible-first-owner-marker'],
+          }
+        : {
+            value: null,
+            source: 'ea-visible-ui',
+            observedAt,
+            status: 'unknown',
+            evidence: ['no-visible-first-owner-marker'],
+          },
+      loan: {
+        value: card.classList.contains('loan'),
+        source: 'ea-visible-ui',
+        observedAt,
+        status: 'inferred',
+        evidence: ['visible-sbc-card-loan-class'],
+      },
+      faceStats: [],
+    }),
   };
 }
 
@@ -85,9 +236,19 @@ export function extractSbcContextEvent(
     );
   }
 
+  const builderHeadings = document.querySelectorAll(
+    SBC_BUILDER_HEADING_SELECTOR,
+  );
   const headings = document.querySelectorAll(HEADING_SELECTOR);
-  const challengeName = normalizeText(headings[0]?.textContent ?? null);
-  if (headings.length !== 1 || challengeName === '') {
+  const headingCandidates = classification.evidenceCodes.includes(
+    'sbc-builder-heading-visible',
+  )
+    ? builderHeadings
+    : headings;
+  const challengeName = normalizeText(
+    headingCandidates[0]?.textContent ?? null,
+  );
+  if (headingCandidates.length !== 1 || challengeName === '') {
     return createDegradedEvent(
       'sbc',
       ['challenge-heading-missing-or-ambiguous'],
@@ -103,8 +264,11 @@ export function extractSbcContextEvent(
       normalizeText(item.textContent),
     ),
   );
+  const builderLayout = classification.evidenceCodes.includes(
+    'sbc-builder-heading-visible',
+  );
   if (
-    requirementLists.length !== 2 ||
+    requirementLists.length !== (builderLayout ? 1 : 2) ||
     requirementLists.some(
       (labels) => labels.length === 0 || labels.some((label) => label === ''),
     )
@@ -118,9 +282,16 @@ export function extractSbcContextEvent(
   }
   const requirementLabels = requirementLists[0];
   const mirroredRequirementLabels = requirementLists[1];
+  if (requirementLabels === undefined) {
+    return createDegradedEvent(
+      'sbc',
+      ['requirement-checklists-missing-or-ambiguous'],
+      observedAt,
+      createId,
+    );
+  }
   if (
-    requirementLabels === undefined ||
-    mirroredRequirementLabels === undefined ||
+    mirroredRequirementLabels !== undefined &&
     !equalLabels(requirementLabels, mirroredRequirementLabels)
   ) {
     return createDegradedEvent(
@@ -161,16 +332,21 @@ export function extractSbcContextEvent(
       createId,
     );
   }
-  if (
-    slots.some((slot) => slot.querySelector(LOADED_PLAYER_SELECTOR) !== null)
-  ) {
-    return createDegradedEvent(
-      'sbc',
-      ['populated-sbc-squad-not-live-validated'],
-      observedAt,
-      createId,
-    );
+  const parsedCards = [
+    ...pitchSlots.map((slot, index) =>
+      cardFromSlot(slot, 'pitch', index, observedAt, createId),
+    ),
+    ...dockSlots.map((slot, index) =>
+      cardFromSlot(slot, 'work-area', index, observedAt, createId),
+    ),
+  ];
+  const cardReasonCodes = parsedCards.flatMap((result) => result.reasonCodes);
+  if (cardReasonCodes.length > 0) {
+    return createDegradedEvent('sbc', cardReasonCodes, observedAt, createId);
   }
+  const cards = parsedCards.flatMap((result) =>
+    result.card === null ? [] : [result.card],
+  );
 
   return sbcContextVisibleEventSchema.parse({
     eventVersion: 1,
@@ -178,7 +354,7 @@ export function extractSbcContextEvent(
     type: 'sbcContext.visible',
     webAppBuild: unknownString(observedAt),
     occurredAt: observedAt,
-    confidence: 0.94,
+    confidence: cards.length === 0 ? 0.94 : 0.91,
     extractionStatus: 'inferred',
     adapterVersion: ADAPTER_VERSION,
     payload: {
@@ -190,10 +366,12 @@ export function extractSbcContextEvent(
       ]),
       requirementLabels: requirementLabels.map((label) =>
         knownString(label, observedAt, [
-          'matching-visible-sbc-requirement-checklists',
+          requirementLists.length === 2
+            ? 'matching-visible-sbc-requirement-checklists'
+            : 'single-visible-sbc-builder-requirement-checklist',
         ]),
       ),
-      cards: [],
+      cards,
     },
   });
 }

@@ -16,8 +16,8 @@ It is intentionally not committed because it is reproducible build output.
 ## Release status
 
 The selected-card, Active Squad, Unassigned player pack/duplicate, read-only
-Transfer List, Transfer Market Search Results, and empty SBC-requirements
+Transfer List, Transfer Market Search Results, and empty plus populated SBC
 workflows are live-validated against the English FC 26 Web App. Exact rebuilt
-pack/duplicate behavior is owner-confirmed. Player pick, populated SBC cards,
-and the remaining manual smoke checklist remain release gates. The manual
-side-panel workspaces are usable without those pending live extractors.
+pack/duplicate and populated-SBC behavior is owner-confirmed. Player pick and
+the remaining manual smoke checklist remain release gates. The manual
+side-panel workspaces are usable without the pending player-pick extractor.
