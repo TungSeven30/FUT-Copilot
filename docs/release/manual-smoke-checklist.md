@@ -55,4 +55,7 @@ or raw page HTML into this file.
 - [ ] Player pick preserves option order and never selects.
 - [ ] Visible duplicate creates one idempotent local case.
 - [ ] Visible SBC requirements label unsupported constraints.
-- [ ] Visible market context never performs a market action.
+- [x] Visible Transfer List context reads one selected card and scoped coin
+      values without performing a market action. Owner-assisted read-only
+      observation confirmed the live structure on 2026-08-01; no listing or
+      account values were retained.

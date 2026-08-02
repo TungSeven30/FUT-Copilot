@@ -234,6 +234,8 @@ async function ensureOwnedCard(
   profile: PersonalProfile,
   observedAt: string,
   createId: () => string,
+  location: OwnedCard['location'],
+  newOwnershipStatus: OwnedCard['ownershipStatus'],
 ): Promise<OwnedCard> {
   const existing = await database.ownedCards
     .where('[profileId+cardDefinitionId]')
@@ -249,6 +251,11 @@ async function ensureOwnedCard(
           : observedTradeability(card),
       firstOwner:
         card.firstOwner.value === null ? existing.firstOwner : card.firstOwner,
+      location,
+      ownershipStatus:
+        newOwnershipStatus === 'unknown'
+          ? existing.ownershipStatus
+          : newOwnershipStatus,
       lastObservedAt: observedAt,
     });
     await database.ownedCards.put(updated);
@@ -259,10 +266,10 @@ async function ensureOwnedCard(
     id: createId(),
     cardDefinitionId: definition.id,
     profileId: profile.id,
-    ownershipStatus: 'owned',
+    ownershipStatus: newOwnershipStatus,
     tradeability: observedTradeability(card),
     firstOwner: card.firstOwner,
-    location: 'club',
+    location,
     platform: profile.platform,
     protected: false,
     personalTagIds: [],
@@ -277,7 +284,12 @@ async function ensureOwnedCard(
 export async function ensureSelectedCardContext(
   database: FutCopilotDatabase,
   card: VisibleCard,
-  options: { createId?: () => string; now?: () => Date } = {},
+  options: {
+    createId?: () => string;
+    location?: OwnedCard['location'];
+    newOwnershipStatus?: OwnedCard['ownershipStatus'];
+    now?: () => Date;
+  } = {},
 ): Promise<PersonalizedCardContext> {
   const createId = options.createId ?? (() => crypto.randomUUID());
   const observedAt = nowIso(options.now);
@@ -324,6 +336,8 @@ export async function ensureSelectedCardContext(
     profile,
     observedAt,
     createId,
+    options.location ?? 'club',
+    options.newOwnershipStatus ?? 'owned',
   );
   return { profile, tags, identity, cardDefinition: definition, ownedCard };
 }

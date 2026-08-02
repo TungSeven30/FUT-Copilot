@@ -4,9 +4,10 @@
 
 - Live-validated: English FC 26 Web App, **My Club Players**, one visible
   selected card; and **Active Squad**, with 11 starting player slots, 7
-  substitutes, and 5 reserves.
-- Synthetic-only adapter contracts: pack result, player pick, duplicate, SBC,
-  and transfer market contexts.
+  substitutes, and 5 reserves; and **Transfer List**, with one selected detailed
+  card and scoped displayed coin values.
+- Synthetic-only adapter contracts: pack result, player pick, duplicate, and
+  SBC contexts.
 - Small Active Squad cards do not expose player names as accessible visible
   text. Squad observations therefore preserve slot, rating, position, and
   narrow state markers while leaving names and hidden identity fields unknown.
@@ -43,6 +44,11 @@
 ## Market and FUT.GG
 
 - Prices and transaction events are entered manually and can become stale.
+- Transfer List coin values are visible read-only context. Their semantic label
+  is not guessed and they are not automatically saved as market observations.
+- A newly seen Transfer List card has unknown ownership status until Club
+  context confirms it, preventing stale/sold listings from becoming SBC
+  inventory.
 - Tax defaults to 5% but is configurable in the calculator.
 - FUT.GG opens only after a user click. High-confidence confirmed URLs may open
   directly; otherwise FUT Copilot opens a public player-name search.

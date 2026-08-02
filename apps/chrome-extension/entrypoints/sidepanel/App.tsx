@@ -179,14 +179,28 @@ function useAdapterPanelState() {
 }
 
 function selectedCardFromSnapshot(snapshot: AdapterSnapshot | null) {
+  if (snapshot?.state !== 'ready') return null;
   if (
-    snapshot?.state !== 'ready' ||
-    snapshot.event.type !== 'card.selected' ||
-    snapshot.event.payload.card === null
+    snapshot.event.type === 'card.selected' &&
+    snapshot.event.payload.card !== null
   ) {
-    return null;
+    return {
+      card: snapshot.event.payload.card,
+      location: 'club' as const,
+      newOwnershipStatus: 'owned' as const,
+    };
   }
-  return snapshot.event.payload.card;
+  if (
+    snapshot.event.type === 'marketContext.visible' &&
+    snapshot.event.payload.selectedCard !== null
+  ) {
+    return {
+      card: snapshot.event.payload.selectedCard,
+      location: 'transfer-list' as const,
+      newOwnershipStatus: 'unknown' as const,
+    };
+  }
+  return null;
 }
 
 function useCardWorkspace(snapshot: AdapterSnapshot | null) {
@@ -195,8 +209,11 @@ function useCardWorkspace(snapshot: AdapterSnapshot | null) {
     state: WorkspaceState;
   } | null>(null);
   const [reloadVersion, setReloadVersion] = useState(0);
-  const card = selectedCardFromSnapshot(snapshot);
-  const loadKey = `${card?.localObservationId ?? 'idle'}:${snapshot?.updatedAt ?? 'none'}:${reloadVersion}`;
+  const selected = selectedCardFromSnapshot(snapshot);
+  const card = selected?.card ?? null;
+  const selectedLocation = selected?.location ?? 'club';
+  const selectedOwnershipStatus = selected?.newOwnershipStatus ?? 'owned';
+  const loadKey = `${card?.localObservationId ?? 'idle'}:${selectedLocation}:${selectedOwnershipStatus}:${snapshot?.updatedAt ?? 'none'}:${reloadVersion}`;
 
   useEffect(() => {
     let active = true;
@@ -206,7 +223,10 @@ function useCardWorkspace(snapshot: AdapterSnapshot | null) {
       };
     }
 
-    void ensureSelectedCardContext(database, card)
+    void ensureSelectedCardContext(database, card, {
+      location: selectedLocation,
+      newOwnershipStatus: selectedOwnershipStatus,
+    })
       .then(async (context) => {
         if (!active) return;
         if (
@@ -281,7 +301,7 @@ function useCardWorkspace(snapshot: AdapterSnapshot | null) {
     return () => {
       active = false;
     };
-  }, [card, loadKey]);
+  }, [card, loadKey, selectedLocation, selectedOwnershipStatus]);
 
   const reload = useCallback(() => {
     setReloadVersion((version) => version + 1);
@@ -347,6 +367,66 @@ function StateNotice({
 }
 
 function ReadyObservation({ snapshot }: { snapshot: AdapterSnapshot }) {
+  if (snapshot.event.type === 'marketContext.visible') {
+    const card = snapshot.event.payload.selectedCard;
+    if (card === null) {
+      return (
+        <StateNotice
+          eyebrow="Transfer List recognized"
+          title="No transfer item selected"
+          detail="The list is supported, but no visible item detail is open."
+        />
+      );
+    }
+    const confidence = Math.round(snapshot.event.confidence * 100);
+    return (
+      <article className="observation-card observation-card--ready">
+        <div className="selected-card-heading">
+          <div>
+            <p className="card-eyebrow">Transfer List context</p>
+            <h2>{formatValue(card.name)}</h2>
+          </div>
+          <div
+            aria-label={`Overall ${formatValue(card.overall)}`}
+            className="rating-badge"
+          >
+            {formatValue(card.overall)}
+            <span>{formatValue(card.position)}</span>
+          </div>
+        </div>
+
+        <div className="calculation-grid calculation-grid--compact">
+          {snapshot.event.payload.displayedPrices.length === 0 ? (
+            <div>
+              <span>Displayed coin values</span>
+              <strong>None</strong>
+            </div>
+          ) : (
+            snapshot.event.payload.displayedPrices.map((price, index) => (
+              <div key={`${index}:${price.value ?? 'unknown'}`}>
+                <span>Displayed coin value {index + 1}</span>
+                <strong>{formatCoins(price.value)}</strong>
+              </div>
+            ))
+          )}
+        </div>
+
+        <div className="facts">
+          <FactRow label="Tradeability" observation={card.tradeability} />
+          <FactRow label="Rarity family" observation={card.rarity} />
+        </div>
+        <p className="helper-text">
+          Values are read-only context and are not saved as a market price or
+          used to click any transfer action.
+        </p>
+        <footer className="observation-meta">
+          <span>{confidence}% extraction confidence</span>
+          <span>{snapshot.event.adapterVersion}</span>
+        </footer>
+      </article>
+    );
+  }
+
   if (snapshot.event.type === 'activeSquad.visible') {
     const slots = snapshot.event.payload.slots;
     const groupSummary = (
@@ -1652,11 +1732,11 @@ function SettingsWorkspace({ snapshot }: { snapshot: AdapterSnapshot | null }) {
           </div>
           <div className="fact-row">
             <span>Live-supported screens</span>
-            <strong>English Club card + active squad</strong>
+            <strong>English Club card, squad + Transfer List</strong>
           </div>
           <div className="fact-row">
             <span>Synthetic-only contexts</span>
-            <strong>5 workflow contexts</strong>
+            <strong>4 workflow contexts</strong>
           </div>
           <div className="fact-row">
             <span>Last successful observation</span>

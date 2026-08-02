@@ -38,6 +38,11 @@
   fixture covering partial-field and structural ambiguity behavior.
 - A least-privilege GitHub Actions gate that runs the complete `pnpm verify`
   release pipeline for pull requests and the main branch.
+- Live English Transfer List extraction with one selected detailed card,
+  read-only displayed coin values, known empty-list handling, and a side-panel
+  context summary.
+- Ownership-safe Transfer List persistence: newly observed listings remain
+  `ownershipStatus: unknown` until a later Club observation confirms ownership.
 
 ### Fixed
 
@@ -58,7 +63,7 @@
 
 ### Known limitations
 
-- Live EA extraction supports the English Club selected-card and Active Squad
-  contexts. Pack result, player pick, duplicate, SBC, and transfer-market event
+- Live EA extraction supports the English Club selected-card, Active Squad, and
+  Transfer List contexts. Pack result, player pick, duplicate, and SBC event
   contracts remain synthetic-only until user-assisted validation produces
   sanitized compatibility evidence.

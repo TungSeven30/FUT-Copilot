@@ -1,6 +1,7 @@
 import type { ScreenKind } from '@fut-copilot/domain/adapter-events';
 
 const CLUB_HEADING = 'My Club Players';
+const TRANSFER_LIST_HEADING = 'Transfer List';
 
 export type ScreenClassification = {
   screen: ScreenKind;
@@ -13,6 +14,20 @@ function normalizeText(value: string | null): string {
 }
 
 export function classifyScreen(document: Document): ScreenClassification {
+  const heading = document.querySelector('.ut-root-view h1.title');
+  const headingText = normalizeText(heading?.textContent ?? null);
+  const transferLists = document.querySelectorAll('.ut-transfer-list-view');
+  if (headingText === TRANSFER_LIST_HEADING && transferLists.length === 1) {
+    return {
+      screen: 'transfer-list',
+      confidence: 0.99,
+      evidenceCodes: [
+        'transfer-list-heading-visible',
+        'transfer-list-view-visible',
+      ],
+    };
+  }
+
   const squadActions = document.querySelectorAll('.ut-squad-actions-view');
   const squadOverviews = document.querySelectorAll('.ut-squad-overview');
   const squadPitches = document.querySelectorAll('.ut-squad-pitch-view');
@@ -37,8 +52,7 @@ export function classifyScreen(document: Document): ScreenClassification {
     };
   }
 
-  const heading = document.querySelector('.ut-root-view h1.title');
-  if (normalizeText(heading?.textContent ?? null) === CLUB_HEADING) {
+  if (headingText === CLUB_HEADING) {
     return {
       screen: 'club',
       confidence: 0.98,

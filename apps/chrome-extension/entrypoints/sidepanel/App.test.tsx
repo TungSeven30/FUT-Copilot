@@ -154,7 +154,7 @@ describe('FUT Copilot side panel', () => {
         occurredAt: observedAt,
         confidence: 0.9,
         extractionStatus: 'inferred',
-        adapterVersion: 'fc26-web-v0.2.0',
+        adapterVersion: 'fc26-web-v0.3.0',
         payload: {
           slots: groups.flatMap(([group, prefix, count]) =>
             Array.from({ length: count }, (_, index) => ({
@@ -209,6 +209,103 @@ describe('FUT Copilot side panel', () => {
     expect(container.textContent).toContain('89 · ST');
     expect(container.textContent).toContain(
       'keeps them unknown instead of matching by image or hidden data',
+    );
+  });
+
+  it('renders live Transfer List context as read-only displayed values', async () => {
+    const observedAt = '2026-08-01T20:00:00.000Z';
+    const unknownString = {
+      value: null,
+      source: 'ea-visible-ui',
+      observedAt,
+      status: 'unknown',
+    } as const;
+    browserMocks.state.snapshot = {
+      state: 'ready',
+      updatedAt: observedAt,
+      event: {
+        eventVersion: 1,
+        eventId: 'd64d1930-ee85-4c00-806a-214ed44cb5b1',
+        type: 'marketContext.visible',
+        webAppBuild: unknownString,
+        occurredAt: observedAt,
+        confidence: 0.94,
+        extractionStatus: 'known',
+        adapterVersion: 'fc26-web-v0.3.0',
+        payload: {
+          selectedCard: {
+            localObservationId: '698ff715-6d26-4738-8a61-aac27a1f1f18',
+            name: {
+              value: 'Alex Transfer',
+              source: 'ea-visible-ui',
+              observedAt,
+              status: 'known',
+            },
+            overall: {
+              value: 90,
+              source: 'ea-visible-ui',
+              observedAt,
+              status: 'known',
+            },
+            position: {
+              value: 'CM',
+              source: 'ea-visible-ui',
+              observedAt,
+              status: 'known',
+            },
+            club: unknownString,
+            league: unknownString,
+            nation: unknownString,
+            rarity: {
+              value: 'special',
+              source: 'ea-visible-ui',
+              observedAt,
+              status: 'inferred',
+            },
+            tradeability: {
+              value: 'tradeable',
+              source: 'ea-visible-ui',
+              observedAt,
+              status: 'inferred',
+            },
+            firstOwner: unknownString,
+            loan: {
+              value: false,
+              source: 'ea-visible-ui',
+              observedAt,
+              status: 'inferred',
+            },
+            faceStats: [],
+          },
+          displayedPrices: [
+            {
+              value: 120_000,
+              source: 'ea-visible-ui',
+              observedAt,
+              status: 'known',
+            },
+            {
+              value: 135_000,
+              source: 'ea-visible-ui',
+              observedAt,
+              status: 'known',
+            },
+          ],
+        },
+      },
+    };
+
+    const container = document.createElement('div');
+    mountedRoot = createRoot(container);
+    await act(async () => mountedRoot?.render(<App />));
+    await flushUi();
+
+    expect(container.textContent).toContain('Transfer List context');
+    expect(container.textContent).toContain('Alex Transfer');
+    expect(container.textContent).toContain('120,000 coins');
+    expect(container.textContent).toContain('135,000 coins');
+    expect(container.textContent).toContain(
+      'not saved as a market price or used to click any transfer action',
     );
   });
 });

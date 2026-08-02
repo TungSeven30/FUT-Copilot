@@ -11,10 +11,10 @@ HTML, cookie, token, header, or authenticated response.
 - Prettier and ESLint passed.
 - TypeScript passed for domain, EA adapter, recommendation engine, storage, and
   Chrome extension workspaces.
-- Vitest passed: **24 files, 91 tests**.
-- Fixture redaction passed for **9 synthetic fixture files**.
+- Vitest passed: **25 files, 101 tests**.
+- Fixture redaction passed for **10 synthetic fixture files**.
 - The Chrome MV3 production build completed at
-  `apps/chrome-extension/.output/chrome-mv3/` (**701.47 kB** total).
+  `apps/chrome-extension/.output/chrome-mv3/` (**706.75 kB** total).
 - The generated manifest declared exactly `storage` and `sidePanel` permissions.
 - The production artifact contained no programmatic background/content route
   activation, runtime network path, or dynamic-code escape rejected by the
@@ -48,6 +48,13 @@ Focused regression evidence includes:
   slots, and degrading on a partially loaded or structurally ambiguous card.
 - The client-rendered side panel summarizes normalized squad groups and exposes
   the unknown-name boundary instead of matching through images or hidden data.
+- The live Transfer List contract scopes one selected detailed card and numeric
+  auction-panel coin values, ignores nonnumeric placeholders, supports an empty
+  list, and fails closed on active-card or panel ambiguity.
+- A newly observed Transfer List card is locally unknown-owned and excluded
+  from SBC inventory until a Club observation confirms ownership.
+- GitHub Actions independently passes the same complete `pnpm verify` release
+  pipeline on the draft pull request.
 
 ## Owner-assisted live evidence
 
@@ -63,10 +70,16 @@ Focused regression evidence includes:
   position, broad card-state markers, and the absence of accessible player-name
   text on small squad cards.
 - Compatibility record: `docs/compatibility/2026-08-01-fc26-active-squad.md`.
+- Supported screen: **Transfer List**, with one selected detailed card and
+  scoped displayed coin values.
+- Result: sanitized read-only structural observation matched the extractor
+  contract without clicking re-list, search, bid, buy, listing, or clearing
+  controls.
+- Compatibility record: `docs/compatibility/2026-08-01-fc26-transfer-list.md`.
 
 ## Open live gates
 
-Pack result, player pick, duplicate, SBC, transfer context, and the complete
-manual regression checklist remain open. These screens require owner-assisted,
-naturally reached visible states; FUT Copilot will not open a pack, select a
-pick, submit an SBC, search/bid/buy, list, discard, or quick-sell for the owner.
+Pack result, player pick, duplicate, SBC, and the complete manual regression
+checklist remain open. These screens require owner-assisted, naturally reached
+visible states; FUT Copilot will not open a pack, select a pick, submit an SBC,
+search/bid/buy, list, discard, or quick-sell for the owner.

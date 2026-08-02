@@ -197,4 +197,35 @@ describe('personalized selected-card storage', () => {
     ).toBe(42_000);
     expect(updated.purchasePrice?.value).toBe(35_000);
   });
+
+  it('keeps a new Transfer List observation ownership-safe until Club confirms it', async () => {
+    const database = createDatabase();
+    const transferContext = await ensureSelectedCardContext(
+      database,
+      visibleCard(),
+      {
+        location: 'transfer-list',
+        newOwnershipStatus: 'unknown',
+        now: () => new Date(observedAt),
+      },
+    );
+
+    expect(transferContext.ownedCard).toMatchObject({
+      location: 'transfer-list',
+      ownershipStatus: 'unknown',
+    });
+
+    const clubContext = await ensureSelectedCardContext(
+      database,
+      visibleCard(),
+      {
+        now: () => new Date('2026-08-01T16:00:00.000Z'),
+      },
+    );
+    expect(clubContext.ownedCard).toMatchObject({
+      location: 'club',
+      ownershipStatus: 'owned',
+    });
+    expect(await database.ownedCards.count()).toBe(1);
+  });
 });

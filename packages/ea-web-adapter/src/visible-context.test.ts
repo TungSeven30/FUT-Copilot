@@ -1,4 +1,5 @@
 import activeSquadFixture from '../../../fixtures/ea-web/active-squad/live-contract.json';
+import transferListFixture from '../../../fixtures/ea-web/market/live-transfer-list-contract.json';
 import selectedCardFixture from '../../../fixtures/ea-web/selected-card/basic.json';
 
 import { FixtureHarness } from './testing/fixture-harness';
@@ -21,6 +22,15 @@ describe('visible context dispatcher', () => {
 
     expect(extractVisibleContextEvent(harness.fixtureDocument).type).toBe(
       'card.selected',
+    );
+  });
+
+  it('routes the Transfer List contract to its live extractor', () => {
+    const harness = new FixtureHarness(transferListFixture, () => []);
+    harness.load();
+
+    expect(extractVisibleContextEvent(harness.fixtureDocument).type).toBe(
+      'marketContext.visible',
     );
   });
 });

@@ -27,6 +27,9 @@
 - [x] Live English FC 26 active-squad extraction with ordered starting XI,
       substitutes, reserves, explicit manager exclusion, and unknown-name
       boundaries.
+- [x] Live English FC 26 Transfer List extraction with selected visible card,
+      scoped displayed coin values, empty-state handling, and ownership-safe
+      local persistence.
 
 ## Active release gates
 
@@ -34,8 +37,6 @@
       making a pick on the user's behalf.
 - [ ] Live-observe duplicate state and prove idempotent local case creation.
 - [ ] Live-observe an SBC segment and implement supported requirement extraction.
-- [ ] Live-observe read-only transfer context without searching, bidding, buying,
-      or listing on the user's behalf.
 - [ ] Run the complete manual smoke checklist on the supported EA build.
 
 ## Acceptance target
@@ -49,5 +50,6 @@ The owner restored the EA session manually on 2026-08-01. Read-only observation
 then validated the active-squad 11 + manager / 7 / 5 slot shape and the narrow
 visible card fields. No player name, club identity, balance, credential,
 authenticated response, or raw HTML was retained. The next owner-assisted gate
-is a naturally reached pack-result or player-pick screen; FUT Copilot will not
-open a pack or select an option for the owner.
+is an SBC segment or a naturally reached pack-result/player-pick/duplicate
+screen; FUT Copilot will not submit an SBC, open a pack, or select an option for
+the owner.
