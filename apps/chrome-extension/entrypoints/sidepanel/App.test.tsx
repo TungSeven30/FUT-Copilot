@@ -141,6 +141,9 @@ describe('FUT Copilot side panel', () => {
     await flushUi();
 
     expect(container.textContent).toContain('No Web App observation yet');
+    expect(container.textContent).toContain(
+      'Club, squad, Unassigned pack, Transfer List, Transfer Market, or SBC',
+    );
 
     const expectedHeadings = new Map([
       ['context', 'Selected context'],

@@ -65,6 +65,8 @@
 - The in-panel compatibility dashboard now lists the live Unassigned pack
   context and names player pick plus populated SBC as the remaining
   synthetic-only contexts.
+- The disconnected-panel recovery message now names every currently supported
+  live context instead of pointing only to Club and Active Squad.
 - GitHub verification now uses the current Node 24-based checkout, pnpm setup,
   and Node setup action majors instead of deprecated Node 20 action runtimes.
 - Player-pick event validation now rejects a selected index outside the visible

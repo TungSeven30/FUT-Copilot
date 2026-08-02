@@ -772,7 +772,7 @@ function ObservationContent({ state }: { state: PanelState }) {
       <StateNotice
         eyebrow="Waiting for EA"
         title="No Web App observation yet"
-        detail="Open the EA Web App on Active Squad or select a card in My Club Players."
+        detail="Open a live-supported Club, squad, Unassigned pack, Transfer List, Transfer Market, or SBC screen in the EA Web App."
       />
     );
   }
