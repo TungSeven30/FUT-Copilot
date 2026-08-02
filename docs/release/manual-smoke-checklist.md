@@ -59,3 +59,8 @@ or raw page HTML into this file.
       values without performing a market action. Owner-assisted read-only
       observation confirmed the live structure on 2026-08-01; no listing or
       account values were retained.
+- [ ] Transfer Market Search Results reads one selected detailed card plus the
+      labeled start and Buy Now values in the exact production side panel. The
+      live structure was observed with one read-only search; no Watch, Bid, Buy,
+      Compare, list, or re-list action was performed, and no result or account
+      value was retained.

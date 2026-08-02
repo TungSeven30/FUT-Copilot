@@ -2,6 +2,7 @@ import type { ScreenKind } from '@fut-copilot/domain/adapter-events';
 
 const CLUB_HEADING = 'My Club Players';
 const TRANSFER_LIST_HEADING = 'Transfer List';
+const TRANSFER_MARKET_RESULTS_HEADING = 'Search Results';
 
 export type ScreenClassification = {
   screen: ScreenKind;
@@ -24,6 +25,23 @@ export function classifyScreen(document: Document): ScreenClassification {
       evidenceCodes: [
         'transfer-list-heading-visible',
         'transfer-list-view-visible',
+      ],
+    };
+  }
+
+  const transferMarketResults = document.querySelectorAll(
+    '.ut-pinned-list-container.SearchResults',
+  );
+  if (
+    headingText === TRANSFER_MARKET_RESULTS_HEADING &&
+    transferMarketResults.length === 1
+  ) {
+    return {
+      screen: 'transfer-market',
+      confidence: 0.99,
+      evidenceCodes: [
+        'transfer-market-results-heading-visible',
+        'transfer-market-results-view-visible',
       ],
     };
   }

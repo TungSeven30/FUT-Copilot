@@ -13,6 +13,7 @@
     "./sbc-context": "./src/sbc-context.ts",
     "./selected-card": "./src/selected-card.ts",
     "./transfer-list": "./src/transfer-list.ts",
+    "./transfer-market": "./src/transfer-market.ts",
     "./visible-context": "./src/visible-context.ts"
   },
   "scripts": {

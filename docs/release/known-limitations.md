@@ -6,7 +6,9 @@
   selected card; and **Active Squad**, with 11 starting player slots, 7
   substitutes, and 5 reserves; and **Transfer List**, with one selected detailed
   card and scoped displayed coin values; and an **empty SBC challenge**, with
-  mirrored visible requirements, 11 pitch slots, and 12 work-area slots.
+  mirrored visible requirements, 11 pitch slots, and 12 work-area slots; and
+  **Transfer Market Search Results**, with one selected detailed card and
+  labeled start/Buy Now values.
 - Synthetic-only adapter contracts: pack result, player pick, duplicate, and
   populated SBC-card contexts.
 - Small Active Squad cards do not expose player names as accessible visible
@@ -52,6 +54,9 @@
 - A newly seen Transfer List card has unknown ownership status until Club
   context confirms it, preventing stale/sold listings from becoming SBC
   inventory.
+- A Transfer Market result remains observation-only: it does not create or
+  update an owned card. Its displayed start/Buy Now values are not silently
+  recorded as a market observation or transaction.
 - Tax defaults to 5% but is configurable in the calculator.
 - FUT.GG opens only after a user click. High-confidence confirmed URLs may open
   directly; otherwise FUT Copilot opens a public player-name search.

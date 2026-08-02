@@ -5,6 +5,8 @@
   substitutes, reserves, and manager boundary.
 - `2026-08-01-fc26-transfer-list.md` — English populated Transfer List selected
   card and read-only displayed coin values.
+- `2026-08-01-fc26-transfer-market-search-results.md` — English populated
+  Transfer Market Search Results selected card, start price, and Buy Now label.
 - `2026-08-01-fc26-sbc-requirements.md` — English single-segment empty SBC
   challenge, mirrored requirements, pitch, and work-area boundaries.
 

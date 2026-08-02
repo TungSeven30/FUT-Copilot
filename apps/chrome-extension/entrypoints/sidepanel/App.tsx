@@ -71,6 +71,8 @@ import {
 import { useCallback, useEffect, useState } from 'react';
 import { browser } from 'wxt/browser';
 
+import { selectedCardFromSnapshot } from './selected-context';
+
 const database = new FutCopilotDatabase();
 
 type PanelState =
@@ -176,31 +178,6 @@ function useAdapterPanelState() {
   }, []);
 
   return { state, observeVisibleContext };
-}
-
-function selectedCardFromSnapshot(snapshot: AdapterSnapshot | null) {
-  if (snapshot?.state !== 'ready') return null;
-  if (
-    snapshot.event.type === 'card.selected' &&
-    snapshot.event.payload.card !== null
-  ) {
-    return {
-      card: snapshot.event.payload.card,
-      location: 'club' as const,
-      newOwnershipStatus: 'owned' as const,
-    };
-  }
-  if (
-    snapshot.event.type === 'marketContext.visible' &&
-    snapshot.event.payload.selectedCard !== null
-  ) {
-    return {
-      card: snapshot.event.payload.selectedCard,
-      location: 'transfer-list' as const,
-      newOwnershipStatus: 'unknown' as const,
-    };
-  }
-  return null;
 }
 
 function useCardWorkspace(snapshot: AdapterSnapshot | null) {
@@ -379,11 +356,19 @@ function ReadyObservation({ snapshot }: { snapshot: AdapterSnapshot }) {
       );
     }
     const confidence = Math.round(snapshot.event.confidence * 100);
+    const transferMarket =
+      card.tradeability.evidence?.includes(
+        'visible-transfer-market-context',
+      ) === true;
     return (
       <article className="observation-card observation-card--ready">
         <div className="selected-card-heading">
           <div>
-            <p className="card-eyebrow">Transfer List context</p>
+            <p className="card-eyebrow">
+              {transferMarket
+                ? 'Transfer Market context'
+                : 'Transfer List context'}
+            </p>
             <h2>{formatValue(card.name)}</h2>
           </div>
           <div
@@ -404,7 +389,17 @@ function ReadyObservation({ snapshot }: { snapshot: AdapterSnapshot }) {
           ) : (
             snapshot.event.payload.displayedPrices.map((price, index) => (
               <div key={`${index}:${price.value ?? 'unknown'}`}>
-                <span>Displayed coin value {index + 1}</span>
+                <span>
+                  {price.evidence?.includes(
+                    'visible-transfer-market-start-price',
+                  )
+                    ? 'Start price'
+                    : price.evidence?.includes(
+                          'visible-transfer-market-buy-now-price',
+                        )
+                      ? 'Buy Now price'
+                      : `Displayed coin value ${index + 1}`}
+                </span>
                 <strong>{formatCoins(price.value)}</strong>
               </div>
             ))
@@ -416,8 +411,8 @@ function ReadyObservation({ snapshot }: { snapshot: AdapterSnapshot }) {
           <FactRow label="Rarity family" observation={card.rarity} />
         </div>
         <p className="helper-text">
-          Values are read-only context and are not saved as a market price or
-          used to click any transfer action.
+          Values are read-only context and are not saved as a market price. FUT
+          Copilot never activates Watch, Bid, Buy, List, or Re-list.
         </p>
         <footer className="observation-meta">
           <span>{confidence}% extraction confidence</span>
@@ -1785,7 +1780,9 @@ function SettingsWorkspace({ snapshot }: { snapshot: AdapterSnapshot | null }) {
           </div>
           <div className="fact-row">
             <span>Live-supported screens</span>
-            <strong>English Club card, squad, Transfer List + empty SBC</strong>
+            <strong>
+              English Club card, squad, Transfer List, market + empty SBC
+            </strong>
           </div>
           <div className="fact-row">
             <span>Synthetic-only contexts</span>

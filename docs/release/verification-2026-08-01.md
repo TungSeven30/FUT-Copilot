@@ -11,10 +11,10 @@ HTML, cookie, token, header, or authenticated response.
 - Prettier and ESLint passed.
 - TypeScript passed for domain, EA adapter, recommendation engine, storage, and
   Chrome extension workspaces.
-- Vitest passed: **26 files, 109 tests**.
-- Fixture redaction passed for **11 synthetic fixture files**.
+- Vitest passed: **27 files, 117 tests**.
+- Fixture redaction passed for **12 synthetic fixture files**.
 - The Chrome MV3 production build completed at
-  `apps/chrome-extension/.output/chrome-mv3/` (**711.1 kB** total).
+  `apps/chrome-extension/.output/chrome-mv3/` (**714.67 kB** total).
 - The generated manifest declared exactly `storage` and `sidePanel` permissions.
 - The production artifact contained no programmatic background/content route
   activation, runtime network path, or dynamic-code escape rejected by the
@@ -58,6 +58,9 @@ Focused regression evidence includes:
   slots, and degrades when any card is populated or the structure changes.
 - The observed Bronze-only requirement is displayed but rejected by the
   rating-only planner, while its one-player count remains understood.
+- The live Transfer Market contract scopes one selected result/detail card and
+  separately labels the visible start and Buy Now values. It does not create or
+  update local owned-card context.
 - GitHub Actions independently passes the same complete `pnpm verify` release
   pipeline on the draft pull request.
 
@@ -87,6 +90,13 @@ Focused regression evidence includes:
   contract without using Squad Builder, placing cards, clearing, submitting,
   exchanging, or claiming.
 - Compatibility record: `docs/compatibility/2026-08-01-fc26-sbc-requirements.md`.
+- Supported screen: **Transfer Market Search Results**, with one selected
+  visible result and detailed card.
+- Result: one unfiltered read-only search confirmed the selected-result,
+  detail-card, start-price, and Buy Now label boundaries without activating
+  Watch, Bid, Buy, Compare, list, or re-list.
+- Compatibility record:
+  `docs/compatibility/2026-08-01-fc26-transfer-market-search-results.md`.
 
 ## Open live gates
 

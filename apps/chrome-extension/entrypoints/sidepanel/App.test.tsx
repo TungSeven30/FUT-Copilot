@@ -2,6 +2,7 @@ import { act } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { afterEach, describe, expect, it, vi } from 'vitest';
+import { adapterSnapshotSchema } from '@fut-copilot/domain/messages';
 
 const browserMocks = vi.hoisted(() => {
   const listeners = new Set<(message: unknown) => unknown>();
@@ -43,6 +44,7 @@ vi.mock('wxt/browser', () => ({
 }));
 
 import { App } from './App';
+import { selectedCardFromSnapshot } from './selected-context';
 
 let mountedRoot: Root | null = null;
 
@@ -198,7 +200,6 @@ describe('FUT Copilot side panel', () => {
         },
       },
     };
-
     const container = document.createElement('div');
     mountedRoot = createRoot(container);
     await act(async () => mountedRoot?.render(<App />));
@@ -304,8 +305,108 @@ describe('FUT Copilot side panel', () => {
     expect(container.textContent).toContain('Alex Transfer');
     expect(container.textContent).toContain('120,000 coins');
     expect(container.textContent).toContain('135,000 coins');
+    expect(container.textContent).toContain('not saved as a market price');
     expect(container.textContent).toContain(
-      'not saved as a market price or used to click any transfer action',
+      'never activates Watch, Bid, Buy, List, or Re-list',
+    );
+  });
+
+  it('renders Transfer Market values without creating owned-card context', async () => {
+    const observedAt = '2026-08-01T22:00:00.000Z';
+    const unknownString = {
+      value: null,
+      source: 'ea-visible-ui',
+      observedAt,
+      status: 'unknown',
+    } as const;
+    browserMocks.state.snapshot = {
+      state: 'ready',
+      updatedAt: observedAt,
+      event: {
+        eventVersion: 1,
+        eventId: 'a05f6ad4-00b5-4282-b290-1017cf9ae114',
+        type: 'marketContext.visible',
+        webAppBuild: unknownString,
+        occurredAt: observedAt,
+        confidence: 0.95,
+        extractionStatus: 'known',
+        adapterVersion: 'fc26-web-v0.5.0',
+        payload: {
+          selectedCard: {
+            localObservationId: 'fd0fd6cc-6d39-456b-800b-2fb22f2e2e67',
+            name: {
+              value: 'Alex Market',
+              source: 'ea-visible-ui',
+              observedAt,
+              status: 'known',
+            },
+            overall: {
+              value: 91,
+              source: 'ea-visible-ui',
+              observedAt,
+              status: 'known',
+            },
+            position: {
+              value: 'RW',
+              source: 'ea-visible-ui',
+              observedAt,
+              status: 'known',
+            },
+            club: unknownString,
+            league: unknownString,
+            nation: unknownString,
+            rarity: unknownString,
+            tradeability: {
+              value: 'tradeable',
+              source: 'ea-visible-ui',
+              observedAt,
+              status: 'inferred',
+              evidence: ['visible-transfer-market-context'],
+            },
+            firstOwner: unknownString,
+            loan: {
+              value: false,
+              source: 'ea-visible-ui',
+              observedAt,
+              status: 'inferred',
+            },
+            faceStats: [],
+          },
+          displayedPrices: [
+            {
+              value: 12_000,
+              source: 'ea-visible-ui',
+              observedAt,
+              status: 'known',
+              evidence: ['visible-transfer-market-start-price'],
+            },
+            {
+              value: 24_000,
+              source: 'ea-visible-ui',
+              observedAt,
+              status: 'known',
+              evidence: ['visible-transfer-market-buy-now-price'],
+            },
+          ],
+        },
+      },
+    };
+    expect(
+      selectedCardFromSnapshot(
+        adapterSnapshotSchema.parse(browserMocks.state.snapshot),
+      ),
+    ).toBeNull();
+
+    const container = document.createElement('div');
+    mountedRoot = createRoot(container);
+    await act(async () => mountedRoot?.render(<App />));
+    await flushUi();
+
+    expect(container.textContent).toContain('Transfer Market context');
+    expect(container.textContent).toContain('Start price12,000 coins');
+    expect(container.textContent).toContain('Buy Now price24,000 coins');
+    expect(container.textContent).toContain(
+      'never activates Watch, Bid, Buy, List, or Re-list',
     );
   });
 

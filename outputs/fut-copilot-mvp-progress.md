@@ -12,7 +12,7 @@ Current milestone: pack, player-pick, duplicate, and final manual live gates rem
 - Known, inferred, unknown, and stale observation states plus explicit tradeability.
 - Twelve-table Dexie database schema v2 with tested version-1 migration.
 - Validated schema-v2 JSON export/import, preview, merge/replace, and backup-before-replace.
-- Eight synthetic/redacted fixture categories, eleven account-free fixture files,
+- Eight synthetic/redacted fixture categories, twelve account-free fixture files,
   and a deterministic fixture harness.
 - Live-tested English Club screen classifier and selected-card extractor.
 - Live-tested English Active Squad extractor with ordered 11 / 7 / 5 player
@@ -21,6 +21,8 @@ Current milestone: pack, player-pick, duplicate, and final manual live gates rem
   persistence and read-only displayed coin values.
 - Live-tested English empty-SBC requirements extractor with mirrored-list and
   11 + 12 slot-shape agreement; populated SBC cards fail closed.
+- Live-tested English Transfer Market Search Results extractor with a selected
+  detail card, labeled start/Buy Now values, and no owned-card mutation.
 - Typed Chrome messaging and loading, empty, ready, unsupported, and degraded panel states.
 - Local PlayStation profile, seven tags, protection rules, notes, and non-collapsing identity resolution.
 - User-clicked FUT.GG exact-or-search links with no API, scraping, or background request.
@@ -58,7 +60,7 @@ Generated unpacked extension:
 | Empty SBC requirements | Yes | Yes | Live validated; exact-build panel confirmation pending |
 | Populated SBC cards | Yes | No | User-created visible state required |
 | Transfer List detail | Yes | Yes | Live validated |
-| Transfer Market search results | Yes | No | Safe read-only observation required |
+| Transfer Market search results | Yes | Yes | Live validated |
 
 Unsupported live screens fail closed; synthetic coverage is never presented as
 proof of EA DOM compatibility.
@@ -71,10 +73,8 @@ proof of EA DOM compatibility.
    duplicate visible state manually.
 3. Record only sanitized structural evidence, implement one extractor slice at
    a time, and add compatibility notes.
-4. Safely observe Transfer Market search results if that screen remains in the
-   accepted release scope.
-5. Run every item in `docs/release/manual-smoke-checklist.md`.
-6. Mark the draft PR ready only after all required gates pass or are explicitly
+4. Run every item in `docs/release/manual-smoke-checklist.md`.
+5. Mark the draft PR ready only after all required gates pass or are explicitly
    waived by the owner.
 
 ## Safety boundary retained

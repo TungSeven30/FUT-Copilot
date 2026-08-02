@@ -33,6 +33,9 @@
 - [x] Live English FC 26 empty-SBC requirement extraction with mirrored-list
       agreement, 11 + 12 slot validation, and populated-squad fail-closed
       behavior.
+- [x] Live English FC 26 Transfer Market Search Results extraction with one
+      selected detailed card, labeled start/Buy Now values, observation-only
+      storage, and no market action.
 
 ## Active release gates
 

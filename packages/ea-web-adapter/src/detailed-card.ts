@@ -19,7 +19,7 @@ const FACE_STAT_LABELS = new Set([
 ]);
 
 export type DetailedCardTradeabilityContext =
-  'visible-detail-actions' | 'transfer-list';
+  'visible-detail-actions' | 'transfer-list' | 'transfer-market';
 
 export type DetailedCardExtraction = {
   card: VisibleCard | null;
@@ -122,7 +122,9 @@ export function extractDetailedVisibleCard(input: {
       label === 'List on Transfer Market' || label === 'Send to Transfer List',
   );
   const tradeable =
-    tradeabilityContext === 'transfer-list' || hasTransferAction;
+    tradeabilityContext === 'transfer-list' ||
+    tradeabilityContext === 'transfer-market' ||
+    hasTransferAction;
   const firstOwnerMarker = cardElement.querySelector(
     '.icon_chemistry_first_owner',
   );
@@ -180,7 +182,9 @@ export function extractDetailedVisibleCard(input: {
             evidence: [
               tradeabilityContext === 'transfer-list'
                 ? 'visible-transfer-list-context'
-                : 'visible-manual-transfer-action',
+                : tradeabilityContext === 'transfer-market'
+                  ? 'visible-transfer-market-context'
+                  : 'visible-manual-transfer-action',
             ],
           }
         : {

@@ -48,6 +48,9 @@
   fail-closed handling for populated or structurally changed squads.
 - A read-only SBC context summary that exposes visible requirements while
   preserving the planner block on unsupported constraints.
+- Live English Transfer Market Search Results extraction with one selected
+  detailed card, labeled start and Buy Now values, observation-only storage,
+  and no Watch, Bid, Buy, Compare, or listing action.
 
 ### Fixed
 
@@ -71,6 +74,7 @@
 ### Known limitations
 
 - Live EA extraction supports the English Club selected-card, Active Squad,
-  Transfer List, and empty SBC-requirements contexts. Pack result, player pick,
-  duplicate, and populated SBC-card contracts remain synthetic-only until
-  user-assisted validation produces sanitized compatibility evidence.
+  Transfer List, Transfer Market Search Results, and empty SBC-requirements
+  contexts. Pack result, player pick, duplicate, and populated SBC-card
+  contracts remain synthetic-only until user-assisted validation produces
+  sanitized compatibility evidence.
